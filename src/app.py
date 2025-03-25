@@ -1,13 +1,16 @@
+from datetime import datetime
 from flask import Flask
 import os 
+from routes.login  import login_bp
 
 app = Flask(__name__)
+app.register_blueprint(login_bp)
 
 DEFAULT_PORT = '8080'
 
 @app.route('/')
-def home():
-    return "¡Hola, Docker con Flask!"
+def health_check():
+    return str(datetime.now())
 
 if __name__ == '__main__':
     try:
