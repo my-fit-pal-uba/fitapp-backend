@@ -1,3 +1,9 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))  # Agrega src al path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  #
+
 from datetime import datetime
 from flask import Flask
 import os
