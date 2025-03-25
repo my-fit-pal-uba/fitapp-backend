@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Flask
 import os 
-from routes.login  import login_bp
+from routes.login_controller import login_bp
 
 app = Flask(__name__)
 app.register_blueprint(login_bp)
