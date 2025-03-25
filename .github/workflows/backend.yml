@@ -1,0 +1,67 @@
+name: Test backend
+on:
+  push:
+  pull_request:
+jobs:
+  run-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Run tests
+        run: |
+          python -m unittest ./tests/*.py
+  format-check:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Black
+        run: |
+          black --check --diff .
+  type-check:
+    runs-on: ubuntu-24.04
+    needs: [format-check]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run mypy
+        run: |
+          mypy .
+  run-with-coverage:
+    runs-on: ubuntu-24.04
+    needs: [run-tests]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests with coverage
+        run: |
+          python -m pytest --cov --cov-fail-under=80 ./tests/*.py
