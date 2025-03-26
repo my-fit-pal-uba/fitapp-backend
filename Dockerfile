@@ -1,14 +1,17 @@
-FROM python:3.9
+# Base Image of dockerfile
+FROM python:3.12-slim as base 
+WORKDIR /usr/local/app
 
-WORKDIR /app
-
-COPY src/ ./src
-COPY requirements.txt .
-
+# Instal dependencies 
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 5000
 
-ENV PORT=5000
+# Copy source code
+COPY src/ ./src
+EXPOSE 8080
+
+RUN useradd app 
+USER app
 
 CMD ["python", "src/app.py"]
