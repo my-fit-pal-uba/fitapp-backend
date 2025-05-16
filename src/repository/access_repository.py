@@ -3,7 +3,7 @@ from psycopg2 import sql
 
 # Configuración de la conexión (usa las variables de tu docker-compose.yml)
 DB_CONFIG = {
-    "host": "localhost",  # o "db" si estás dentro de Docker
+    "host": "db",  # o "db" si estás dentro de Docker
     "database": "app_db",
     "user": "app_user",
     "password": "app_password",
@@ -25,12 +25,12 @@ def get_users():
     query = "SELECT * FROM Users;"
     try:
         conn = get_connection()
+        if not conn: 
+            return ["Vacio"]
         print("Pase por aca")
         with conn.cursor() as cursor:
             cursor.execute(query)
             users = cursor.fetchall()
-            for user in users:
-                print(user)
         return users
     except psycopg2.Error as e:
         print(f"Error al obtener usuarios: {e}")

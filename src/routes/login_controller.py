@@ -22,8 +22,9 @@ def sign_in():
 @login_bp.route("/users")
 def get_users():
     try:
-        print("Pase por aca")
+        print("Se supone que deberia printear algo")
         return login_service.get_users()
     except Exception as e:
+        print("Pase por aca")
         return []
     
