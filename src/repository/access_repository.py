@@ -7,8 +7,9 @@ DB_CONFIG = {
     "database": "app_db",
     "user": "app_user",
     "password": "app_password",
-    "port": "5432"
+    "port": "5432",
 }
+
 
 def get_connection():
     """Establece conexión con la base de datos."""
@@ -25,7 +26,7 @@ def get_users():
     query = "SELECT * FROM Users;"
     try:
         conn = get_connection()
-        if not conn: 
+        if not conn:
             return ["Vacio"]
         print("Pase por aca")
         with conn.cursor() as cursor:

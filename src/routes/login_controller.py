@@ -19,6 +19,7 @@ def sign_in():
         print(e)
         return ""
 
+
 @login_bp.route("/users")
 def get_users():
     try:
@@ -27,4 +28,3 @@ def get_users():
     except Exception as e:
         print("Pase por aca")
         return []
-    

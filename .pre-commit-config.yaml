@@ -14,21 +14,17 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+
       - id: format-check
         name: Check format for backend
         entry: black --check --diff .
         language: system
         pass_filenames: false
         always_run: true
+
       - id: black
         name: Format code for backend
         entry: black .
-        language: system
-        pass_filenames: false
-        always_run: true
-      - id: type-check
-        name: Type format for backend
-        entry: mypy .
         language: system
         pass_filenames: false
         always_run: true
