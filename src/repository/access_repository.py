@@ -1,5 +1,8 @@
+from typing import List
 import psycopg2
+from psycopg2.extras import DictCursor
 from psycopg2 import sql
+from src.models.user import User
 
 # Configuración de la conexión (usa las variables de tu docker-compose.yml)
 DB_CONFIG = {
@@ -21,21 +24,73 @@ def get_connection():
         return None
 
 
-def get_users():
-    """Obtiene todos los usuarios de la tabla Users."""
-    query = "SELECT * FROM Users;"
+def get_users() -> List[User]:
+    """
+    Retrieve all users from the database and map them to User objects.
+
+    Returns:
+        List[User]: A list of User objects sorted by user_id
+
+    Raises:
+        DatabaseError: If there's any database connectivity issue
+        DataError: If there's an issue with the data format
+    """
+    query = sql.SQL(
+        """
+        SELECT 
+            user_id, 
+            username, 
+            email, 
+            first_name, 
+            last_name, 
+            is_active, 
+            is_admin, 
+            last_login 
+        FROM {} 
+    """
+    ).format(
+        sql.Identifier("users")
+    )  # Safe table name quoting
+
+    conn = None
     try:
         conn = get_connection()
-        if not conn:
-            return ["Vacio"]
-        print("Pase por aca")
-        with conn.cursor() as cursor:
+        if conn is None:
+            raise psycopg2.DatabaseError("Database connection failed")
+
+        with conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.execute(query)
-            users = cursor.fetchall()
-        return users
+
+            if cursor.rowcount == 0:
+                return []
+
+            users = []
+            for record in cursor:
+                try:
+                    users.append(
+                        User(
+                            user_id=record["user_id"],
+                            username=record["username"],
+                            email=record["email"],
+                            first_name=record["first_name"],
+                            last_name=record["last_name"],
+                            is_active=record["is_active"],
+                            is_superuser=record["is_admin"],
+                            last_login=(
+                                record["last_login"] if record["last_login"] else None
+                            ),
+                        )
+                    )
+                except (KeyError, TypeError) as e:
+                    raise psycopg2.DataError(
+                        f"Data format error in record {record}: {e}"
+                    )
+
+            return users
+
     except psycopg2.Error as e:
-        print(f"Error al obtener usuarios: {e}")
-        return []
+        # Log the error here (consider using logging module)
+        raise psycopg2.DatabaseError(f"Database operation failed: {e}")
     finally:
         if conn:
             conn.close()

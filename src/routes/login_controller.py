@@ -1,5 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from src.services.login import Login
+from typing import List
+from src.models.user import User
 
 login_bp = Blueprint("login", __name__, url_prefix="/access")
 
@@ -20,11 +22,7 @@ def sign_in():
         return ""
 
 
-@login_bp.route("/users")
+@login_bp.route("/users", methods=["GET"])
 def get_users():
-    try:
-        print("Se supone que deberia printear algo")
-        return login_service.get_users()
-    except Exception as e:
-        print("Pase por aca")
-        return []
+    users: List[User] = login_service.get_users()
+    return jsonify([user.to_dict() for user in users])
