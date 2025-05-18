@@ -64,3 +64,27 @@ class AccessRepository:
                 return [self._record_to_user(record) for record in cursor]
         except psycopg2.Error:
             return None
+
+    def create_user(self, user: User) -> bool:
+        query = """
+            INSERT INTO Users (username, email, first_name, last_name, is_active, is_admin, password_hash)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(
+                    query,
+                    (
+                        user.username,
+                        user.email,
+                        user.first_name,
+                        user.last_name,
+                        user.is_active if user.is_active is not None else True,
+                        user.is_superuser if user.is_superuser is not None else False,
+                        user.password_hash,
+                    ),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            return None

@@ -11,13 +11,14 @@ class LoginController:
         self.register_routes()
 
     def register_routes(self):
-        self.login_bp.add_url_rule("/login", view_func=self.login, methods=["GET"])
-        self.login_bp.add_url_rule("/signin", view_func=self.sign_in)
+        self.login_bp.add_url_rule("/login", view_func=self.login, methods=["POST"])
+        self.login_bp.add_url_rule("/signup", view_func=self.sign_up, methods =["POST"])
         self.login_bp.add_url_rule("/users", view_func=self.get_users, methods=["GET"])
 
     def login(self):  # ← Sin parámetros
-        user_email = request.args.get("user_email")
-        user_password = request.args.get("user_password")
+        data = request.get_json()
+        user_email = data.get("email")
+        user_password = data.get("password")
 
         if not user_email or not user_password:
             return jsonify({"error": "Email and password are required"}), 400
@@ -30,12 +31,19 @@ class LoginController:
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    def sign_in(self):
+    def sign_up(self):
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return jsonify({"error": "Email and password are required"}), 400
+
         try:
-            return self.login_service.sign_in()
+            result = self.login_service.sign_up(email, password)
+            return jsonify({"result": result}), 201
         except Exception as e:
-            print(e)
-            return ""
+            return jsonify({"error": str(e)}), 500
 
     def get_users(self):
         users: List[User] = self.login_service.get_users()

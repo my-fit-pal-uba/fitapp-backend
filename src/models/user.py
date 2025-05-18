@@ -7,15 +7,15 @@ class User:
 
     def __init__(
         self,
-        user_id: int,
-        username: str,
         email: str,
-        first_name: Optional[str] = None,
-        last_name: Optional[str] = None,
+        password_hash: str,
         is_active: bool = True,
         is_superuser: bool = False,
+        first_name: Optional[str] = None,
         last_login: Optional[datetime] = None,
-        password_hash: Optional[str] = None,
+        last_name: Optional[str] = None,
+        user_id: Optional[int] = None,
+        username: Optional[str] = None,
     ):
         self.user_id = user_id
         self.username = username
