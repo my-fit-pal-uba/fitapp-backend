@@ -15,6 +15,7 @@ class User:
         is_active: bool = True,
         is_superuser: bool = False,
         last_login: Optional[datetime] = None,
+        password_hash: Optional[str] = None,
     ):
         self.user_id = user_id
         self.username = username
@@ -24,6 +25,7 @@ class User:
         self.is_active = is_active
         self.is_superuser = is_superuser
         self.last_login = last_login
+        self.password_hash = password_hash
 
     def to_dict(self):
         return {
