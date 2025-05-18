@@ -1,7 +1,7 @@
 from typing import List
-import psycopg2
-from psycopg2.extras import DictCursor
-from psycopg2 import sql
+import psycopg2  # type: ignore
+from psycopg2.extras import DictCursor  # type: ignore
+from psycopg2 import sql  # type: ignore
 from src.models.user import User
 
 # Configuración de la conexión (usa las variables de tu docker-compose.yml)
