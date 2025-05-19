@@ -2,8 +2,10 @@ from src.access_module.models.user import User
 from src.access_module.repository.access_repository import AccessRepository
 import hashlib
 
+from src.access_module.services.abstract_login import AbstractLogin
 
-class Login:
+
+class Login(AbstractLogin):
 
     def __init__(self):
         self.repository = AccessRepository()
