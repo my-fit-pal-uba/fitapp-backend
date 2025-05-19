@@ -1,14 +1,14 @@
-from src.access_module.models.user import User
-from src.access_module.repository.access_repository import AccessRepository
+from access_module.models.user import User
+from access_module.repository.abstract_access_repository import AbstractAccessRepository
 import hashlib
 
-from src.access_module.services.abstract_login import abstract_access_service
+from access_module.services.abstract_login import AbstractAccessService
 
 
-class Login(abstract_access_service):
+class Login(AbstractAccessService):
 
-    def __init__(self):
-        self.repository = AccessRepository()
+    def __init__(self, abstract_access_service: AbstractAccessRepository):
+        self.repository: AbstractAccessRepository = abstract_access_service
 
     def say_hello(self):
         return "Hello from Login service 4"

@@ -1,4 +1,4 @@
-class abstract_access_service:
+class AbstractAccessService:
     """
     An abstract base class that defines the interface for access services,
     such as login and logout functionality. Subclasses should implement

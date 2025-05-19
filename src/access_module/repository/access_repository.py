@@ -2,9 +2,10 @@ from typing import Optional, List
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
 from access_module.models.user import User
+from access_module.repository.abstract_access_repository import AbstractAccessRepository
 
 
-class AccessRepository:
+class AccessRepository(AbstractAccessRepository):
     def __init__(self, db_config=None):
         self.db_config = db_config or {
             "host": "db",
