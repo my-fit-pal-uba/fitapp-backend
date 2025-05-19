@@ -32,6 +32,8 @@ class BackendApp:
 
             return str(datetime.now())
 
+        self.inyect_login_service()
+
     def run(self):
         import os
 

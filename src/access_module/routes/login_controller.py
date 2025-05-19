@@ -15,7 +15,7 @@ class LoginController:
         self.login_bp.add_url_rule("/signup", view_func=self.sign_up, methods=["POST"])
         self.login_bp.add_url_rule("/users", view_func=self.get_users, methods=["GET"])
 
-    def login(self, user_email: str, hash_password: str):  # ← Sin parámetros
+    def login(self):  # ← Sin parámetros
         user_email = request.args.get("email")
         user_password = request.args.get("password")
 
