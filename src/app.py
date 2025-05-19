@@ -1,4 +1,5 @@
 from flask import Flask
+import os
 from flask_cors import CORS
 
 from access_module.routes.login_controller import LoginController
@@ -6,6 +7,7 @@ from access_module.repository.access_repository import AccessRepository
 from access_module.services.login import Login
 from access_module.services.abstract_login import AbstractAccessService
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
+from access_module.routes.login_proxy import LoginProxy
 
 DEFAULT_PORT = "8080"
 
@@ -15,27 +17,24 @@ class BackendApp:
         self.app = Flask(__name__)
         CORS(self.app, origins=["http://localhost:8081"], supports_credentials=True)
         # self.app.register_blueprint(container.login_blueprint())
-        self.register_routes()
+        self.register_healt_check()
+        self.inyect_login_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
         login_service: AbstractAccessService = Login(login_repository)
         login_controller: LoginController = LoginController(login_service)
-        self.app.register_blueprint(login_controller.login_bp)
+        login_proxy = LoginProxy(login_controller)
+        self.app.register_blueprint(login_proxy.login_bp)
 
-        # login_repository: AbstractLoginRepository = AccessRepository()
-
-    def register_routes(self):
+    def register_healt_check(self):
         @self.app.route("/")
         def health_check():
             from datetime import datetime
 
             return str(datetime.now())
 
-        self.inyect_login_service()
-
     def run(self):
-        import os
 
         try:
             port_data = os.getenv("PORT", DEFAULT_PORT)
