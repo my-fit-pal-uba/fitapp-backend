@@ -1,8 +1,5 @@
 from access_module.services.abstract_login import AbstractAccessService
 
-# from typing import List
-# from access_module.models.user import User
-
 
 class LoginController:
     def __init__(self, login_service: AbstractAccessService):

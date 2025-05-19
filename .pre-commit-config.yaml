@@ -3,29 +3,21 @@ repos:
     hooks:
       - id: run-tests
         name: Run tests for backend
-        entry: |
-          bash -c '
-            if [[ "$OSTYPE" == "linux"* ]];
-            then python3 -m unittest discover -s ./tests -p "*.py"
-            elif [[ "$OSTYPE" == "msys"* ]];
-            then python -m unittest discover -s ./tests -p "*.py";
-            fi
-          '
+        entry: python3 -m unittest discover -s ./tests -p "*.py"
         language: system
         pass_filenames: false
         always_run: true
 
       - id: format-check
         name: Check format for backend
-        entry: black --check --diff .
+        entry: black --check --diff src
         language: system
         pass_filenames: false
         always_run: true
 
       - id: black
         name: Format code for backend
-        entry: black .
+        entry: black src
         language: system
         pass_filenames: false
         always_run: true
-  
