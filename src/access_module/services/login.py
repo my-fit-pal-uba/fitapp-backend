@@ -1,6 +1,5 @@
-# import ..repository/access_repository
-from src.models.user import User
-from src.repository.access_repository import AccessRepository
+from src.access_module.models.user import User
+from src.access_module.repository.access_repository import AccessRepository
 import hashlib
 
 
@@ -16,11 +15,10 @@ class Login:
         user_data: User = self.repository.get_user_by_email(user_email)
         if not user_data:
             raise ValueError("User not found")
-        # Hashear la contraseña recibida antes de comparar
-        password_hash = hashlib.sha256(user_password.encode()).hexdigest()
-        if password_hash != user_data.password_hash:
+
+        if user_data.password_hash != user_password:
             raise ValueError("Invalid password")
-        return "User logged in successfully"
+        return True
 
     def sign_up(self, email: str, password: str):
         password_hash = hashlib.sha256(password.encode()).hexdigest()

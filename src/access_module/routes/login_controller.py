@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from src.services.login import Login
+from src.access_module.services.login import Login
 from typing import List
-from models.user import User
+from src.access_module.models.user import User
 
 
 class LoginController:
@@ -11,14 +11,13 @@ class LoginController:
         self.register_routes()
 
     def register_routes(self):
-        self.login_bp.add_url_rule("/login", view_func=self.login, methods=["POST"])
-        self.login_bp.add_url_rule("/signup", view_func=self.sign_up, methods =["POST"])
+        self.login_bp.add_url_rule("/login", view_func=self.login, methods=["GET"])
+        self.login_bp.add_url_rule("/signup", view_func=self.sign_up, methods=["POST"])
         self.login_bp.add_url_rule("/users", view_func=self.get_users, methods=["GET"])
 
     def login(self):  # ← Sin parámetros
-        data = request.get_json()
-        user_email = data.get("email")
-        user_password = data.get("password")
+        user_email = request.args.get("email")
+        user_password = request.args.get("password")
 
         if not user_email or not user_password:
             return jsonify({"error": "Email and password are required"}), 400

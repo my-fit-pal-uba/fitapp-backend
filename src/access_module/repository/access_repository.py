@@ -1,7 +1,7 @@
 from typing import Optional, List
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
-from src.models.user import User
+from access_module.models.user import User
 
 
 class AccessRepository:

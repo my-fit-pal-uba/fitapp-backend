@@ -8,7 +8,7 @@ from datetime import datetime
 from flask import Flask
 from flask_cors import CORS
 import os
-from src.routes.login_controller import login_bp
+from access_module.routes.login_controller import login_bp
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8081"], supports_credentials=True)
