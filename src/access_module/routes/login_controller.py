@@ -1,13 +1,17 @@
 from flask import Blueprint, jsonify, request
-from src.access_module.services.login import Login
+from src.access_module.services.abstract_login import abstract_access_service
+from src.access_module.services.login import (
+    Login,
+    abstract_access_service,
+)  # noqa: F811
 from typing import List
 from src.access_module.models.user import User
 
 
 class LoginController:
-    def __init__(self):
+    def __init__(self, login_service: abstract_access_service):
         self.login_bp = Blueprint("login", __name__, url_prefix="/access")
-        self.login_service = Login()
+        self.login_service: abstract_access_service = login_service
         self.register_routes()
 
     def register_routes(self):
@@ -15,7 +19,7 @@ class LoginController:
         self.login_bp.add_url_rule("/signup", view_func=self.sign_up, methods=["POST"])
         self.login_bp.add_url_rule("/users", view_func=self.get_users, methods=["GET"])
 
-    def login(self):  # ← Sin parámetros
+    def login(self, user_email: str, hash_password: str):  # ← Sin parámetros
         user_email = request.args.get("email")
         user_password = request.args.get("password")
 
@@ -50,5 +54,5 @@ class LoginController:
 
 
 # Para usar el blueprint:
-login_controller = LoginController()
+login_controller = LoginController(Login())
 login_bp = login_controller.login_bp
