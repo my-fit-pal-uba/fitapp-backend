@@ -25,13 +25,10 @@ class Login(AbstractAccessService):
         return True
 
     def sign_up(self, email: str, password: str, name: str, last_name: str):
-        try:
-            result = self.repository.create_user(email, password, name, last_name)
-            if not result:
-                raise UserAlreadyExists(email)
-            return True
-        except Exception:
-            return False
+        result = self.repository.create_user(email, password, name, last_name)
+        if not result:
+            raise UserAlreadyExists(email)
+        return result
 
     def get_users(self):
         return self.repository.get_users()

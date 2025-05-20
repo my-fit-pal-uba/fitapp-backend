@@ -10,6 +10,7 @@ from access_module.services.login import Login
 from access_module.models.user import User
 from access_module.exceptions.non_existing_user import NonExistingUser
 from access_module.exceptions.invalid_password import InvalidUserPassword
+from access_module.exceptions.user_already_exists import UserAlreadyExists
 
 
 class LoginServiceTest(unittest.TestCase):
@@ -44,6 +45,19 @@ class LoginServiceTest(unittest.TestCase):
         self.mock_repo.get_user_by_email.return_value = self.user
         with self.assertRaises(InvalidUserPassword):
             self.login_service.login("test@mail.com", "1234")
+
+    def test_sign_up_success(self):
+        self.mock_repo.create_user.return_value = True
+        result = self.login_service.sign_up("test@mail.com", "1234", "Test", "User")
+        self.assertTrue(result)
+        self.mock_repo.create_user.assert_called_once_with(
+            "test@mail.com", "1234", "Test", "User"
+        )
+
+    def test_sign_up_user_already_exists(self):
+        self.mock_repo.create_user.return_value = False
+        with self.assertRaises(UserAlreadyExists):
+            self.login_service.sign_up("test@mail.com", "1234", "Test", "User")
 
 
 if __name__ == "__main__":

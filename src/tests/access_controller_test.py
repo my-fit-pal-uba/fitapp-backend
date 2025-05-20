@@ -44,6 +44,36 @@ class LoginControllerTest(unittest.TestCase):
         self.assertEqual(msg, "Invalid password")
         self.assertEqual(code, 404)
 
+    def test_sign_up_success(self):
+        self.mock_service.sign_up.return_value = True
+        result, msg, code = self.controller.sign_up(
+            "test@mail.com", "1234", "Test", "User"
+        )
+        self.assertTrue(result)
+        self.assertEqual(msg, "User signed up successfully")
+        self.assertEqual(code, 200)
+        self.mock_service.sign_up.assert_called_once_with(
+            "test@mail.com", "1234", "Test", "User"
+        )
+
+    def test_sign_up_user_exists(self):
+        self.mock_service.sign_up.return_value = False
+        result, msg, code = self.controller.sign_up(
+            "test@mail.com", "1234", "Test", "User"
+        )
+        self.assertFalse(result)
+        self.assertEqual(msg, "User already exists")
+        self.assertEqual(code, 404)
+
+    def test_sign_up_exception(self):
+        self.mock_service.sign_up.side_effect = Exception("DB error")
+        result, msg, code = self.controller.sign_up(
+            "test@mail.com", "1234", "Test", "User"
+        )
+        self.assertFalse(result)
+        self.assertEqual(msg, "DB error")
+        self.assertEqual(code, 500)
+
 
 if __name__ == "__main__":
     unittest.main()
