@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
 from access_module.models.user import User
@@ -48,44 +48,3 @@ class AccessRepository(AbstractAccessRepository):
                 return self._record_to_user(record) if record else None
         except psycopg2.Error:
             return None
-
-    def get_users(self) -> Optional[List[User]]:
-        query = """
-            SELECT 
-                user_id, username, email, first_name, last_name, 
-                is_active, is_admin, last_login
-            FROM Users
-            ORDER BY user_id
-        """
-        try:
-            with self.get_connection() as conn, conn.cursor(
-                cursor_factory=DictCursor
-            ) as cursor:
-                cursor.execute(query)
-                return [self._record_to_user(record) for record in cursor]
-        except psycopg2.Error:
-            return None
-
-    # def create_user(self, user: User) -> bool:
-    #     query = """
-    #         INSERT INTO Users (username, email, first_name, last_name, is_active, is_admin, password_hash)
-    #         VALUES (%s, %s, %s, %s, %s, %s, %s)
-    #     """
-    #     try:
-    #         with self.get_connection() as conn, conn.cursor() as cursor:
-    #             cursor.execute(
-    #                 query,
-    #                 (
-    #                     user.username,
-    #                     user.email,
-    #                     user.first_name,
-    #                     user.last_name,
-    #                     user.is_active if user.is_active is not None else True,
-    #                     user.is_superuser if user.is_superuser is not None else False,
-    #                     user.password_hash,
-    #                 ),
-    #             )
-    #             conn.commit()
-    #             return True
-    #     except psycopg2.Error:
-    #         return None

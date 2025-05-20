@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
 from access_module.routes.login_controller import LoginController
+from models.response import ResponseInfo
 
 
 ### Aca agrego la logica dependiente de flasl
@@ -20,13 +21,13 @@ class LoginProxy:
         user_email = data.get("email", None)
         user_password = data.get("password", None)
         if not user_email or not user_password:
-            return jsonify({"error": "Email and password are required"}), 400
+            return ResponseInfo.to_response(
+                (False, "Email and password are required", 400)
+            )
 
         responde = self.login_controller.login(user_email, user_password)
-        if responde:
-            return jsonify({"message": "Login successful"}), 200
-        else:
-            return jsonify({"error": "Invalid credentials"}), 401
+
+        return ResponseInfo.to_response(responde)
 
     def sign_up(self):
         pass
