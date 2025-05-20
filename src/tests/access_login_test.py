@@ -16,9 +16,7 @@ class LoginServiceTest(unittest.TestCase):
     def setUp(self):
         self.mock_repo = MagicMock()
         self.login_service = Login(self.mock_repo)
-
-    def test_login_success(self):
-        user = User(
+        self.user = User(
             user_id=1,
             username="testuser",
             email="test@mail.com",
@@ -29,7 +27,9 @@ class LoginServiceTest(unittest.TestCase):
             last_login=None,
             password_hash="1234",
         )
-        self.mock_repo.get_user_by_email.return_value = user
+
+    def test_login_success(self):
+        self.mock_repo.get_user_by_email.return_value = self.user
         result = self.login_service.login("test@mail.com", "1234")
         self.assertTrue(result)
         self.mock_repo.get_user_by_email.assert_called_once_with("test@mail.com")
@@ -40,20 +40,10 @@ class LoginServiceTest(unittest.TestCase):
             self.login_service.login("notfound@mail.com", "any")
 
     def test_login_invalid_password(self):
-        user = User(
-            user_id=1,
-            username="testuser",
-            email="test@mail.com",
-            first_name="Test",
-            last_name="User",
-            is_active=True,
-            is_superuser=False,
-            last_login=None,
-            password_hash="correct",
-        )
-        self.mock_repo.get_user_by_email.return_value = user
+        self.user.password_hash = "wrong"
+        self.mock_repo.get_user_by_email.return_value = self.user
         with self.assertRaises(InvalidUserPassword):
-            self.login_service.login("test@mail.com", "wrong")
+            self.login_service.login("test@mail.com", "1234")
 
 
 if __name__ == "__main__":
