@@ -16,8 +16,7 @@ class BackendApp:
     def __init__(self):
         self.app = Flask(__name__)
         Swagger(self.app)
-        CORS(self.app, origins=["http://localhost:8081"], supports_credentials=True)
-        # self.app.register_blueprint(container.login_blueprint())
+        CORS(self.app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
         self.register_healt_check()
         self.inyect_login_service()
 

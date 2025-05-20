@@ -23,7 +23,7 @@ class LoginProxy:
         tags:
           - Authentication
         parameters:
-          - name: username
+          - name: email
             in: query
             type: string
             required: true
