@@ -14,12 +14,9 @@ from access_module.exceptions.user_already_exists import UserAlreadyExists
 
 load_dotenv()
 
-# JWT_SECRET = os.getenv("JWT_SECRET", "your_jwt_secret")
-# JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-# JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
-JWT_SECRET = "my_secret_key"
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRE_MINUTES = 60
+JWT_SECRET = os.getenv("JWT_SECRET", "your_jwt_secret")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
 
 
 class Login(AbstractAccessService):
