@@ -45,7 +45,6 @@ class Login(AbstractAccessService):
 
     def create_access_token(self, user: User):
         dict_user = user.to_dict()
-        print(dict_user)
         to_encode = dict_user.copy()
         expire = datetime.now() + timedelta(minutes=JWT_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
