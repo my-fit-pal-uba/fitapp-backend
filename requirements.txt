@@ -7,3 +7,6 @@ types-colorama
 pytest-cov
 psycopg2-binary
 flasgger
+pyjwt 
+python-dotenv 
+bcrypt

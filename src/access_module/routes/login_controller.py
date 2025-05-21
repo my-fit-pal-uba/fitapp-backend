@@ -16,9 +16,9 @@ class LoginController:
             response = self.login_service.login(user_email, user_password)
             return response, "Login successful", 200
         except NonExistingUser:
-            return False, "User does not exist", 404
+            return "", "User does not exist", 404
         except InvalidUserPassword:
-            return False, "Invalid password", 404
+            return "", "Invalid password", 404
 
     def sign_up(
         self, user_email: str, user_password: str, name: str, last_name: str
