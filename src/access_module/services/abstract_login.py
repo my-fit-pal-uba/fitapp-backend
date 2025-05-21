@@ -18,7 +18,7 @@ class AbstractAccessService:
     """
 
     @abstractmethod
-    def login(self, username: str, password: str) -> bool:
+    def login(self, username: str, password: str) -> str:
         """
         Abstract method to be implemented by subclasses for user login.
         """
@@ -32,7 +32,7 @@ class AbstractAccessService:
         raise NotImplementedError("Subclasses should implement this method.")
 
     @abstractmethod
-    def sign_up(self, email: str, password: str, name: str, last_name: str):
+    def sign_up(self, email: str, password: str, name: str, last_name: str) -> str:
         """
         Abstract method to be implemented by subclasses for user sign-up.
         """

@@ -14,9 +14,12 @@ from access_module.exceptions.user_already_exists import UserAlreadyExists
 
 load_dotenv()
 
-JWT_SECRET = os.getenv("JWT_SECRET", "your_jwt_secret")
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
+# JWT_SECRET = os.getenv("JWT_SECRET", "your_jwt_secret")
+# JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+# JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
+JWT_SECRET = "my_secret_key"
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRE_MINUTES = 60
 
 
 class Login(AbstractAccessService):
@@ -40,11 +43,12 @@ class Login(AbstractAccessService):
         result = self.repository.create_user(email, password, name, last_name)
         if not result:
             raise UserAlreadyExists(email)
-        return result
+        user_data: User = self.repository.get_user_by_email(email)
+        return self.create_access_token(user_data)
 
     def create_access_token(self, user: User):
         dict_user = user.to_dict()
-        dict_user.pop("password_hash", None)
+        print(dict_user)
         to_encode = dict_user.copy()
         expire = datetime.now() + timedelta(minutes=JWT_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
