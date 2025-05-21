@@ -1,7 +1,7 @@
 from flask import Flask
 import os
 from flask_cors import CORS
-
+from flasgger import Swagger  # type: ignore
 from access_module.routes.login_controller import LoginController
 from access_module.repository.access_repository import AccessRepository
 from access_module.services.login import Login
@@ -15,8 +15,8 @@ DEFAULT_PORT = "8080"
 class BackendApp:
     def __init__(self):
         self.app = Flask(__name__)
-        CORS(self.app, origins=["http://localhost:8081"], supports_credentials=True)
-        # self.app.register_blueprint(container.login_blueprint())
+        Swagger(self.app)
+        CORS(self.app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
         self.register_healt_check()
         self.inyect_login_service()
 
@@ -39,7 +39,7 @@ class BackendApp:
         try:
             port_data = os.getenv("PORT", DEFAULT_PORT)
             port = int(port_data)
-            self.app.run(host="0.0.0.0", port=port)
+            self.app.run(host="0.0.0.0", port=port, debug=True)
         except Exception as e:
             print(f"Error: {e}")
 

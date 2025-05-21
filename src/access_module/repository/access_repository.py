@@ -48,3 +48,16 @@ class AccessRepository(AbstractAccessRepository):
                 return self._record_to_user(record) if record else None
         except psycopg2.Error:
             return None
+
+    def create_user(self, email: str, password: str, name: str, last_name: str) -> bool:
+        query = """
+            INSERT INTO Users (email, password_hash, first_name, last_name, username)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (email, password, name, last_name, name))
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            return False

@@ -4,6 +4,7 @@ from access_module.exceptions.non_existing_user import NonExistingUser
 
 from access_module.services.abstract_login import AbstractAccessService
 from access_module.exceptions.invalid_password import InvalidUserPassword
+from access_module.exceptions.user_already_exists import UserAlreadyExists
 
 
 class Login(AbstractAccessService):
@@ -23,12 +24,11 @@ class Login(AbstractAccessService):
 
         return True
 
-    def sign_up(self, email: str, password: str):
-        # password_hash = hashlib.sha256(password.encode()).hexdigest()
-        # user_id y username como None (o puedes pedir username en el registro)
-        # user = User(email=email, password_hash=password_hash)
-        # self.repository.create_user(user)
-        return "User signed up successfully"
+    def sign_up(self, email: str, password: str, name: str, last_name: str):
+        result = self.repository.create_user(email, password, name, last_name)
+        if not result:
+            raise UserAlreadyExists(email)
+        return result
 
     def get_users(self):
         return self.repository.get_users()
