@@ -9,18 +9,8 @@ class RegistrationServic(AbstractRegistrationService):
     def __init__(self, repository: AbstractRegistrationRepository):
         self.repository: AbstractRegistrationService = repository
 
-    def register_user(self, user_data):
-        # Logic to register a new user
-        pass
-
-    def verify_user(self, user_id):
-        # Logic to verify a user's registration
-        pass
-
-    def update_user_info(self, user_id, updated_data):
-        # Logic to update user information
-        pass
-
-    def delete_user(self, user_id):
-        # Logic to delete a user
-        pass
+    def register_rol(self, user_rol: str, user_id: int):
+        """
+        Register user rol
+        """
+        return self.repository.register_progile(user_rol, user_id)

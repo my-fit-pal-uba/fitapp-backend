@@ -7,7 +7,7 @@ class AbstractRegistrationService:
     """
 
     @abstractmethod  # noqa: F821
-    def register_progile(self, profile_type: str, user_id: int):
+    def register_rol(self, rol: str, user_id: int):
         """
         Register a new user.
 
