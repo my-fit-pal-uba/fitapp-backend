@@ -48,6 +48,7 @@ class LoginServiceTest(unittest.TestCase):
 
     def test_sign_up_success(self):
         self.mock_repo.create_user.return_value = True
+        self.mock_repo.get_user_by_email.return_value = self.user
         result = self.login_service.sign_up("test@mail.com", "1234", "Test", "User")
         self.assertTrue(result)
         self.mock_repo.create_user.assert_called_once_with(
