@@ -1,0 +1,120 @@
+from exercise_module.models.exercise import Exercise
+import psycopg2  # type: ignore
+from exercise_module.repository.abstract_exercise_repository import AbstractExerciseRepository
+
+class ExerciseRepository(AbstractExerciseRepository):
+    def __init__(self, db_config=None):
+        self.db_config = db_config or {
+            "host": "db",
+            "database": "app_db",
+            "user": "app_user",
+            "password": "app_password",
+            "port": "5432",
+        }
+
+    def get_connection(self):
+        return psycopg2.connect(**self.db_config)
+    
+    def _record_to_exercise(self, record) -> Exercise:
+        return Exercise(
+            exercise_id=record["exercise_id"],
+            name=record["name"],
+            description=record["description"],
+            muscular_group=record["muscular_group"],
+            type=record["type"],
+            place=record["place"],
+            photo_guide=record.get("photo_guide"),
+            video_guide=record.get("video_guide"),
+        )
+    
+    def search_exercises(self, name: str) -> list:
+        query = """
+            SELECT 
+                exercise_id, name, description, muscular_group, type, place, 
+                photo_guide, video_guide
+            FROM Exercises
+            WHERE name ILIKE %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (name,))
+                records = cursor.fetchall()
+                return [self._record_to_exercise(record) for record in records]
+        except psycopg2.Error:
+            return []
+        
+    def get_exercises(self) -> list:
+        query = """
+            SELECT 
+                exercise_id, name, description, muscular_group, type, place, 
+                photo_guide, video_guide
+            FROM Exercises
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query)
+                records = cursor.fetchall()
+                return [self._record_to_exercise(record) for record in records]
+        except psycopg2.Error:
+            return []
+        
+    def filter_by_muscular_group(self, muscular_group: str) -> list:
+        query = """
+            SELECT 
+                exercise_id, name, description, muscular_group, type, place, 
+                photo_guide, video_guide
+            FROM Exercises
+            WHERE muscular_group = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (muscular_group,))
+                records = cursor.fetchall()
+                return [self._record_to_exercise(record) for record in records]
+        except psycopg2.Error:
+            return []
+        
+    def filter_by_type(self, type_: str) -> list:
+        query = """
+            SELECT 
+                exercise_id, name, description, muscular_group, type, place, 
+                photo_guide, video_guide
+            FROM Exercises
+            WHERE type = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (type_,))
+                records = cursor.fetchall()
+                return [self._record_to_exercise(record) for record in records]
+        except psycopg2.Error:
+            return []
+        
+
+    def filter_by_place(self, place: str) -> list:
+        query = """
+            SELECT 
+                exercise_id, name, description, muscular_group, type, place, 
+                photo_guide, video_guide
+            FROM Exercises
+            WHERE place = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (place,))
+                records = cursor.fetchall()
+                return [self._record_to_exercise(record) for record in records]
+        except psycopg2.Error:
+            return []
+    
+    
