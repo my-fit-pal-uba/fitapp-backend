@@ -1,6 +1,9 @@
 from exercise_module.models.exercise import Exercise
 import psycopg2  # type: ignore
-from exercise_module.repository.abstract_exercise_repository import AbstractExerciseRepository
+from exercise_module.repository.abstract_exercise_repository import (
+    AbstractExerciseRepository,
+)
+
 
 class ExerciseRepository(AbstractExerciseRepository):
     def __init__(self, db_config=None):
@@ -14,7 +17,7 @@ class ExerciseRepository(AbstractExerciseRepository):
 
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
-    
+
     def _record_to_exercise(self, record) -> Exercise:
         return Exercise(
             exercise_id=record["exercise_id"],
@@ -26,7 +29,7 @@ class ExerciseRepository(AbstractExerciseRepository):
             photo_guide=record.get("photo_guide"),
             video_guide=record.get("video_guide"),
         )
-    
+
     def search_exercises(self, name: str) -> list:
         query = """
             SELECT 
@@ -44,7 +47,7 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
-        
+
     def get_exercises(self) -> list:
         query = """
             SELECT 
@@ -61,7 +64,7 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
-        
+
     def filter_by_muscular_group(self, muscular_group: str) -> list:
         query = """
             SELECT 
@@ -79,7 +82,7 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
-        
+
     def filter_by_type(self, type_: str) -> list:
         query = """
             SELECT 
@@ -97,7 +100,6 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
-        
 
     def filter_by_place(self, place: str) -> list:
         query = """
@@ -116,5 +118,3 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
-    
-    

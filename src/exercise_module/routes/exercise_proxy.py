@@ -3,18 +3,29 @@ from flask import Blueprint, request
 from exercise_module.routes.exercise_controller import ExerciseController
 from models.response import ResponseInfo
 
+
 class ExerciseProxy:
     def __init__(self, exercise_controller: ExerciseController):
         self.exercise_controller = exercise_controller
         self.exercise_bp = Blueprint("exercise", __name__, url_prefix="/exercises")
         self.register_routes()
-    
+
     def register_routes(self):
         self.exercise_bp.add_url_rule("/search", view_func=self.search, methods=["GET"])
-        self.exercise_bp.add_url_rule("/all", view_func=self.get_exercises, methods=["GET"])
-        self.exercise_bp.add_url_rule("/filter_by_muscular_group", view_func=self.filter_by_muscular_group, methods=["GET"])
-        self.exercise_bp.add_url_rule("/filter_by_place", view_func=self.filter_by_place, methods=["GET"])
-        self.exercise_bp.add_url_rule("/filter_by_type", view_func=self.filter_by_type, methods=["GET"])
+        self.exercise_bp.add_url_rule(
+            "/all", view_func=self.get_exercises, methods=["GET"]
+        )
+        self.exercise_bp.add_url_rule(
+            "/filter_by_muscular_group",
+            view_func=self.filter_by_muscular_group,
+            methods=["GET"],
+        )
+        self.exercise_bp.add_url_rule(
+            "/filter_by_place", view_func=self.filter_by_place, methods=["GET"]
+        )
+        self.exercise_bp.add_url_rule(
+            "/filter_by_type", view_func=self.filter_by_type, methods=["GET"]
+        )
 
     def search(self):
         """
@@ -59,7 +70,7 @@ class ExerciseProxy:
             return ResponseInfo.to_response((False, "Name is required", 400))
         response = self.exercise_controller.search_exercises(name)
         return ResponseInfo.to_response((True, response, 200))
-    
+
     def get_exercises(self):
         """
         Obtiene todos los ejercicios
@@ -94,7 +105,7 @@ class ExerciseProxy:
         """
         response = self.exercise_controller.get_exercises()
         return ResponseInfo.to_response((True, response, 200))
-    
+
     def filter_by_muscular_group(self):
         """
         Filtra ejercicios por grupo muscular
@@ -138,7 +149,7 @@ class ExerciseProxy:
             return ResponseInfo.to_response((False, "Muscular group is required", 400))
         response = self.exercise_controller.filter_by_muscular_group(muscular_group)
         return ResponseInfo.to_response((True, response, 200))
-    
+
     def filter_by_place(self):
         """
         Filtra ejercicios por lugar
@@ -182,7 +193,7 @@ class ExerciseProxy:
             return ResponseInfo.to_response((False, "Place is required", 400))
         response = self.exercise_controller.filter_by_place(place)
         return ResponseInfo.to_response((True, response, 200))
-    
+
     def filter_by_type(self):
         """
         Filtra ejercicios por tipo
@@ -226,4 +237,3 @@ class ExerciseProxy:
             return ResponseInfo.to_response((False, "Type is required", 400))
         response = self.exercise_controller.filter_by_type(type_)
         return ResponseInfo.to_response((True, response, 200))
-    

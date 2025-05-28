@@ -57,8 +57,10 @@ class AccessRepository(AbstractAccessRepository):
                 return self._record_to_user(record) if record else None
         except psycopg2.Error:
             return None
-    
-    def save_user_profile(self, user_id, age : int, height : int, gender : str) -> Optional[User]:
+
+    def save_user_profile(
+        self, user_id, age: int, height: int, gender: str
+    ) -> Optional[User]:
         query = """
             INSERT INTO profiles (user_id, age, height, gender)
             VALUES (%s, %s, %s, %s)
@@ -86,7 +88,7 @@ class AccessRepository(AbstractAccessRepository):
                 return True
         except psycopg2.Error:
             return False
-    
+
     def get_user_profile(self, user_id: int) -> Optional[Profile]:
         query = """
             SELECT 

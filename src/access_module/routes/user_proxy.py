@@ -3,6 +3,7 @@ from flask import Blueprint, request
 from access_module.routes.user_controller import UserController
 from models.response import ResponseInfo
 
+
 class UserProxy:
     def __init__(self, user_controller: UserController):
         self.user_controller = user_controller
@@ -11,8 +12,12 @@ class UserProxy:
 
     def register_routes(self):
         self.user_bp.add_url_rule("/info", view_func=self.info, methods=["GET"])
-        self.user_bp.add_url_rule("/save_profile", view_func=self.save_profile, methods=["POST"])
-        self.user_bp.add_url_rule("/get_profile", view_func=self.get_profile, methods=["GET"])
+        self.user_bp.add_url_rule(
+            "/save_profile", view_func=self.save_profile, methods=["POST"]
+        )
+        self.user_bp.add_url_rule(
+            "/get_profile", view_func=self.get_profile, methods=["GET"]
+        )
 
     def info(self):
         """
@@ -66,10 +71,10 @@ class UserProxy:
         email = request.args.get("email")
         if not email:
             return ResponseInfo.to_response((False, "Email is required", 400))
-        
+
         response = self.user_controller.get_user_info(email)
         return ResponseInfo.to_response((True, response, 200))
-      
+
     def save_profile(self):
         """
         Guarda perfil de usuario
@@ -115,20 +120,24 @@ class UserProxy:
         email = request.args.get("email")
         if not email:
             return ResponseInfo.to_response((False, "Email is required", 400))
-        
+
         age = request.args.get("age", type=int)
         height = request.args.get("height", type=int)
         gender = request.args.get("gender", type=str)
         if height <= 0:
-            return ResponseInfo.to_response((False, "La estatura debe ser positiva", 400))
+            return ResponseInfo.to_response(
+                (False, "La estatura debe ser positiva", 400)
+            )
         if gender not in ["male", "female", "other"]:
             return ResponseInfo.to_response((False, "Género inválido", 400))
-        
+
         try:
             result = self.user_controller.save_profile(email, age, height, gender)
             return ResponseInfo.to_response((True, "Perfil guardado exitosamente", 200))
         except Exception as e:
-            return ResponseInfo.to_response((False, f"Error del servidor: {str(e)}", 500))
+            return ResponseInfo.to_response(
+                (False, f"Error del servidor: {str(e)}", 500)
+            )
 
     def get_profile(self):
         """
@@ -173,6 +182,6 @@ class UserProxy:
         email = request.args.get("email")
         if not email:
             return ResponseInfo.to_response((False, "Email is required", 400))
-        
+
         response = self.user_controller.get_profile(email)
         return ResponseInfo.to_response((True, response, 200))

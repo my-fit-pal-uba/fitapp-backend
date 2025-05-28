@@ -9,7 +9,7 @@ class AbstractExerciseRepository:
     @abstractmethod
     def get_exercises(self) -> list:
         pass
-    
+
     @abstractmethod
     def filter_by_muscular_group(self, muscular_group: str) -> list:
         pass

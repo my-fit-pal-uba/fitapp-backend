@@ -1,18 +1,19 @@
 from typing import Optional
 
+
 class Exercise:
     """Clase que repersenta un ejercicio del sistema."""
 
     def __init__(
-            self,
-            name: str,
-            description: str,
-            muscular_group: str,
-            type: str,
-            place: str,
-            photo_guide: Optional[str] = None,
-            video_guide: Optional[str] = None,
-            exercise_id: Optional[int] = None,       
+        self,
+        name: str,
+        description: str,
+        muscular_group: str,
+        type: str,
+        place: str,
+        photo_guide: Optional[str] = None,
+        video_guide: Optional[str] = None,
+        exercise_id: Optional[int] = None,
     ):
         self.exercise_id = exercise_id
         self.name = name

@@ -11,7 +11,9 @@ from access_module.services.abstract_login import AbstractAccessService
 from access_module.routes.login_proxy import LoginProxy
 from access_module.routes.user_proxy import UserProxy
 
-from exercise_module.repository.abstract_exercise_repository import AbstractExerciseRepository
+from exercise_module.repository.abstract_exercise_repository import (
+    AbstractExerciseRepository,
+)
 from exercise_module.repository.exercise_repository import ExerciseRepository
 from exercise_module.services.abstract_exercise import AbstractExerciseService
 from exercise_module.services.exercise import ExerciseService
