@@ -2,6 +2,7 @@ from profile_module.repository.abstract_profile_repository import (
     AbstractProfileRepository,
 )
 from profile_module.services.abstract_profile_service import AbstractProfileService
+from models.profile import Profile
 
 
 class ProfileService(AbstractProfileService):
@@ -47,3 +48,12 @@ class ProfileService(AbstractProfileService):
         :return: A tuple containing the user's profile data.
         """
         return self.repository.get_profile(user_id)
+
+    def save_profile(self, profile: Profile):
+        """
+        Save the profile of a user.
+
+        :param user_id: The ID of the user.
+        :return: A boolean indicating whether the profile was saved successfully.
+        """
+        return self.repository.save_profile(profile)

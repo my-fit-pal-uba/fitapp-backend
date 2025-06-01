@@ -2,6 +2,7 @@ from flask import Blueprint, request
 
 from models.response import ResponseInfo
 from profile_module.routes.profile_controller import ProfileController
+from models.profile import Profile
 
 
 ### Aca agrego la logica dependiente de flasl
@@ -300,8 +301,9 @@ class ProfileProxy:
         if gender not in ["male", "female", "other"]:
             return ResponseInfo.to_response((False, "Género inválido", 400))
 
+        profile = Profile(user_id=user_id, age=age, height=height, gender=gender)
         try:
-            result = self.profile_controller.save_profile(user_id, age, height, gender)
+            result = self.profile_controller.save_profile(profile)
             if not result:
                 return ResponseInfo.to_response((False, "Usuario no encontrado", 404))
             return ResponseInfo.to_response(result)

@@ -1,4 +1,5 @@
 from profile_module.services.abstract_profile_service import AbstractProfileService
+from models.profile import Profile
 
 
 class ProfileController:
@@ -41,11 +42,11 @@ class ProfileController:
         """
         return True, {"message": "Profile service is running"}, 200
 
-    def save_profile(self, user_id: int, profile_data: dict) -> tuple:
-        if not user_id or not profile_data:
+    def save_profile(self, profile: Profile) -> tuple:
+        if not profile or not profile.user_id:
             return False, {"error": "User ID and profile data are required"}, 400
 
-        result = self.ProfileService.save_profile(user_id, profile_data)
+        result = self.ProfileService.save_profile(profile)
         if not result:
             return False, {"error": "Failed to save profile"}, 500
 
