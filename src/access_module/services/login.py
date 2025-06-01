@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 import jwt
-from access_module.models.user import User
+from models.user import User
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
 from access_module.exceptions.non_existing_user import NonExistingUser
 

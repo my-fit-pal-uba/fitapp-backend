@@ -1,8 +1,8 @@
 from typing import Optional
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
-from access_module.models.user import User
-from access_module.models.profile import Profile
+from models.user import User
+from models.profile import Profile  # noqa: F401
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
 
 
@@ -32,14 +32,6 @@ class AccessRepository(AbstractAccessRepository):
             password_hash=record.get("password_hash"),
         )
 
-    def _record_to_profile(self, record) -> Profile:
-        return Profile(
-            user_id=record["user_id"],
-            age=record["age"],
-            height=record["height"],
-            gender=record["gender"],
-        )
-
     def get_user_by_email(self, email: str) -> Optional[User]:
         query = """
             SELECT 
@@ -58,24 +50,6 @@ class AccessRepository(AbstractAccessRepository):
         except psycopg2.Error:
             return None
 
-    def save_user_profile(
-        self, user_id, age: int, height: int, gender: str
-    ) -> Optional[User]:
-        query = """
-            INSERT INTO profiles (user_id, age, height, gender)
-            VALUES (%s, %s, %s, %s)
-            ON CONFLICT (user_id)
-            DO UPDATE SET age = EXCLUDED.age, height = EXCLUDED.height, gender = EXCLUDED.gender;
-        """
-        try:
-            with self.get_connection() as conn, conn.cursor() as cursor:
-                cursor.execute(query, (user_id, age, height, gender))
-                conn.commit()
-                return True
-        except psycopg2.Error as e:
-            print(f"Error al guardar perfil: {e}")
-            return False
-
     def create_user(self, email: str, password: str, name: str, last_name: str) -> bool:
         query = """
             INSERT INTO Users (email, password_hash, first_name, last_name, username)
@@ -88,20 +62,3 @@ class AccessRepository(AbstractAccessRepository):
                 return True
         except psycopg2.Error:
             return False
-
-    def get_user_profile(self, user_id: int) -> Optional[Profile]:
-        query = """
-            SELECT 
-                user_id, age, height, gender
-            FROM profiles
-            WHERE user_id = %s
-        """
-        try:
-            with self.get_connection() as conn, conn.cursor(
-                cursor_factory=DictCursor
-            ) as cursor:
-                cursor.execute(query, (user_id,))
-                record = cursor.fetchone()
-                return self._record_to_profile(record) if record else None
-        except psycopg2.Error:
-            return None
