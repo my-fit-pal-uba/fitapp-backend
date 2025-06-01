@@ -29,7 +29,6 @@ class ProfileProxy:
             methods=["POST"],
         )
 
-        self.profile_bp.add_url_rule("/info", view_func=self.info, methods=["GET"])
         self.profile_bp.add_url_rule(
             "/save_profile", view_func=self.save_profile, methods=["POST"]
         )
@@ -188,62 +187,6 @@ class ProfileProxy:
         result = self.profile_controller.post_rol(rol_id=rol_id, user_id=int(user_id))
 
         return ResponseInfo.to_response(result)
-
-    def info(self):
-        """
-        Obtiene data de usuario
-        ---
-        tags:
-          - Profile
-        parameters:
-          - name: user_id
-            in: query
-            type: string
-            required: true
-            example: usuario@ejemplo,com
-        responses:
-          200:
-            description: Info obtenida exitosamente
-            schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                  example: true
-                data:
-                  type: object
-                  properties:
-                    user_id:
-                      type: integer
-                      example: 42
-                    username:
-                      type: string
-                      example: usuario_ejemplo
-                    user_id:
-                      type: string
-                      example: pepe@gmail
-                    first_name:
-                      type: string
-                      example: Pepe
-                    last_name:
-                      type: string
-                      example: Perez
-                    is_active:
-                      type: boolean
-                      example: true
-          400:
-            description: user_id es requerido
-          404:
-            description: Usuario no encontrado
-          500:
-            description: Error del servidor
-        """
-        user_id = request.args.get("user_id")
-        if not user_id:
-            return ResponseInfo.to_response((False, "user_id is required", 400))
-
-        response = self.profile_controller.get_user_info(user_id)
-        return ResponseInfo.to_response((True, response, 200))
 
     def save_profile(self):
         """

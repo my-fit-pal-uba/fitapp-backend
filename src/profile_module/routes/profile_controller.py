@@ -36,12 +36,6 @@ class ProfileController:
 
         return True, {"message": "Daily calories registered successfully"}, 200
 
-    def info(self) -> tuple:
-        """
-        Returns a simple message indicating that the profile service is running.
-        """
-        return True, {"message": "Profile service is running"}, 200
-
     def save_profile(self, profile: Profile) -> tuple:
         if not profile or not profile.user_id:
             return False, {"error": "User ID and profile data are required"}, 400
