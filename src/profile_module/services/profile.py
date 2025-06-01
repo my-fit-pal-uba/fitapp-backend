@@ -1,7 +1,9 @@
-from profile_module.services.abstract_registration_service import (
+from src.profile_module.services.abstract_profile_service import (
     AbstractRegistrationService,
 )
-from profile_module.repository.abstract_repository import AbstractRegistrationRepository
+from src.profile_module.repository.abstract_registration_repository import (
+    AbstractRegistrationRepository,
+)
 
 
 class RegistrationServic(AbstractRegistrationService):
