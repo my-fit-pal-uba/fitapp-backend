@@ -1,3 +1,6 @@
+from abc import abstractmethod
+
+
 class AbstractAccessService:
     """
     An abstract base class that defines the interface for access services,
@@ -14,14 +17,23 @@ class AbstractAccessService:
         Abstract method for logging out the current user.
     """
 
-    def login(self, username: str, password: str) -> bool:
+    @abstractmethod
+    def login(self, username: str, password: str) -> str:
         """
         Abstract method to be implemented by subclasses for user login.
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
+    @abstractmethod
     def logout(self) -> None:
         """
         Abstract method to be implemented by subclasses for user logout.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def sign_up(self, email: str, password: str, name: str, last_name: str) -> str:
+        """
+        Abstract method to be implemented by subclasses for user sign-up.
         """
         raise NotImplementedError("Subclasses should implement this method.")

@@ -6,4 +6,7 @@ Types-Flask-Cors==5.0.0.20240902
 types-colorama
 pytest-cov
 psycopg2-binary
-python-dotenv
+flasgger
+pyjwt 
+python-dotenv 
+bcrypt
