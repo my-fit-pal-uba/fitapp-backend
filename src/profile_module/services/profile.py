@@ -1,18 +1,40 @@
-from src.profile_module.services.abstract_profile_service import (
-    AbstractRegistrationService,
+from profile_module.repository.abstract_profile_repository import (
+    AbstractProfileRepository,
 )
-from src.profile_module.repository.abstract_registration_repository import (
-    AbstractRegistrationRepository,
-)
+from profile_module.services.abstract_profile_service import AbstractProfileService
 
 
-class RegistrationServic(AbstractRegistrationService):
+class ProfileService(AbstractProfileService):
 
-    def __init__(self, repository: AbstractRegistrationRepository):
-        self.repository: AbstractRegistrationService = repository
+    def __init__(self, repository: AbstractProfileRepository):
+        self.repository: AbstractProfileService = repository
 
     def register_rol(self, user_rol: str, user_id: int):
         """
-        Register user rol
+        Register a new role for a user.
+
+        :param user_rol: The role to be registered.
+        :param user_id: The ID of the user.
+        :return: A tuple containing the result of the operation.
         """
-        return self.repository.register_progile(user_rol, user_id)
+        return self.repository.register_rol(user_rol, user_id)
+
+    def register_daily_weight(self, user_id: int, weight: float):
+        """
+        Register the daily weight of a user.
+
+        :param user_id: The ID of the user.
+        :param weight: The weight to be registered.
+        :return: A tuple containing the result of the operation.
+        """
+        return self.repository.register_daily_weight(user_id, weight)
+
+    def register_daily_calories(self, user_id: int, calories: float):
+        """
+        Register the daily calories of a user.
+
+        :param user_id: The ID of the user.
+        :param calories: The calories to be registered.
+        :return: A tuple containing the result of the operation.
+        """
+        return self.repository.register_daily_calories(user_id, calories)
