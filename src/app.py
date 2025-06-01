@@ -19,6 +19,8 @@ from exercise_module.services.abstract_exercise import AbstractExerciseService
 from exercise_module.services.exercise import ExerciseService
 from exercise_module.routes.exercise_controller import ExerciseController
 from exercise_module.routes.exercise_proxy import ExerciseProxy
+from profile_module.routes.profile_controller import ProfileController
+from profile_module.routes.profile_proxy import ProfileProxy
 
 DEFAULT_PORT = "8080"
 
@@ -32,6 +34,7 @@ class BackendApp:
         self.inyect_login_service()
         self.inject_user_service()
         self.inject_exercise_service()
+        self.inyect_registrarion_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -52,6 +55,11 @@ class BackendApp:
         exercise_controller: ExerciseController = ExerciseController(exercise_service)
         exercise_proxy = ExerciseProxy(exercise_controller)
         self.app.register_blueprint(exercise_proxy.exercise_bp)
+
+    def inyect_registrarion_service(self):
+        profile_controller = ProfileController()
+        profile_proxy = ProfileProxy(profile_controller)
+        self.app.register_blueprint(profile_proxy.profile_bp)
 
     def register_healt_check(self):
         @self.app.route("/")
