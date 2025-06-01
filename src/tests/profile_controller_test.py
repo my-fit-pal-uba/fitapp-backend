@@ -71,6 +71,62 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(data, {"error": "Failed to register daily calories"})
         self.assertEqual(code, 500)
 
+    def test_save_profile_success(self):
+        mock_profile = MagicMock()
+        mock_profile.user_id = 1
+        self.mock_service.save_profile.return_value = True
+        result, data, code = self.controller.save_profile(mock_profile)
+        self.assertTrue(result)
+        self.assertEqual(data, {"message": "Profile saved successfully"})
+        self.assertEqual(code, 200)
+        self.mock_service.save_profile.assert_called_once_with(mock_profile)
+
+    def test_save_profile_missing_profile(self):
+        result, data, code = self.controller.save_profile(None)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "User ID and profile data are required"})
+        self.assertEqual(code, 400)
+
+    def test_save_profile_missing_user_id(self):
+        mock_profile = MagicMock()
+        mock_profile.user_id = None
+        result, data, code = self.controller.save_profile(mock_profile)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "User ID and profile data are required"})
+        self.assertEqual(code, 400)
+
+    def test_save_profile_fail(self):
+        mock_profile = MagicMock()
+        mock_profile.user_id = 1
+        self.mock_service.save_profile.return_value = False
+        result, data, code = self.controller.save_profile(mock_profile)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "Failed to save profile"})
+        self.assertEqual(code, 500)
+
+    def test_get_profile_success(self):
+        mock_profile = MagicMock()
+        mock_profile.to_dict.return_value = {"user_id": 1, "name": "Test"}
+        self.mock_service.get_profile.return_value = mock_profile
+        result, data, code = self.controller.get_profile(1)
+        self.assertTrue(result)
+        self.assertEqual(data, {"user_id": 1, "name": "Test"})
+        self.assertEqual(code, 200)
+        self.mock_service.get_profile.assert_called_once_with(1)
+
+    def test_get_profile_missing_user_id(self):
+        result, data, code = self.controller.get_profile(0)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "User ID is required"})
+        self.assertEqual(code, 400)
+
+    def test_get_profile_not_found(self):
+        self.mock_service.get_profile.return_value = None
+        result, data, code = self.controller.get_profile(1)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "Profile not found"})
+        self.assertEqual(code, 404)
+
 
 if __name__ == "__main__":
     unittest.main()
