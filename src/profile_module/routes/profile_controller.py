@@ -55,3 +55,9 @@ class ProfileController:
             return False, {"error": "Profile not found"}, 404
 
         return True, profile.to_dict(), 200
+
+    def get_user_rols(self) -> tuple:
+
+        rols = self.ProfileService.get_user_rols()
+
+        return True, {"rols": rols}, 200

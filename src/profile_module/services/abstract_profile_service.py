@@ -60,3 +60,12 @@ class AbstractProfileService:
         :return: A tuple containing the profile data.
         """
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def get_user_rols(self):
+        """
+        Retrieve the roles of a user.
+
+        :return: A tuple containing the user's roles.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")

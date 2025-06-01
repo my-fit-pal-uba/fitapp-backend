@@ -6,7 +6,8 @@ import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
 
 from models.user import User  # noqa: F401
-from models.profile import Profile  # type: ignore
+from models.profile import Profile
+from profile_module.models.user_rol import Rol  # type: ignore
 
 
 class ProfileRepository(AbstractProfileRepository):
@@ -90,3 +91,34 @@ class ProfileRepository(AbstractProfileRepository):
 
         except psycopg2.Error:
             return None
+
+    def _record_to_rol(record):
+        return Rol(
+            id=record["Id"],
+            resource_key=record["rol_resource_key"],
+            name=record["display_name"],
+            description=record["description"],
+            icon=record["icon"],
+        )
+
+    def get_user_rols(self):
+        query = """
+            SELECT 
+                Id,
+                rol_resource_key,
+                display_name, 
+                description, 
+                icon
+            FROM rols
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
+                cursor.execute(
+                    query,
+                )
+                records = cursor.fetchall()
+                return records if records else []
+        except psycopg2.Error:
+            return []

@@ -38,3 +38,12 @@ class AbstractProfileRepository:
         :return: A tuple containing the result of the operation.
         """
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def get_rols(self):
+        """
+        Get the roles of a user.
+
+        :return: A tuple containing the user's roles.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")

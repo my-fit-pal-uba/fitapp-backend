@@ -35,6 +35,9 @@ class ProfileProxy:
         self.profile_bp.add_url_rule(
             "/get_profile", view_func=self.get_profile, methods=["GET"]
         )
+        self.profile_bp.add_url_rule(
+            "/get_user_rols", view_func=self.get_user_rols, methods=["GET"]
+        )
 
     def post_daily_weight(self):
         """
@@ -302,4 +305,30 @@ class ProfileProxy:
         response = self.profile_controller.get_profile(user_id)
         if not response:
             return ResponseInfo.to_response((False, "Usuario no encontrado", 404))
+        return ResponseInfo.to_response(response)
+
+    def get_user_rols(self):
+        """
+        Obtiene roles de usuario
+        ---
+        tags:
+          - Profile
+        parameters: []
+        responses:
+          200:
+            description: Roles obtenidos exitosamente
+            schema:
+              type: object
+              properties:
+          success:
+            type: boolean
+            example: true
+          data:
+            type: array
+            items:
+              type: string
+          500:
+            description: Error del servidor
+        """
+        response = self.profile_controller.get_user_rols()
         return ResponseInfo.to_response(response)
