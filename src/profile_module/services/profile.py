@@ -61,3 +61,16 @@ class ProfileService(AbstractProfileService):
     def get_user_rols(self):
         user_rols = self.repository.get_user_rols()
         return user_rols
+
+    def post_user_rol(self, user_id: int, rol_id: int):
+        """
+        Post a user role.
+
+        :param user_id: The ID of the user.
+        :param rol_id: The ID of the role.
+        :return: A tuple containing the result of the operation.
+        """
+        try:
+            return self.repository.post_user_rol(user_id, rol_id)
+        except Exception:
+            return None

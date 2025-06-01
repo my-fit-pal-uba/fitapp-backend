@@ -122,3 +122,18 @@ class ProfileRepository(AbstractProfileRepository):
                 return records if records else []
         except psycopg2.Error:
             return []
+
+    def post_user_rol(self, user_id: int, rol_id: int) -> bool:
+        query = """
+            INSERT INTO user_rols (user_id, rol_id)
+            VALUES (%s, %s)
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id, rol_id))
+                return True
+        except psycopg2.Error:
+            print("Error al registrar el rol del usuario")
+            return False

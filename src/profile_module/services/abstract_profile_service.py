@@ -69,3 +69,14 @@ class AbstractProfileService:
         :return: A tuple containing the user's roles.
         """
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def post_user_rol(self, user_id: int, rol_id: int) -> tuple:
+        """
+        Post a user's role.
+
+        :param user_id: The ID of the user.
+        :param rol_id: The ID of the role to be posted.
+        :return: A tuple containing the result of the operation.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")

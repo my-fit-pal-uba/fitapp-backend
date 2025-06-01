@@ -93,37 +93,33 @@ class ProfileProxy:
 
     def post_daily_calories(self):
         """
+        Registra las calorías diarias de un usuario
         ---
         tags:
           - Profile
-        post:
-          summary: Add a role to a user
-          description: Adds a new role to a user based on the provided parameters.
-          requestBody:
-            required: true
-            content:
-              application/json:
-            schema:
-              type: object
-              properties:
-                user_id:
-                  type: integer
-                  description: ID of the user
-                role:
-                  type: string
-                  description: Role to add
-              required:
-                - user_id
-                - role
-          responses:
-            200:
-              description: Role added successfully
-              content:
+        requestBody:
+          required: true
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseInfo'
-            400:
-              description: Invalid input
+          type: object
+          properties:
+            user_id:
+              type: integer
+              description: ID del usuario
+            calories:
+              type: number
+              description: Calorías consumidas
+          required:
+            - user_id
+            - calories
+        responses:
+          200:
+            description: Calorías registradas exitosamente
+            content:
+              application/json:
+          400:
+            description: Parámetros inválidos
         """
         data = request.args.to_dict()
         calories = data.get("calories", None)
@@ -139,55 +135,6 @@ class ProfileProxy:
         result = self.profile_controller.post_daily_calories(
             user_id=int(user_id), calories=float(calories)
         )
-
-        return ResponseInfo.to_response(result)
-
-    def post_user_rol(self):
-        """
-        ---
-        tags:
-          - Profile
-        post:
-          summary: Add a role to a user
-          description: Adds a new role to a user based on the provided parameters.
-          requestBody:
-            required: true
-            content:
-              application/json:
-            schema:
-              type: object
-              properties:
-                user_id:
-                  type: integer
-                  description: ID of the user
-                role:
-                  type: string
-                  description: Role to add
-              required:
-                - user_id
-                - role
-          responses:
-            200:
-              description: Role added successfully
-              content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseInfo'
-            400:
-              description: Invalid input
-        """
-        data = request.args.to_dict()
-        rol_id = data.get("rol_id", None)
-        user_id = data.get("user_id", None)
-
-        if not rol_id or not user_id:
-            return ResponseInfo(
-                status_code=400,
-                message="Role and user_id are required",
-                data=None,
-            ).to_dict()
-
-        result = self.profile_controller.post_rol(rol_id=rol_id, user_id=int(user_id))
 
         return ResponseInfo.to_response(result)
 
@@ -332,3 +279,53 @@ class ProfileProxy:
         """
         response = self.profile_controller.get_user_rols()
         return ResponseInfo.to_response(response)
+
+    def post_user_rol(self):
+        """
+        Autentica a un usuario existente
+        ---
+        tags:
+          - Profile
+        parameters:
+          - name: body
+            in: body
+            type: string
+            required: true
+            example: {
+                        "user_id": "1",
+                        "rol_id": "Perez"
+                    }
+        responses:
+          200:
+            description: Login exitoso
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 42
+                rol_id:
+                  type: integer
+                  example: 42
+          401:
+            description: Credenciales inválidas
+          500:
+            description: Error del servidor
+        """
+        data = request.get_json()
+        print(data)
+        rol_id = data.get("rol_id", None)
+        user_id = data.get("user_id", None)
+
+        if not rol_id or not user_id:
+            return ResponseInfo(
+                status_code=400,
+                message="Role and user_id are required",
+                data=None,
+            ).to_dict()
+
+        result = self.profile_controller.post_user_rol(
+            rol_id=int(rol_id), user_id=int(user_id)
+        )
+
+        return ResponseInfo.to_response(result)
