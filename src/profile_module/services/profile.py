@@ -38,3 +38,12 @@ class ProfileService(AbstractProfileService):
         :return: A tuple containing the result of the operation.
         """
         return self.repository.register_daily_calories(user_id, calories)
+
+    def get_profile(self, user_id: int):
+        """
+        Get the profile of a user.
+
+        :param user_id: The ID of the user.
+        :return: A tuple containing the user's profile data.
+        """
+        return self.repository.get_profile(user_id)

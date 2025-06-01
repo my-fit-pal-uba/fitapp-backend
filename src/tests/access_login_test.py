@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from unittest.mock import MagicMock
 from access_module.services.login import Login
-from access_module.models.user import User
+from src.models.user import User
 from access_module.exceptions.non_existing_user import NonExistingUser
 from access_module.exceptions.invalid_password import InvalidUserPassword
 from access_module.exceptions.user_already_exists import UserAlreadyExists

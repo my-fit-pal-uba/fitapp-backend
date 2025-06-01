@@ -3,7 +3,9 @@ from profile_module.repository.abstract_profile_repository import (
 )
 from typing import Optional  # noqa: F401
 import psycopg2  # type: ignore
-from psycopg2.extras import DictCursor  # type: ignore
+from psycopg2.extras import DictCursor
+
+from models.user import User  # type: ignore
 
 
 class ProfileRepository(AbstractProfileRepository):
@@ -42,3 +44,21 @@ class ProfileRepository(AbstractProfileRepository):
 
     def register_daily_calories(self, user_id: int, calories: float) -> tuple:
         raise NotImplementedError("Subclasses must implement this method.")
+
+    def save_user_profile(
+        self, user_id, age: int, height: int, gender: str
+    ) -> Optional[User]:
+        query = """
+            INSERT INTO profiles (user_id, age, height, gender)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (user_id)
+            DO UPDATE SET age = EXCLUDED.age, height = EXCLUDED.height, gender = EXCLUDED.gender;
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (user_id, age, height, gender))
+                conn.commit()
+                return True
+        except psycopg2.Error as e:
+            print(f"Error al guardar perfil: {e}")
+            return False
