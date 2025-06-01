@@ -3,13 +3,11 @@ import os
 from flask_cors import CORS
 from flasgger import Swagger  # type: ignore
 from access_module.routes.login_controller import LoginController
-from access_module.routes.user_controller import UserController
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
 from access_module.repository.access_repository import AccessRepository
 from access_module.services.login import Login
 from access_module.services.abstract_login import AbstractAccessService
 from access_module.routes.login_proxy import LoginProxy
-from access_module.routes.user_proxy import UserProxy
 
 from exercise_module.repository.abstract_exercise_repository import (
     AbstractExerciseRepository,
@@ -45,12 +43,6 @@ class BackendApp:
         login_controller: LoginController = LoginController(login_service)
         login_proxy = LoginProxy(login_controller)
         self.app.register_blueprint(login_proxy.login_bp)
-
-    def inject_user_service(self):
-        user_repository: AbstractAccessRepository = AccessRepository()
-        user_controller = UserController(user_repository)
-        user_proxy = UserProxy(user_controller)
-        self.app.register_blueprint(user_proxy.user_bp)
 
     def inject_exercise_service(self):
         exercise_repository: AbstractExerciseRepository = ExerciseRepository()
