@@ -60,4 +60,4 @@ class ProfileController:
         if not profile:
             return False, {"error": "Profile not found"}, 404
 
-        return True, {"profile": profile}, 200
+        return True, profile.to_dict(), 200

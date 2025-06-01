@@ -40,7 +40,7 @@ class ProfileService(AbstractProfileService):
         """
         return self.repository.register_daily_calories(user_id, calories)
 
-    def get_profile(self, user_id: int):
+    def get_profile(self, user_id: int) -> Profile:
         """
         Get the profile of a user.
 

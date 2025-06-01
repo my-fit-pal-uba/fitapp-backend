@@ -73,7 +73,7 @@ class ProfileRepository(AbstractProfileRepository):
             print(f"Error al guardar perfil: {e}")
             return False
 
-    def get_user_profile(self, user_id: int) -> Optional[Profile]:
+    def get_profile(self, user_id: int) -> Optional[Profile]:
         query = """
             SELECT 
                 user_id, age, height, gender

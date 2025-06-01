@@ -23,17 +23,6 @@ class UserController:
         }
         return True, user_data, 200
 
-    def save_profile(self, email, age, height, gender) -> Tuple[bool, dict, int]:
-        if not email:
-            return False, {"error": "Email is required"}, 400
-        user = self.user_service.get_user_by_email(email)
-        if not user:
-            return False, {"error": "User not found"}, 404
-
-        self.user_service.save_user_profile(user.user_id, age, height, gender)
-
-        return True, "Profile saved up successfully", 200
-
     def get_profile(self, email: str) -> Tuple[bool, dict, int]:
         if not email:
             return False, {"error": "Email is required"}, 400

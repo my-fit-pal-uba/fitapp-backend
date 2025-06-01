@@ -2,7 +2,7 @@ from typing import Optional
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
 from models.user import User
-from models.profile import Profile
+from models.profile import Profile  # noqa: F401
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
 
 
