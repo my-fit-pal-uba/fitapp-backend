@@ -21,6 +21,9 @@ from exercise_module.routes.exercise_controller import ExerciseController
 from exercise_module.routes.exercise_proxy import ExerciseProxy
 from profile_module.routes.profile_controller import ProfileController
 from profile_module.routes.profile_proxy import ProfileProxy
+from profile_module.repository.profile_repository import ProfileRepository
+from profile_module.services.abstract_profile_service import AbstractProfileService
+from profile_module.services.profile import ProfileService
 
 DEFAULT_PORT = "8080"
 
@@ -57,7 +60,9 @@ class BackendApp:
         self.app.register_blueprint(exercise_proxy.exercise_bp)
 
     def inyect_registrarion_service(self):
-        profile_controller = ProfileController()
+        profile_respository: AbstractProfileService = ProfileRepository()
+        profile_service: AbstractProfileService = ProfileService(profile_respository)
+        profile_controller = ProfileController(profile_service)
         profile_proxy = ProfileProxy(profile_controller)
         self.app.register_blueprint(profile_proxy.profile_bp)
 

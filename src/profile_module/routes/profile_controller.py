@@ -34,3 +34,29 @@ class ProfileController:
             return False, {"error": "Failed to register daily calories"}, 500
 
         return True, {"message": "Daily calories registered successfully"}, 200
+
+    def info(self) -> tuple:
+        """
+        Returns a simple message indicating that the profile service is running.
+        """
+        return True, {"message": "Profile service is running"}, 200
+
+    def save_profile(self, user_id: int, profile_data: dict) -> tuple:
+        if not user_id or not profile_data:
+            return False, {"error": "User ID and profile data are required"}, 400
+
+        result = self.ProfileService.save_profile(user_id, profile_data)
+        if not result:
+            return False, {"error": "Failed to save profile"}, 500
+
+        return True, {"message": "Profile saved successfully"}, 200
+
+    def get_profile(self, user_id: int) -> tuple:
+        if not user_id:
+            return False, {"error": "User ID is required"}, 400
+
+        profile = self.ProfileService.get_profile(user_id)
+        if not profile:
+            return False, {"error": "Profile not found"}, 404
+
+        return True, {"profile": profile}, 200
