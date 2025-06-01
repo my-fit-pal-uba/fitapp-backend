@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: run-tests
         name: Run tests for backend
-        entry: python3 -m unittest discover -s ./tests -p "*.py"
+        entry: python3 -m unittest discover -s src/tests -p "*.py"
         language: system
         pass_filenames: false
         always_run: true
