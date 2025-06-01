@@ -33,7 +33,6 @@ class BackendApp:
         CORS(self.app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
         self.register_healt_check()
         self.inyect_login_service()
-        self.inject_user_service()
         self.inject_exercise_service()
         self.inyect_registrarion_service()
 
