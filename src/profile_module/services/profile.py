@@ -8,7 +8,7 @@ from models.profile import Profile
 class ProfileService(AbstractProfileService):
 
     def __init__(self, repository: AbstractProfileRepository):
-        self.repository: AbstractProfileService = repository
+        self.repository: AbstractProfileRepository = repository
 
     def register_rol(self, user_rol: str, user_id: int):
         """
@@ -57,3 +57,20 @@ class ProfileService(AbstractProfileService):
         :return: A boolean indicating whether the profile was saved successfully.
         """
         return self.repository.save_profile(profile)
+
+    def get_user_rols(self):
+        user_rols = self.repository.get_user_rols()
+        return user_rols
+
+    def post_user_rol(self, user_id: int, rol_id: int):
+        """
+        Post a user role.
+
+        :param user_id: The ID of the user.
+        :param rol_id: The ID of the role.
+        :return: A tuple containing the result of the operation.
+        """
+        try:
+            return self.repository.post_user_rol(user_id, rol_id)
+        except Exception:
+            return None
