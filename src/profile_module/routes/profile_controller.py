@@ -55,3 +55,19 @@ class ProfileController:
             return False, {"error": "Profile not found"}, 404
 
         return True, profile.to_dict(), 200
+
+    def get_user_rols(self) -> tuple:
+        rols = self.ProfileService.get_user_rols()
+        return True, {"rols": rols}, 200
+
+    def post_user_rol(self, user_id: int, rol_id: int) -> tuple:
+        if not user_id or not rol_id:
+            return False, {"error": "User ID and role are required"}, 400
+
+        result = self.ProfileService.post_user_rol(user_id, rol_id)
+        if result is None:
+            return False, {"error": "Failed to post user role"}, 500
+
+        if not result:
+            return False, {"error": "An error has ocurred"}, 400
+        return True, {"message": "User role posted successfully"}, 200
