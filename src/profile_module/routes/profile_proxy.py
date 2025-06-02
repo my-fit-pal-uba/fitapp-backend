@@ -41,40 +41,36 @@ class ProfileProxy:
 
     def post_daily_weight(self):
         """
+        Autentica a un usuario existente
         ---
         tags:
           - Profile
-        post:
-          summary: Add a role to a user
-          description: Adds a new role to a user based on the provided parameters.
-          requestBody:
+        parameters:
+          - name: body
+            in: body
+            type: string
             required: true
-            content:
-              application/json:
+            example: {
+                        "user_id": "1",
+                        "weight": "80.5"
+                    }
+        responses:
+          200:
+            description: Peso registrado exitosamente
             schema:
               type: object
               properties:
                 user_id:
                   type: integer
-                  description: ID of the user
-                role:
-                  type: string
-                  description: Role to add
-              required:
-                - user_id
-                - role
-          responses:
-            200:
-              description: Role added successfully
-              content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseInfo'
-            400:
-              description: Invalid input
+                  example: 42
+                weight:
+                  type: float
+                  example: 42
+          500:
+            description: Error inesperado del servidor
         """
-        data = request.args.to_dict()
-        print(data)
+
+        data = request.get_json()
         weight = data.get("weight", None)
         user_id = data.get("user_id", None)
 
@@ -85,7 +81,7 @@ class ProfileProxy:
                 data=None,
             ).to_dict()
 
-        result = self.profile_controller.post_daily_weight(
+        result = self.profile_controller.register_daily_weight(
             user_id=int(user_id), weight=float(weight)
         )
 
@@ -93,35 +89,37 @@ class ProfileProxy:
 
     def post_daily_calories(self):
         """
-        Registra las calorías diarias de un usuario
+
+        Autentica a un usuario existente
         ---
         tags:
           - Profile
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-          type: object
-          properties:
-            user_id:
-              type: integer
-              description: ID del usuario
-            calories:
-              type: number
-              description: Calorías consumidas
-          required:
-            - user_id
-            - calories
+        parameters:
+          - name: body
+            in: body
+            type: string
+            required: true
+            example: {
+                        "user_id": "1",
+                        "calories": "80.5"
+                    }
         responses:
           200:
-            description: Calorías registradas exitosamente
-            content:
-              application/json:
-          400:
-            description: Parámetros inválidos
+            description: Peso registrado exitosamente
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 42
+                calories:
+                  type: float
+                  example: 42
+          500:
+            description: Error inesperado del servidor
         """
-        data = request.args.to_dict()
+
+        data = request.get_json()
         calories = data.get("calories", None)
         user_id = data.get("user_id", None)
 
@@ -132,7 +130,7 @@ class ProfileProxy:
                 data=None,
             ).to_dict()
 
-        result = self.profile_controller.post_daily_calories(
+        result = self.profile_controller.register_daily_calories(
             user_id=int(user_id), calories=float(calories)
         )
 

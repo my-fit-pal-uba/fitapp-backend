@@ -30,12 +30,12 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(code, 500)
 
     def test_register_daily_weight_success(self):
-        self.mock_service.post_daily_weight.return_value = True
+        self.mock_service.register_daily_weight.return_value = True
         result, data, code = self.controller.register_daily_weight(1, 70.5)
         self.assertTrue(result)
         self.assertEqual(data, {"message": "Daily weight registered successfully"})
         self.assertEqual(code, 200)
-        self.mock_service.post_daily_weight.assert_called_once_with(1, 70.5)
+        self.mock_service.register_daily_weight.assert_called_once_with(1, 70.5)
 
     def test_register_daily_weight_missing_params(self):
         result, data, code = self.controller.register_daily_weight(0, 0)
@@ -44,19 +44,19 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(code, 400)
 
     def test_register_daily_weight_fail(self):
-        self.mock_service.post_daily_weight.return_value = False
+        self.mock_service.register_daily_weight.return_value = False
         result, data, code = self.controller.register_daily_weight(1, 70.5)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "Failed to register daily weight"})
         self.assertEqual(code, 500)
 
     def test_register_daily_calories_success(self):
-        self.mock_service.post_daily_calories.return_value = True
+        self.mock_service.register_daily_calories.return_value = True
         result, data, code = self.controller.register_daily_calories(1, 2000)
         self.assertTrue(result)
         self.assertEqual(data, {"message": "Daily calories registered successfully"})
         self.assertEqual(code, 200)
-        self.mock_service.post_daily_calories.assert_called_once_with(1, 2000)
+        self.mock_service.register_daily_calories.assert_called_once_with(1, 2000)
 
     def test_register_daily_calories_missing_params(self):
         result, data, code = self.controller.register_daily_calories(0, 0)
@@ -65,7 +65,7 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(code, 400)
 
     def test_register_daily_calories_fail(self):
-        self.mock_service.post_daily_calories.return_value = False
+        self.mock_service.register_daily_calories.return_value = False
         result, data, code = self.controller.register_daily_calories(1, 2000)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "Failed to register daily calories"})
@@ -135,30 +135,30 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(code, 200)
         self.mock_service.get_user_rols.assert_called_once_with()
 
-    def test_post_user_rol_success(self):
-        self.mock_service.post_user_rol.return_value = True
-        result, data, code = self.controller.post_user_rol(1, 2)
+    def test_register_user_rol_success(self):
+        self.mock_service.register_user_rol.return_value = True
+        result, data, code = self.controller.register_user_rol(1, 2)
         self.assertTrue(result)
-        self.assertEqual(data, {"message": "User role posted successfully"})
+        self.assertEqual(data, {"message": "User role registered successfully"})
         self.assertEqual(code, 200)
-        self.mock_service.post_user_rol.assert_called_once_with(1, 2)
+        self.mock_service.register_user_rol.assert_called_once_with(1, 2)
 
-    def test_post_user_rol_missing_params(self):
-        result, data, code = self.controller.post_user_rol(0, 0)
+    def test_register_user_rol_missing_params(self):
+        result, data, code = self.controller.register_user_rol(0, 0)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "User ID and role are required"})
         self.assertEqual(code, 400)
 
-    def test_post_user_rol_result_none(self):
-        self.mock_service.post_user_rol.return_value = None
-        result, data, code = self.controller.post_user_rol(1, 2)
+    def test_register_user_rol_result_none(self):
+        self.mock_service.register_user_rol.return_value = None
+        result, data, code = self.controller.register_user_rol(1, 2)
         self.assertFalse(result)
-        self.assertEqual(data, {"error": "Failed to post user role"})
+        self.assertEqual(data, {"error": "Failed to register user role"})
         self.assertEqual(code, 500)
 
-    def test_post_user_rol_result_false(self):
-        self.mock_service.post_user_rol.return_value = False
-        result, data, code = self.controller.post_user_rol(1, 2)
+    def test_register_user_rol_result_false(self):
+        self.mock_service.register_user_rol.return_value = False
+        result, data, code = self.controller.register_user_rol(1, 2)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "An error has ocurred"})
         self.assertEqual(code, 400)

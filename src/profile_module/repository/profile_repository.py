@@ -1,3 +1,4 @@
+from datetime import datetime
 from profile_module.repository.abstract_profile_repository import (
     AbstractProfileRepository,
 )
@@ -50,10 +51,38 @@ class ProfileRepository(AbstractProfileRepository):
             return None
 
     def register_daily_weight(self, user_id: int, weight: float) -> tuple:
-        raise NotImplementedError("Subclasses must implement this method.")
+        query = """
+            INSERT INTO weight_history (user_id, date, weight)
+            VALUES (%s, %s, %s);
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(
+                    query,
+                    (user_id, datetime.now(), weight),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            print("Error al registrar las calorias")
+            return False
 
     def register_daily_calories(self, user_id: int, calories: float) -> tuple:
-        raise NotImplementedError("Subclasses must implement this method.")
+        query = """
+            INSERT INTO calories_history (user_id, date, calories)
+            VALUES (%s, %s, %s);
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(
+                    query,
+                    (user_id, datetime.now(), calories),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            print("Error al registrar las calorias")
+            return False
 
     def save_profile(self, profile: Profile) -> bool:
         query = """
