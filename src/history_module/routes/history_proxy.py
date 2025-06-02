@@ -46,8 +46,17 @@ class HistoryProxy:
 
         today = datetime.now()
         history = []
-        for i in range(7):
+        for i in range(100):
             day = today - timedelta(days=i)
             calories = round(random.uniform(1500, 3000), 2)
             history.append({"date": day.strftime("%Y-%m-%d"), "calories": calories})
+        grouped = {}
+        for entry in history:
+            date_key = entry["date"]
+            if date_key not in grouped:
+                grouped[date_key] = entry
+            else:
+                grouped[date_key]["calories"] += entry["calories"]
+        history = list(grouped.values())
+        history.sort(key=lambda x: x["date"])
         return history[::-1]
