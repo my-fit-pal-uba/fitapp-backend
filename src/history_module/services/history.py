@@ -4,7 +4,7 @@ from history_module.repository.abstract_history_repository import (
 )
 
 
-class History(AbstractHistoryService):
+class HistoryService(AbstractHistoryService):
 
     def __init__(self, abstract_history_repository):
         self.history_repository: AbstractHistoryRepository = abstract_history_repository
