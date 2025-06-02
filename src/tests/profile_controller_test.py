@@ -131,7 +131,7 @@ class TestProfileController(unittest.TestCase):
         self.mock_service.get_user_rols.return_value = ["admin", "user"]
         result, data, code = self.controller.get_user_rols()
         self.assertTrue(result)
-        self.assertEqual(data, {"rols": ["admin", "user"]})
+        self.assertEqual(data, ["admin", "user"])
         self.assertEqual(code, 200)
         self.mock_service.get_user_rols.assert_called_once_with()
 

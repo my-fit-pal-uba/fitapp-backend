@@ -58,7 +58,7 @@ class ProfileController:
 
     def get_user_rols(self) -> tuple:
         rols = self.ProfileService.get_user_rols()
-        return True, {"rols": rols}, 200
+        return True, rols, 200
 
     def register_user_rol(self, user_id: int, rol_id: int) -> tuple:
         if not user_id or not rol_id:

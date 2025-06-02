@@ -121,19 +121,19 @@ class ProfileRepository(AbstractProfileRepository):
         except psycopg2.Error:
             return None
 
-    def _record_to_rol(record):
+    def _record_to_rol(self, record):
         return Rol(
-            id=record["Id"],
-            resource_key=record["rol_resource_key"],
-            name=record["display_name"],
-            description=record["description"],
-            icon=record["icon"],
+            id=record[0],
+            resource_key=record[1],
+            name=record[2],
+            description=record[3],
+            icon=record[4],
         )
 
     def get_user_rols(self):
         query = """
             SELECT 
-                Id,
+                id,
                 rol_resource_key,
                 display_name, 
                 description, 
@@ -144,12 +144,24 @@ class ProfileRepository(AbstractProfileRepository):
             with self.get_connection() as conn, conn.cursor(
                 cursor_factory=DictCursor
             ) as cursor:
-                cursor.execute(
-                    query,
-                )
+                cursor.execute(query)
                 records = cursor.fetchall()
-                return records if records else []
-        except psycopg2.Error:
+                return (
+                    [
+                        {
+                            "role_id": record["id"],
+                            "name": record["rol_resource_key"],
+                            "display_name": record["display_name"],
+                            "description": record["description"],
+                            "icon": record["icon"],
+                        }
+                        for record in records
+                    ]
+                    if records
+                    else []
+                )
+        except psycopg2.Error as e:
+            print(f"Database error: {e}")
             return []
 
     def post_user_rol(self, user_id: int, rol_id: int) -> bool:
