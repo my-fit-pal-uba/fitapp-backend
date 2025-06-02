@@ -8,26 +8,26 @@ class TestProfileController(unittest.TestCase):
         self.mock_service = MagicMock()
         self.controller = ProfileController(self.mock_service)
 
-    def test_register_rol_success(self):
+    def test_register_user_rol_success(self):
         self.mock_service.register_rol.return_value = True
-        result, data, code = self.controller.register_rol("admin", 1)
+        result, data, code = self.controller.register_user_rol("admin", 1)
         self.assertTrue(result)
-        self.assertEqual(data, {"message": "Role registered successfully"})
+        self.assertEqual(data, {"message": "User role registered successfully"})
         self.assertEqual(code, 200)
-        self.mock_service.register_rol.assert_called_once_with("admin", 1)
+        self.mock_service.register_rol.assert_called_once_with(1, "admin")
 
-    def test_register_rol_missing_params(self):
-        result, data, code = self.controller.register_rol("", 0)
+    def test_register_user_rol_missing_params(self):
+        result, data, code = self.controller.register_user_rol("", 0)
         self.assertFalse(result)
-        self.assertEqual(data, {"error": "Role and user ID are required"})
+        self.assertEqual(data, {"error": "User ID and role are required"})
         self.assertEqual(code, 400)
 
-    def test_register_rol_fail(self):
+    def test_register_user_rol_fail(self):
         self.mock_service.register_rol.return_value = False
-        result, data, code = self.controller.register_rol("admin", 1)
+        result, data, code = self.controller.register_user_rol("admin", 1)
         self.assertFalse(result)
-        self.assertEqual(data, {"error": "Failed to register role"})
-        self.assertEqual(code, 500)
+        self.assertEqual(data, {"error": "An error has ocurred"})
+        self.assertEqual(code, 400)
 
     def test_register_daily_weight_success(self):
         self.mock_service.register_daily_weight.return_value = True
@@ -135,29 +135,29 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(code, 200)
         self.mock_service.get_user_rols.assert_called_once_with()
 
-    def test_register_user_rol_success(self):
-        self.mock_service.register_user_rol.return_value = True
+    def test_register_user_rol_success_with_ids(self):
+        self.mock_service.register_rol.return_value = True
         result, data, code = self.controller.register_user_rol(1, 2)
         self.assertTrue(result)
         self.assertEqual(data, {"message": "User role registered successfully"})
         self.assertEqual(code, 200)
-        self.mock_service.register_user_rol.assert_called_once_with(1, 2)
+        self.mock_service.register_rol.assert_called_once_with(2, 1)
 
-    def test_register_user_rol_missing_params(self):
+    def test_register_user_rol_missing_params_with_ids(self):
         result, data, code = self.controller.register_user_rol(0, 0)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "User ID and role are required"})
         self.assertEqual(code, 400)
 
     def test_register_user_rol_result_none(self):
-        self.mock_service.register_user_rol.return_value = None
+        self.mock_service.register_rol.return_value = None
         result, data, code = self.controller.register_user_rol(1, 2)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "Failed to register user role"})
         self.assertEqual(code, 500)
 
     def test_register_user_rol_result_false(self):
-        self.mock_service.register_user_rol.return_value = False
+        self.mock_service.register_rol.return_value = False
         result, data, code = self.controller.register_user_rol(1, 2)
         self.assertFalse(result)
         self.assertEqual(data, {"error": "An error has ocurred"})

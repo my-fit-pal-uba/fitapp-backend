@@ -33,22 +33,20 @@ class ProfileRepository(AbstractProfileRepository):
             gender=record["gender"],
         )
 
-    def register_rol(self, rol: str, user_id: int) -> tuple:
-
+    def register_rol(self, rol_id: int, user_id: int) -> bool:
         query = """
-            INSERT INTO UserRoles (user_id, role_id)
+            INSERT INTO user_rols (user_id, rol_id)
             VALUES (%s, %s)
-            RETURNING user_id, role_id
         """
         try:
             with self.get_connection() as conn, conn.cursor(
                 cursor_factory=DictCursor
             ) as cursor:
-                cursor.execute(query, (user_id, rol))
-                record = cursor.fetchone()
-                return self._record_to_user(record) if record else None
+                cursor.execute(query, (user_id, rol_id))
+                conn.commit()
+                return True
         except psycopg2.Error:
-            return None
+            return False
 
     def register_daily_weight(self, user_id: int, weight: float) -> tuple:
         query = """
@@ -149,8 +147,8 @@ class ProfileRepository(AbstractProfileRepository):
                 return (
                     [
                         {
-                            "role_id": record["id"],
-                            "name": record["rol_resource_key"],
+                            "rol_id": record["id"],
+                            "resource_key": record["rol_resource_key"],
                             "display_name": record["display_name"],
                             "description": record["description"],
                             "icon": record["icon"],
@@ -163,18 +161,3 @@ class ProfileRepository(AbstractProfileRepository):
         except psycopg2.Error as e:
             print(f"Database error: {e}")
             return []
-
-    def post_user_rol(self, user_id: int, rol_id: int) -> bool:
-        query = """
-            INSERT INTO user_rols (user_id, rol_id)
-            VALUES (%s, %s)
-        """
-        try:
-            with self.get_connection() as conn, conn.cursor(
-                cursor_factory=DictCursor
-            ) as cursor:
-                cursor.execute(query, (user_id, rol_id))
-                cursor.fetchone()
-                return True
-        except psycopg2.Error:
-            return False

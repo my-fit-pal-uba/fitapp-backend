@@ -311,7 +311,6 @@ class ProfileProxy:
             description: Error del servidor
         """
         data = request.get_json()
-        print(data)
         rol_id = data.get("rol_id", None)
         user_id = data.get("user_id", None)
 
@@ -322,7 +321,7 @@ class ProfileProxy:
                 data=None,
             ).to_dict()
 
-        result = self.profile_controller.post_user_rol(
+        result = self.profile_controller.register_user_rol(
             rol_id=int(rol_id), user_id=int(user_id)
         )
 
