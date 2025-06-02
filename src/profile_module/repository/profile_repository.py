@@ -133,7 +133,7 @@ class ProfileRepository(AbstractProfileRepository):
                 cursor_factory=DictCursor
             ) as cursor:
                 cursor.execute(query, (user_id, rol_id))
+                cursor.fetchone()
                 return True
         except psycopg2.Error:
-            print("Error al registrar el rol del usuario")
             return False

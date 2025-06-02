@@ -69,5 +69,5 @@ class ProfileController:
             return False, {"error": "Failed to post user role"}, 500
 
         if not result:
-            return False, {"error": "??????"}, 400
+            return False, {"error": "An error has ocurred"}, 400
         return True, {"message": "User role posted successfully"}, 200

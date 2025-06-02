@@ -41,6 +41,24 @@ class TestProfileService(unittest.TestCase):
         self.assertTrue(result)
         self.mock_repo.save_profile.assert_called_once_with(mock_profile)
 
+    def test_get_user_rols(self):
+        self.mock_repo.get_user_rols.return_value = ["admin", "user"]
+        result = self.service.get_user_rols()
+        self.assertEqual(result, ["admin", "user"])
+        self.mock_repo.get_user_rols.assert_called_once_with()
+
+    def test_post_user_rol_success(self):
+        self.mock_repo.post_user_rol.return_value = ("ok",)
+        result = self.service.post_user_rol(1, 2)
+        self.assertEqual(result, ("ok",))
+        self.mock_repo.post_user_rol.assert_called_once_with(1, 2)
+
+    def test_post_user_rol_exception(self):
+        self.mock_repo.post_user_rol.side_effect = Exception("DB error")
+        result = self.service.post_user_rol(1, 2)
+        self.assertIsNone(result)
+        self.mock_repo.post_user_rol.assert_called_once_with(1, 2)
+
 
 if __name__ == "__main__":
     unittest.main()

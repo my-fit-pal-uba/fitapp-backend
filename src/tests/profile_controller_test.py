@@ -127,6 +127,42 @@ class TestProfileController(unittest.TestCase):
         self.assertEqual(data, {"error": "Profile not found"})
         self.assertEqual(code, 404)
 
+    def test_get_user_rols(self):
+        self.mock_service.get_user_rols.return_value = ["admin", "user"]
+        result, data, code = self.controller.get_user_rols()
+        self.assertTrue(result)
+        self.assertEqual(data, {"rols": ["admin", "user"]})
+        self.assertEqual(code, 200)
+        self.mock_service.get_user_rols.assert_called_once_with()
+
+    def test_post_user_rol_success(self):
+        self.mock_service.post_user_rol.return_value = True
+        result, data, code = self.controller.post_user_rol(1, 2)
+        self.assertTrue(result)
+        self.assertEqual(data, {"message": "User role posted successfully"})
+        self.assertEqual(code, 200)
+        self.mock_service.post_user_rol.assert_called_once_with(1, 2)
+
+    def test_post_user_rol_missing_params(self):
+        result, data, code = self.controller.post_user_rol(0, 0)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "User ID and role are required"})
+        self.assertEqual(code, 400)
+
+    def test_post_user_rol_result_none(self):
+        self.mock_service.post_user_rol.return_value = None
+        result, data, code = self.controller.post_user_rol(1, 2)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "Failed to post user role"})
+        self.assertEqual(code, 500)
+
+    def test_post_user_rol_result_false(self):
+        self.mock_service.post_user_rol.return_value = False
+        result, data, code = self.controller.post_user_rol(1, 2)
+        self.assertFalse(result)
+        self.assertEqual(data, {"error": "An error has ocurred"})
+        self.assertEqual(code, 400)
+
 
 if __name__ == "__main__":
     unittest.main()
