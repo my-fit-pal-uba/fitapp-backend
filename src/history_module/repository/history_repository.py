@@ -61,7 +61,6 @@ class HistoryRepository(AbstractHistoryRepository):
             WHERE user_id = %s
             GROUP BY DATE(date) 
             ORDER BY day
-
         """
         try:
             with self.get_connection() as conn, conn.cursor(
@@ -73,9 +72,9 @@ class HistoryRepository(AbstractHistoryRepository):
                     map(
                         lambda record: {
                             "date": str(record["day"]),
-                            "calories": (
-                                float(record["total_calories"])
-                                if record["total_calories"] is not None
+                            "weight": (
+                                float(record["avg_weight"])
+                                if record["avg_weight"] is not None
                                 else 0.0
                             ),
                         },
