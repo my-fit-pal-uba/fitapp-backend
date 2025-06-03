@@ -6,21 +6,11 @@ class ProfileController:
     def __init__(self, profile_service: AbstractProfileService):
         self.ProfileService: AbstractProfileService = profile_service
 
-    def register_rol(self, rol: str, user_id: int) -> tuple:
-        if not rol or not user_id:
-            return False, {"error": "Role and user ID are required"}, 400
-
-        result = self.ProfileService.register_rol(rol, user_id)
-        if not result:
-            return False, {"error": "Failed to register role"}, 500
-
-        return True, {"message": "Role registered successfully"}, 200
-
     def register_daily_weight(self, user_id: int, weight: float) -> tuple:
         if not user_id or not weight:
             return False, {"error": "User ID and weight are required"}, 400
 
-        result = self.ProfileService.post_daily_weight(user_id, weight)
+        result = self.ProfileService.register_daily_weight(user_id, weight)
         if not result:
             return False, {"error": "Failed to register daily weight"}, 500
 
@@ -30,7 +20,7 @@ class ProfileController:
         if not user_id or not calories:
             return False, {"error": "User ID and calories are required"}, 400
 
-        result = self.ProfileService.post_daily_calories(user_id, calories)
+        result = self.ProfileService.register_daily_calories(user_id, calories)
         if not result:
             return False, {"error": "Failed to register daily calories"}, 500
 
@@ -58,16 +48,16 @@ class ProfileController:
 
     def get_user_rols(self) -> tuple:
         rols = self.ProfileService.get_user_rols()
-        return True, {"rols": rols}, 200
+        return True, rols, 200
 
-    def post_user_rol(self, user_id: int, rol_id: int) -> tuple:
+    def register_user_rol(self, user_id: int, rol_id: int) -> tuple:
         if not user_id or not rol_id:
             return False, {"error": "User ID and role are required"}, 400
 
-        result = self.ProfileService.post_user_rol(user_id, rol_id)
+        result = self.ProfileService.register_rol(rol_id, user_id)
         if result is None:
-            return False, {"error": "Failed to post user role"}, 500
+            return False, {"error": "Failed to register user role"}, 500
 
         if not result:
             return False, {"error": "An error has ocurred"}, 400
-        return True, {"message": "User role posted successfully"}, 200
+        return True, {"message": "User role registered successfully"}, 200

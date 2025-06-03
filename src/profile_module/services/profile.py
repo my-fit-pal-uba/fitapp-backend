@@ -10,7 +10,7 @@ class ProfileService(AbstractProfileService):
     def __init__(self, repository: AbstractProfileRepository):
         self.repository: AbstractProfileRepository = repository
 
-    def register_rol(self, user_rol: str, user_id: int):
+    def register_rol(self, rol_id: int, user_id: int):
         """
         Register a new role for a user.
 
@@ -18,7 +18,7 @@ class ProfileService(AbstractProfileService):
         :param user_id: The ID of the user.
         :return: A tuple containing the result of the operation.
         """
-        return self.repository.register_rol(user_rol, user_id)
+        return self.repository.register_rol(rol_id, user_id)
 
     def register_daily_weight(self, user_id: int, weight: float):
         """
@@ -61,16 +61,3 @@ class ProfileService(AbstractProfileService):
     def get_user_rols(self):
         user_rols = self.repository.get_user_rols()
         return user_rols
-
-    def post_user_rol(self, user_id: int, rol_id: int):
-        """
-        Post a user role.
-
-        :param user_id: The ID of the user.
-        :param rol_id: The ID of the role.
-        :return: A tuple containing the result of the operation.
-        """
-        try:
-            return self.repository.post_user_rol(user_id, rol_id)
-        except Exception:
-            return None

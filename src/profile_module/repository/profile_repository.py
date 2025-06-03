@@ -1,3 +1,4 @@
+from datetime import datetime
 from profile_module.repository.abstract_profile_repository import (
     AbstractProfileRepository,
 )
@@ -32,28 +33,54 @@ class ProfileRepository(AbstractProfileRepository):
             gender=record["gender"],
         )
 
-    def register_rol(self, rol: str, user_id: int) -> tuple:
-
+    def register_rol(self, rol_id: int, user_id: int) -> bool:
         query = """
-            INSERT INTO UserRoles (user_id, role_id)
+            INSERT INTO user_rols (user_id, rol_id)
             VALUES (%s, %s)
-            RETURNING user_id, role_id
         """
         try:
             with self.get_connection() as conn, conn.cursor(
                 cursor_factory=DictCursor
             ) as cursor:
-                cursor.execute(query, (user_id, rol))
-                record = cursor.fetchone()
-                return self._record_to_user(record) if record else None
+                cursor.execute(query, (user_id, rol_id))
+                conn.commit()
+                return True
         except psycopg2.Error:
-            return None
+            return False
 
     def register_daily_weight(self, user_id: int, weight: float) -> tuple:
-        raise NotImplementedError("Subclasses must implement this method.")
+        query = """
+            INSERT INTO weight_history (user_id, date, weight)
+            VALUES (%s, %s, %s);
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(
+                    query,
+                    (user_id, datetime.now(), weight),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            print("Error al registrar las calorias")
+            return False
 
     def register_daily_calories(self, user_id: int, calories: float) -> tuple:
-        raise NotImplementedError("Subclasses must implement this method.")
+        query = """
+            INSERT INTO calories_history (user_id, date, calories)
+            VALUES (%s, %s, %s);
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(
+                    query,
+                    (user_id, datetime.now(), calories),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            print("Error al registrar las calorias")
+            return False
 
     def save_profile(self, profile: Profile) -> bool:
         query = """
@@ -92,19 +119,19 @@ class ProfileRepository(AbstractProfileRepository):
         except psycopg2.Error:
             return None
 
-    def _record_to_rol(record):
+    def _record_to_rol(self, record):
         return Rol(
-            id=record["Id"],
-            resource_key=record["rol_resource_key"],
-            name=record["display_name"],
-            description=record["description"],
-            icon=record["icon"],
+            id=record[0],
+            resource_key=record[1],
+            name=record[2],
+            description=record[3],
+            icon=record[4],
         )
 
     def get_user_rols(self):
         query = """
             SELECT 
-                Id,
+                id,
                 rol_resource_key,
                 display_name, 
                 description, 
@@ -115,25 +142,22 @@ class ProfileRepository(AbstractProfileRepository):
             with self.get_connection() as conn, conn.cursor(
                 cursor_factory=DictCursor
             ) as cursor:
-                cursor.execute(
-                    query,
-                )
+                cursor.execute(query)
                 records = cursor.fetchall()
-                return records if records else []
-        except psycopg2.Error:
+                return (
+                    [
+                        {
+                            "rol_id": record["id"],
+                            "resource_key": record["rol_resource_key"],
+                            "display_name": record["display_name"],
+                            "description": record["description"],
+                            "icon": record["icon"],
+                        }
+                        for record in records
+                    ]
+                    if records
+                    else []
+                )
+        except psycopg2.Error as e:
+            print(f"Database error: {e}")
             return []
-
-    def post_user_rol(self, user_id: int, rol_id: int) -> bool:
-        query = """
-            INSERT INTO user_rols (user_id, rol_id)
-            VALUES (%s, %s)
-        """
-        try:
-            with self.get_connection() as conn, conn.cursor(
-                cursor_factory=DictCursor
-            ) as cursor:
-                cursor.execute(query, (user_id, rol_id))
-                cursor.fetchone()
-                return True
-        except psycopg2.Error:
-            return False
