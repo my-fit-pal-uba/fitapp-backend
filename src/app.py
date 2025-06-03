@@ -22,6 +22,14 @@ from profile_module.routes.profile_proxy import ProfileProxy
 from profile_module.repository.profile_repository import ProfileRepository
 from profile_module.services.abstract_profile_service import AbstractProfileService
 from profile_module.services.profile import ProfileService
+from history_module.repository.abstract_history_repository import (
+    AbstractHistoryRepository,
+)
+from history_module.repository.history_repository import HistoryRepository
+from history_module.routes.history_controller import HistoryController
+from history_module.routes.history_proxy import HistoryProxy
+from history_module.services.abstract_history_service import AbstractHistoryService
+from history_module.services.history import HistoryService
 
 DEFAULT_PORT = "8080"
 
@@ -35,6 +43,7 @@ class BackendApp:
         self.inyect_login_service()
         self.inject_exercise_service()
         self.inyect_registrarion_service()
+        self.inyect_history_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -56,6 +65,14 @@ class BackendApp:
         profile_controller = ProfileController(profile_service)
         profile_proxy = ProfileProxy(profile_controller)
         self.app.register_blueprint(profile_proxy.profile_bp)
+
+    def inyect_history_service(self):
+
+        history_repository: AbstractHistoryRepository = HistoryRepository()
+        history_service: AbstractHistoryService = HistoryService(history_repository)
+        history_controller: HistoryController = HistoryController(history_service)
+        history_proxy = HistoryProxy(history_controller)
+        self.app.register_blueprint(history_proxy.history_bp)
 
     def register_healt_check(self):
         @self.app.route("/")

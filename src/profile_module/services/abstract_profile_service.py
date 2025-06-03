@@ -9,7 +9,7 @@ class AbstractProfileService:
     """
 
     @abstractmethod
-    def register_rol(self, rol: str, user_id: int) -> tuple:
+    def register_rol(self, rol_id: int, user_id: int) -> tuple:
         """
         Register a new role for a user.
 
