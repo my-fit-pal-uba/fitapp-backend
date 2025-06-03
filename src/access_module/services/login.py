@@ -10,6 +10,7 @@ from access_module.exceptions.non_existing_user import NonExistingUser
 from access_module.services.abstract_login import AbstractAccessService
 from access_module.exceptions.invalid_password import InvalidUserPassword
 from access_module.exceptions.user_already_exists import UserAlreadyExists
+from pytz import timezone
 
 
 load_dotenv()
@@ -48,6 +49,10 @@ class Login(AbstractAccessService):
         to_encode = dict_user.copy()
         expire = datetime.now() + timedelta(minutes=JWT_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
+        argentina_time = datetime.now(
+            timezone("America/Argentina/Buenos_Aires")
+        ).isoformat()
+        to_encode.update({"access_time": argentina_time})
         encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
         return encoded_jwt
 

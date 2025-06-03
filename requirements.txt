@@ -10,3 +10,4 @@ flasgger
 pyjwt 
 python-dotenv 
 bcrypt
+pytz
