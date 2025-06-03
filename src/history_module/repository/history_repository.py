@@ -22,13 +22,14 @@ class HistoryRepository(AbstractHistoryRepository):
 
     def get_calories_history(self, user_id: int):
         query = """
-            SELECT 
+            SELECT
             DATE(date) AS day,
             SUM(calories) AS total_calories
             FROM calories_history
             WHERE user_id = %s
             GROUP BY DATE(date) 
             ORDER BY day
+            lIMIT 50
         """
         try:
             with self.get_connection() as conn, conn.cursor(
@@ -54,13 +55,14 @@ class HistoryRepository(AbstractHistoryRepository):
 
     def get_weight_history(self, user_id: int):
         query = """
-            SELECT 
+            SELECT
             DATE(date) AS day,
             AVG(weight) AS avg_weight
             FROM weight_history
             WHERE user_id = %s
             GROUP BY DATE(date) 
-            ORDER BY day
+            ORDER BY day DESC
+            LIMIT 50
         """
         try:
             with self.get_connection() as conn, conn.cursor(
