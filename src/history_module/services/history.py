@@ -15,3 +15,10 @@ class HistoryService(AbstractHistoryService):
             return calories_history[::-1]
         except Exception:
             return []
+
+    def get_weight_history(self, user_id: int):
+        try:
+            weight_history = self.history_repository.get_weight_history(user_id)
+            return weight_history[::-1]
+        except Exception:
+            return []

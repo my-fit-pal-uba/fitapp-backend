@@ -12,3 +12,10 @@ class HistoryController:
             return calories_history, "Success", 200
         except Exception:
             return [], "An error has ocurred", 500
+
+    def get_weight_history(self, user_id: int):
+        try:
+            weight_history = self.history_service.get_weight_history(user_id)
+            return weight_history, "Success", 200
+        except Exception:
+            return [], "An error has ocurred", 500

@@ -9,4 +9,11 @@ class AbstractHistoryRepository:
         Fetches the calories history.
         :return: List of dictionaries with date and calories.
         """
-        pass
+        raise NotImplementedError("This method should be overridden by subclasses.")
+
+    def get_weight_history(self, user_id: int):
+        """
+        Fetches the weight history.
+        :return: List of dictionaries with date and weight.
+        """
+        raise NotImplementedError("This method should be overridden by subclasses.")

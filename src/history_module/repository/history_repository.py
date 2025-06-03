@@ -51,3 +51,36 @@ class HistoryRepository(AbstractHistoryRepository):
                 )
         except psycopg2.Error:
             return []
+
+    def get_weight_history(self, user_id: int):
+        query = """
+            SELECT 
+            DATE(date) AS day,
+            AVG(weight) AS avg_weight
+            FROM weight_history
+            WHERE user_id = %s
+            GROUP BY DATE(date) 
+            ORDER BY day
+
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id,))
+                records = cursor.fetchall()
+                return list(
+                    map(
+                        lambda record: {
+                            "date": str(record["day"]),
+                            "calories": (
+                                float(record["total_calories"])
+                                if record["total_calories"] is not None
+                                else 0.0
+                            ),
+                        },
+                        records,
+                    )
+                )
+        except psycopg2.Error:
+            return []
