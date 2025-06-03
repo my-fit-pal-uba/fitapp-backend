@@ -1,7 +1,7 @@
 from flask import Blueprint
 from history_module.routes.history_controller import HistoryController
-from datetime import datetime, timedelta
-import random
+
+from models.response import ResponseInfo
 
 
 class HistoryProxy:
@@ -26,37 +26,40 @@ class HistoryProxy:
         ---
         tags:
           - History
+        summary: Retrieve user's calories consumption history
+        description: Returns an array of objects containing dates and corresponding calories values
         responses:
           200:
             description: Calories history retrieved successfully
             schema:
               type: array
               items:
-            type: object
-            properties:
-              date:
-                type: string
-                format: date
-              calories:
-                type: number
-                format: float
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    description: The date of the calories record
+                  calories:
+                    type: number
+                    format: float
+                    description: The amount of calories consumed on that date
+            examples:
+              application/json: [
+                {"date": "2023-01-01", "calories": 2000.5},
+                {"date": "2023-01-02", "calories": 1850.0}
+              ]
           400:
-            description: An error occurred while processing the request.
+            description: An error occurred while processing the request
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Error message
         """
-
-        today = datetime.now()
-        history = []
-        for i in range(100):
-            day = today - timedelta(days=i)
-            calories = round(random.uniform(1500, 3000), 2)
-            history.append({"date": day.strftime("%Y-%m-%d"), "calories": calories})
-        grouped = {}
-        for entry in history:
-            date_key = entry["date"]
-            if date_key not in grouped:
-                grouped[date_key] = entry
-            else:
-                grouped[date_key]["calories"] += entry["calories"]
-        history = list(grouped.values())
-        history.sort(key=lambda x: x["date"])
-        return history[::-1]
+        try:
+            result = self.history_service.get_calories_history()
+            return ResponseInfo.to_response(result)
+        except Exception as e:
+            return {"error": str(e)}, 400
