@@ -1,6 +1,6 @@
 class AbstractHistoryService:
 
-    def get_calories_history(self):
+    def get_calories_history(self, user_id: int):
         """
         Retrieves the weight history.
         """

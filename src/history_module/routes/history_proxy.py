@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from history_module.routes.history_controller import HistoryController
 
 from models.response import ResponseInfo
@@ -28,6 +28,12 @@ class HistoryProxy:
           - History
         summary: Retrieve user's calories consumption history
         description: Returns an array of objects containing dates and corresponding calories values
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: The ID of the user whose calories history is being requested
         responses:
           200:
             description: Calories history retrieved successfully
@@ -59,7 +65,11 @@ class HistoryProxy:
                   description: Error message
         """
         try:
-            result = self.history_service.get_calories_history()
+            data = request.args.to_dict()
+            user_id = data.get("user_id", None)
+            if not user_id:
+                return {"error": "User ID is required"}, 400
+            result = self.history_service.get_calories_history(user_id)
             return ResponseInfo.to_response(result)
         except Exception as e:
             return {"error": str(e)}, 400
