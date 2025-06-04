@@ -75,12 +75,9 @@ class ProfileProxy:
         user_id = data.get("user_id", None)
 
         if not weight or not user_id:
-            return ResponseInfo(
-                status_code=400,
-                message="Weight and user_id are required",
-                data=None,
-            ).to_dict()
-
+            return ResponseInfo.to_response(
+                (False, "Weight and user_id are required", 400)
+            )
         result = self.profile_controller.register_daily_weight(
             user_id=int(user_id), weight=float(weight)
         )
@@ -124,12 +121,9 @@ class ProfileProxy:
         user_id = data.get("user_id", None)
 
         if not calories or not user_id:
-            return ResponseInfo(
-                status_code=400,
-                message="Calories and user_id are required",
-                data=None,
-            ).to_dict()
-
+            return ResponseInfo.to_response(
+                (False, "Calories and user_id are required", 400)
+            )
         result = self.profile_controller.register_daily_calories(
             user_id=int(user_id), calories=float(calories)
         )

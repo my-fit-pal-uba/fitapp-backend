@@ -61,7 +61,7 @@ class HistoryRepository(AbstractHistoryRepository):
             FROM weight_history
             WHERE user_id = %s
             GROUP BY DATE(date) 
-            ORDER BY day DESC
+            ORDER BY day
             LIMIT 50
         """
         try:
