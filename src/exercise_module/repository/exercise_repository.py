@@ -1,4 +1,5 @@
 from exercise_module.models.exercise import Exercise
+from exercise_module.models.serie import Serie
 import psycopg2  # type: ignore
 from exercise_module.repository.abstract_exercise_repository import (
     AbstractExerciseRepository,
@@ -118,3 +119,15 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
+    
+    def register_serie(self, serie: Serie) -> bool:
+        query = """
+            INSERT INTO series (user_id, exercise_id, reps, weight)
+            VALUES (%s, %s, %s, %s)
+        """
+        with self.get_connection() as conn, conn.cursor(
+            cursor_factory=psycopg2.extras.DictCursor
+        ) as cursor:
+            cursor.execute(query, (serie.user_id, serie.exercise_id, serie.repetitions, serie.weight))
+            conn.commit()
+            return True
