@@ -54,7 +54,7 @@ class ExerciseController:
             return False, {"error": "No exercises found for this place"}, 404
 
         return True, {"exercises": exercises}, 200
-    
+
     def register_series(
         self, user_id: int, exercise_id: int, series: List[dict]
     ) -> Tuple[bool, dict, int]:
@@ -69,4 +69,3 @@ class ExerciseController:
             return False, {"error": "Internal server error"}, 500
 
         return True, {"message": "Series registered successfully"}, 200
-        

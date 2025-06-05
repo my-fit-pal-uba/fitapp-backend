@@ -22,7 +22,7 @@ class AbstractExerciseRepository:
     @abstractmethod
     def filter_by_place(self, place: str) -> list:
         pass
-    
+
     @abstractmethod
     def register_serie(self, serie: Serie) -> bool:
         """

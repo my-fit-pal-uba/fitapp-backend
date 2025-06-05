@@ -58,21 +58,25 @@ class ExerciseService(AbstractExerciseService):
             return []
 
         return [exercise.to_dict() for exercise in exercises]
-    
-    def register_series(self, user_id: int, exercise_id: int, series: List[dict]) -> bool:
-        
+
+    def register_series(
+        self, user_id: int, exercise_id: int, series: List[dict]
+    ) -> bool:
+
         for serie in series:
             repetitions = serie.get("repetitions")
             weight = serie.get("weight")
 
-            result  = self.repository.register_serie(Serie(
-            user_id=user_id,
-            exercise_id=exercise_id,
-            repetitions=repetitions,
-            weight=weight
-            ))
+            result = self.repository.register_serie(
+                Serie(
+                    user_id=user_id,
+                    exercise_id=exercise_id,
+                    repetitions=repetitions,
+                    weight=weight,
+                )
+            )
 
             if not result:
-                return False 
+                return False
 
         return True
