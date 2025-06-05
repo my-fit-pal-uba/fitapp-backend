@@ -9,7 +9,9 @@ from access_module.services.login import Login
 from access_module.services.abstract_login import AbstractAccessService
 from access_module.routes.login_proxy import LoginProxy
 
-from exercise_module.repository.abstract_exercise_repository import AbstractExerciseRepository
+from exercise_module.repository.abstract_exercise_repository import (
+    AbstractExerciseRepository,
+)
 from exercise_module.repository.exercise_repository import ExerciseRepository
 from exercise_module.services.abstract_exercise import AbstractExerciseService
 from exercise_module.services.exercise import ExerciseService
@@ -29,7 +31,9 @@ from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
 
-from routine_module.repository.abstract_routine_repository import AbstractRoutineRepository
+from routine_module.repository.abstract_routine_repository import (
+    AbstractRoutineRepository,
+)
 from routine_module.repository.routine_repository import RoutineRepository
 from routine_module.services.abstract_routine_service import AbstractRoutineService
 from routine_module.services.routine_service import RoutineService
@@ -49,6 +53,7 @@ class BackendApp:
         self.inject_exercise_service()
         self.inyect_registrarion_service()
         self.inyect_history_service()
+        self.inject_routine_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()

@@ -118,3 +118,21 @@ class ExerciseRepository(AbstractExerciseRepository):
                 return [self._record_to_exercise(record) for record in records]
         except psycopg2.Error:
             return []
+
+    def get_by_id(self, exercise_id: int) -> Exercise:
+        query = """
+            SELECT 
+                exercise_id, name, description, muscular_group, type, place, 
+                photo_guide, video_guide
+            FROM Exercises
+            WHERE exercise_id = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (exercise_id,))
+                record = cursor.fetchone()
+                return self._record_to_exercise(record) if record else None
+        except psycopg2.Error:
+            return None
