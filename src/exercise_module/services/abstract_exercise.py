@@ -67,11 +67,9 @@ class AbstractExerciseService:
         :return: A boolean indicating the success of the operation.
         """
         raise NotImplementedError("Subclasses should implement this method.")
-    
+
     @abstractmethod
-    def rate_exercise(
-        self, user_id: int, exercise_id: int, rating: int
-    ) -> bool:
+    def rate_exercise(self, user_id: int, exercise_id: int, rating: int) -> bool:
         """Abstract method to rate an exercise by a user.
 
         :param user_id: The ID of the user.
@@ -80,7 +78,7 @@ class AbstractExerciseService:
         :return: A boolean indicating the success of the operation.
         """
         raise NotImplementedError("Subclasses should implement this method.")
-    
+
     @abstractmethod
     def get_ratings(self, user_id: int) -> list:
         """Abstract method to get all ratings given by a user.

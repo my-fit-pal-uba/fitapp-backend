@@ -31,7 +31,7 @@ class AbstractExerciseRepository:
         :param serie: The Serie object containing the details of the exercise series.
         """
         pass
-    
+
     @abstractmethod
     def rate_exercise(self, user_id: int, exercise_id: int, rating: int) -> bool:
         """
@@ -43,7 +43,7 @@ class AbstractExerciseRepository:
         :return: A boolean indicating the success of the operation.
         """
         pass
-    
+
     def get_ratings(self, user_id: int) -> list:
         """
         Get all ratings given by a user.

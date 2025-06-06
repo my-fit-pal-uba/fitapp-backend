@@ -36,7 +36,6 @@ class ExerciseProxy:
             "/ratings", view_func=self.get_ratings, methods=["GET"]
         )
 
-
     def search(self):
         """
         Obtiene ejercicios por nombre
@@ -329,67 +328,67 @@ class ExerciseProxy:
         )
 
         return ResponseInfo.to_response((True, response, 200))
-    
+
     def rate_exercise(self, exercise_id):
-      '''
-      Registra la calificación de un ejercicio
-      ---
-      tags:
-        - Exercise
-      consumes:
-        - application/json
-      parameters:
-        - in: path
-          name: exercise_id
-          schema:
-            type: integer
-          required: true
-          description: ID del ejercicio a calificar
-        - in: body
-          name: body
-          required: true
-          schema:
-            type: object
-            required:
-              - user_id
-              - rating
-            properties:
-              user_id:
-                type: integer
-                example: 15
-              rating:
-                type: integer
-                minimum: 1
-                maximum: 5
-                example: 4
-      responses:
-        200:
-          description: Calificación registrada exitosamente
-        400:
-          description: Datos inválidos o faltantes
-        404:
-          description: Ejercicio no encontrado
-        500:
-          description: Error del servidor
-      '''
+        """
+        Registra la calificación de un ejercicio
+        ---
+        tags:
+          - Exercise
+        consumes:
+          - application/json
+        parameters:
+          - in: path
+            name: exercise_id
+            schema:
+              type: integer
+            required: true
+            description: ID del ejercicio a calificar
+          - in: body
+            name: body
+            required: true
+            schema:
+              type: object
+              required:
+                - user_id
+                - rating
+              properties:
+                user_id:
+                  type: integer
+                  example: 15
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 4
+        responses:
+          200:
+            description: Calificación registrada exitosamente
+          400:
+            description: Datos inválidos o faltantes
+          404:
+            description: Ejercicio no encontrado
+          500:
+            description: Error del servidor
+        """
 
-      print(request.get_json())
+        print(request.get_json())
 
-      user_id = request.json.get("user_id")
-      rating = request.json.get("rating")
-      if not user_id or not rating:
+        user_id = request.json.get("user_id")
+        rating = request.json.get("rating")
+        if not user_id or not rating:
+            return ResponseInfo.to_response(
+                (False, "User ID and rating are required", 400)
+            )
+
+        if not isinstance(rating, int) or rating < 1 or rating > 5:
+            return ResponseInfo.to_response(
+                (False, "Rating must be an integer between 1 and 5", 400)
+            )
+
         return ResponseInfo.to_response(
-          (False, "User ID and rating are required", 400)
-      )
-
-      if not isinstance(rating, int) or rating < 1 or rating > 5:
-        return ResponseInfo.to_response(
-          (False, "Rating must be an integer between 1 and 5", 400)
-      )
-
-      return ResponseInfo.to_response(
-        self.exercise_controller.rate_exercise(user_id, exercise_id, rating)
-      )
+            self.exercise_controller.rate_exercise(user_id, exercise_id, rating)
+        )
 
     def get_ratings(self):
         """

@@ -69,7 +69,7 @@ class ExerciseController:
             return False, {"error": "Internal server error"}, 500
 
         return True, {"message": "Series registered successfully"}, 200
-    
+
     def rate_exercise(
         self, user_id: int, exercise_id: int, rating: int
     ) -> Tuple[bool, dict, int]:
@@ -83,8 +83,6 @@ class ExerciseController:
             return False, {"error": "Internal server error"}, 500
 
         return True, {"message": "Exercise rated successfully"}, 200
-    
-    def get_ratings(
-        self, user_id: int
-    ) -> List[dict]:
+
+    def get_ratings(self, user_id: int) -> List[dict]:
         return self.exercise_service.get_ratings(user_id)

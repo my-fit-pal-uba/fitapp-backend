@@ -147,7 +147,7 @@ class ExerciseRepository(AbstractExerciseRepository):
             cursor.execute(query, (user_id, exercise_id, rating))
             conn.commit()
             return True
-    
+
     def get_ratings(self, user_id: int) -> list:
         query = """
             SELECT exercise_id, rating
@@ -160,6 +160,12 @@ class ExerciseRepository(AbstractExerciseRepository):
             ) as cursor:
                 cursor.execute(query, (user_id,))
                 records = cursor.fetchall()
-                return [{"exercise_id": record["exercise_id"], "rating": float(record["rating"])} for record in records]
+                return [
+                    {
+                        "exercise_id": record["exercise_id"],
+                        "rating": float(record["rating"]),
+                    }
+                    for record in records
+                ]
         except psycopg2.Error:
             return []
