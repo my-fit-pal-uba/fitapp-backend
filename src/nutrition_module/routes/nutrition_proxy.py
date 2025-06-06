@@ -7,7 +7,7 @@ class NutritionProxy:
 
     def __init__(self, nutrition_controller):
         self.nutrition_controller: NutritionController = nutrition_controller
-        self.nutrition_bp = Blueprint("nutrition", __name__, url_prefix="/nutrition")
+        self.nutrition_bp = Blueprint("nutritions", __name__, url_prefix="/nutrition")
         self.register_routes()
 
     def register_routes(self):
@@ -19,26 +19,25 @@ class NutritionProxy:
 
     def get_meal_categories(self):
         """
-        Obtiene roles de usuario
+        Obtiene categorías de las comidas
         ---
         tags:
           - nutrition
-        parameters: []
         responses:
           200:
-            description: Roles obtenidos exitosamente
+            description: Categorías de comidas obtenidas exitosamente
             schema:
               type: object
               properties:
-          success:
-            type: boolean
-            example: true
-          data:
-            type: array
-            items:
-              type: string
+            success:
+              type: boolean
+              example: true
+            data:
+              type: array
+              items:
+                type: string
           500:
             description: Error del servidor
         """
-        response = self.profile_controller.get_user_rols()
+        response = self.nutrition_controller.get_meal_categories()
         return ResponseInfo.to_response(response)

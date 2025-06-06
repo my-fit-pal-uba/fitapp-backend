@@ -54,6 +54,7 @@ class BackendApp:
         self.inject_exercise_service()
         self.inyect_registrarion_service()
         self.inyect_history_service()
+        self.inyect_nutrition_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()

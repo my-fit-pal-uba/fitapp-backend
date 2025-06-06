@@ -7,8 +7,8 @@ class NutritionController:
 
     def get_meal_categories(self):
         try:
-            meals_categories: list = self.nutrition_service.get_meal_categories()
-            return True, meals_categories, 200
+            meals_categories = self.nutrition_service.get_meal_categories()
+            return True, [meal.to_dict() for meal in meals_categories], 200
         except Exception as e:
             print(f"Error fetching meal categories: {e}")
             return False, [], 500

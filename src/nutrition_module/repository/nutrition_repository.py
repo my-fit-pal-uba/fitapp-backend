@@ -27,7 +27,7 @@ class NutritionRepository(AbstractNutritionRepository):
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
 
-    def get_meal_categories(self, user_id: int) -> List[MealCategory]:
+    def get_meal_categories(self) -> List[MealCategory]:
         query = """
             SELECT 
             id,
