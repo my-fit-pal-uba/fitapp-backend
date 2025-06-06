@@ -19,6 +19,9 @@ class AbstractRoutineService:
         Abstract method to filter routines by series.
         Should return a list of routines that match the specified series.
 
+    get_all_routines(self, name: str) -> list:
+        Abstract method to get all routines
+        Should return a list of all routines.
     """
 
     @abstractmethod
@@ -34,4 +37,9 @@ class AbstractRoutineService:
     @abstractmethod
     def filter_by_series(self, series: int) -> list:
         """Abstract method to filter routines by series."""
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def get_all_routines(self, name: str) -> list:
+        """Abstract method to get all routines."""
         raise NotImplementedError("Subclasses should implement this method.")

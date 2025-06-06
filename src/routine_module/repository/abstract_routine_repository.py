@@ -14,3 +14,7 @@ class AbstractRoutineRepository:
     @abstractmethod
     def filter_by_series(self, series: int) -> list:
         pass
+
+    @abstractmethod
+    def get_all_routines(self) -> list:
+        pass

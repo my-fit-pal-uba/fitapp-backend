@@ -169,3 +169,50 @@ class RoutineRepository(AbstractRoutineRepository):
         except psycopg2.Error as e:
             print("Error al filtrar por series:", e)
             return []
+
+    def get_all_routines(self) -> list:
+        routine_query = """
+            SELECT routine_id, name, muscular_group, description, series
+            FROM Routines
+        """
+
+        exercises_query = """
+            SELECT e.exercise_id, e.name, e.description, e.muscular_group, e.type, e.place,
+                e.photo_guide, e.video_guide
+            FROM Exercises e
+            JOIN Routine_Exercises re ON e.exercise_id = re.exercise_id
+            WHERE re.routine_id = %s
+        """
+
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(
+                    routine_query,
+                )
+                routines_data = cursor.fetchall()
+
+                routines = []
+                for row in routines_data:
+                    routine_id = row["routine_id"]
+
+                    cursor.execute(exercises_query, (routine_id,))
+                    exercises_data = cursor.fetchall()
+                    exercises = [self._record_to_exercise(e) for e in exercises_data]
+
+                    routine = Routine(
+                        routine_id=routine_id,
+                        name=row["name"],
+                        muscular_group=row["muscular_group"],
+                        description=row["description"],
+                        series=row["series"],
+                        exercises=exercises,
+                    )
+                    routines.append(routine)
+
+                return routines
+
+        except psycopg2.Error as e:
+            print("Error al buscar rutina:", e)
+            return []

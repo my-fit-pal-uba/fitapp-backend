@@ -13,6 +13,7 @@ class RoutineProxy:
     def register_routes(self):
         self.routine_bp.add_url_rule("/create", view_func=self.create, methods=["POST"])
         self.routine_bp.add_url_rule("/search", view_func=self.search, methods=["GET"])
+        self.routine_bp.add_url_rule("/all", view_func=self.all, methods=["GET"])
         self.routine_bp.add_url_rule(
             "/filter_by_series", view_func=self.filter_by_series, methods=["GET"]
         )
@@ -157,4 +158,43 @@ class RoutineProxy:
         if series is None:
             return ResponseInfo.to_response((False, "Series is required", 400))
         response = self.routine_controller.filter_by_series(series)
+        return ResponseInfo.to_response((True, response, 200))
+
+    def all(self):
+        """
+        Obtiene todas las rutinas
+        ---
+        tags:
+          - Routine
+        responses:
+          200:
+            description: Info obtenida exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      routine_id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Full Body Workout
+                      muscular_group:
+                        type: string
+                        example: Full Body
+                      description:
+                        type: string
+                        example: A complete workout for all muscle groups.
+                      series:
+                        type: integer
+                        example: 3
+        """
+        response = self.routine_controller.get_all_routines()
         return ResponseInfo.to_response((True, response, 200))

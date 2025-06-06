@@ -35,3 +35,10 @@ class RoutineController:
             return False, {"error": "No routines found"}, 404
 
         return True, {"routines": routines}, 200
+
+    def get_all_routines(self) -> Tuple[bool, dict, int]:
+        routines = self.routine_service.get_all_routines()
+        if not routines:
+            return False, {"error": "No routines found"}, 404
+
+        return True, {"routines": routines}, 200

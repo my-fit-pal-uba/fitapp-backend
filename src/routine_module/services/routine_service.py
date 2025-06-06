@@ -57,3 +57,11 @@ class RoutineService(AbstractRoutineService):
             return []
 
         return [routine.to_dict() for routine in routines]
+
+    def get_all_routines(self) -> list:
+        routines = self.repository.get_all_routines()
+
+        if not routines:
+            return []
+
+        return [routine.to_dict() for routine in routines]
