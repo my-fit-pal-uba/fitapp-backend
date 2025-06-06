@@ -67,6 +67,6 @@ CREATE TABLE dishes_history (
     consumption_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     serving_size_g FLOAT CHECK (serving_size_g > 0),
     notes TEXT,
-    CONSTRAINT fk_dishhistory_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_dishhistory_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_dishhistory_dish FOREIGN KEY (dish_id) REFERENCES dishes(id) ON DELETE RESTRICT
 );
