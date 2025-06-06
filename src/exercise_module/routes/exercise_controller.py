@@ -1,5 +1,7 @@
 from exercise_module.services.abstract_exercise import AbstractExerciseService
 from typing import Tuple
+from psycopg2.errors import ForeignKeyViolation
+from typing import List
 
 
 class ExerciseController:
@@ -52,3 +54,18 @@ class ExerciseController:
             return False, {"error": "No exercises found for this place"}, 404
 
         return True, {"exercises": exercises}, 200
+
+    def register_series(
+        self, user_id: int, exercise_id: int, series: List[dict]
+    ) -> Tuple[bool, dict, int]:
+
+        try:
+            result = self.exercise_service.register_series(user_id, exercise_id, series)
+            if not result:
+                return False, {"error": "Failed to register series"}, 500
+        except ForeignKeyViolation:
+            return False, {"error": "User or Exercise not found"}, 404
+        except Exception:
+            return False, {"error": "Internal server error"}, 500
+
+        return True, {"message": "Series registered successfully"}, 200

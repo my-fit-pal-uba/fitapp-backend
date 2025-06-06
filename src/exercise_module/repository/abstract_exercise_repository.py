@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from exercise_module.models.serie import Serie
 
 
 class AbstractExerciseRepository:
@@ -20,4 +21,13 @@ class AbstractExerciseRepository:
 
     @abstractmethod
     def filter_by_place(self, place: str) -> list:
+        pass
+
+    @abstractmethod
+    def register_serie(self, serie: Serie) -> bool:
+        """
+        Register a serie of an exercise for an user.
+
+        :param serie: The Serie object containing the details of the exercise series.
+        """
         pass

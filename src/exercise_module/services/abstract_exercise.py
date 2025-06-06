@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import List
 
 
 class AbstractExerciseService:
@@ -51,4 +52,18 @@ class AbstractExerciseService:
     @abstractmethod
     def filter_by_type(self, type: str) -> list:
         """Abstract method to filter exercises by type."""
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def register_series(
+        self, user_id: int, exercise_id: int, series: List[dict]
+    ) -> bool:
+        """Abstract method to register a series of an exercise for a user.
+
+        :param user_id: The ID of the user.
+        :param exercise_id: The ID of the exercise.
+        :param repetitions: The number of repetitions in the series.
+        :param weight: The weight used in the series.
+        :return: A boolean indicating the success of the operation.
+        """
         raise NotImplementedError("Subclasses should implement this method.")
