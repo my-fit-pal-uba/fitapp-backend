@@ -5,13 +5,15 @@ from nutrition_module.repository.abstract_nutrition_repository import (
 from nutrition_module.models import dish
 from typing import *  # noqa: F403
 
+from nutrition_module.models.meal_categorie import MealCategory  # type: ignore # noqa: F403
 
-class Nutrition(AbstractNutritionService):
+
+class NutritionService(AbstractNutritionService):
 
     def __init__(self, nutrition_repository: AbstractNutritionRepository):
         self.nutrition_repository: AbstractNutritionRepository = nutrition_repository
 
-    def get_meal_categories(self):
+    def get_meal_categories(self) -> List[MealCategory]:  # noqa: F405
         try:
             return self.nutrition_repository.get_meal_categories()
         except Exception as e:

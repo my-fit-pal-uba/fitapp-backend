@@ -30,6 +30,16 @@ from history_module.routes.history_controller import HistoryController
 from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
+from nutrition_module.repository.abstract_nutrition_repository import (
+    AbstractNutritionRepository,
+)
+from nutrition_module.routes.nutrition_controller import NutritionController
+from nutrition_module.routes.nutrition_proxy import NutritionProxy
+from nutrition_module.service.abstract_nutrition_service import (
+    AbstractNutritionService,
+)
+from nutrition_module.service.nutrition import NutritionService
+from nutrition_module.repository.nutrition_repository import NutritionRepository
 
 DEFAULT_PORT = "8080"
 
@@ -67,12 +77,22 @@ class BackendApp:
         self.app.register_blueprint(profile_proxy.profile_bp)
 
     def inyect_history_service(self):
-
         history_repository: AbstractHistoryRepository = HistoryRepository()
         history_service: AbstractHistoryService = HistoryService(history_repository)
         history_controller: HistoryController = HistoryController(history_service)
         history_proxy = HistoryProxy(history_controller)
         self.app.register_blueprint(history_proxy.history_bp)
+
+    def inyect_nutrition_service(self):
+        nutrition_repository: AbstractNutritionRepository = NutritionRepository()
+        nutrition_service: AbstractNutritionService = NutritionService(
+            nutrition_repository
+        )
+        nutrition_controller: NutritionController = NutritionController(
+            nutrition_service
+        )
+        nutrition_proxy = NutritionProxy(nutrition_controller)
+        self.app.register_blueprint(nutrition_proxy.nutrition_bp)
 
     def register_healt_check(self):
         @self.app.route("/")
