@@ -6,6 +6,9 @@ class Nutrition(AbstractNutritionService):
     def __init__(self):
         pass
 
+    def get_meal_categories(self):
+        return []
+
     def post_dish(self, dish):
         return ""
 
