@@ -134,3 +134,16 @@ class ExerciseRepository(AbstractExerciseRepository):
             )
             conn.commit()
             return True
+
+    def rate_exercise(self, user_id: int, exercise_id: int, rating: int) -> bool:
+        query = """
+            INSERT INTO exercise_ratings (user_id, exercise_id, rating)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, exercise_id) DO UPDATE SET rating = EXCLUDED.rating
+        """
+        with self.get_connection() as conn, conn.cursor(
+            cursor_factory=psycopg2.extras.DictCursor
+        ) as cursor:
+            cursor.execute(query, (user_id, exercise_id, rating))
+            conn.commit()
+            return True
