@@ -43,3 +43,12 @@ class AbstractExerciseRepository:
         :return: A boolean indicating the success of the operation.
         """
         pass
+    
+    def get_ratings(self, user_id: int) -> list:
+        """
+        Get all ratings given by a user.
+
+        :param user_id: The ID of the user.
+        :return: A list of ratings given by the user.
+        """
+        pass

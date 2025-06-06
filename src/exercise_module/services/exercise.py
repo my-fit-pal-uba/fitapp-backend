@@ -89,3 +89,6 @@ class ExerciseService(AbstractExerciseService):
 
         result = self.repository.rate_exercise(user_id, exercise_id, rating)
         return result
+    
+    def get_ratings(self, user_id: int) -> List[dict]:
+        return self.repository.get_ratings(user_id)

@@ -32,6 +32,9 @@ class ExerciseProxy:
         self.exercise_bp.add_url_rule(
             "/<int:exercise_id>/rate", view_func=self.rate_exercise, methods=["POST"]
         )
+        self.exercise_bp.add_url_rule(
+            "/ratings", view_func=self.get_ratings, methods=["GET"]
+        )
 
 
     def search(self):
@@ -379,11 +382,6 @@ class ExerciseProxy:
           (False, "User ID and rating are required", 400)
       )
 
-      import logging
-      logging.basicConfig(level=logging.DEBUG)
-
-      logging.debug("Request JSON: %s", request.get_json())
-
       if not isinstance(rating, int) or rating < 1 or rating > 5:
         return ResponseInfo.to_response(
           (False, "Rating must be an integer between 1 and 5", 400)
@@ -392,3 +390,47 @@ class ExerciseProxy:
       return ResponseInfo.to_response(
         self.exercise_controller.rate_exercise(user_id, exercise_id, rating)
       )
+
+    def get_ratings(self):
+        """
+        Obtiene las calificaciones de los ejercicios
+        ---
+        tags:
+          - Exercise
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: ID del usuario
+        responses:
+          200:
+            description: Info obtenida exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      exercise_id:
+                        type: integer
+                        example: 1
+                      rating:
+                        type: integer
+                        example: 4
+          400:
+            description: User ID is required
+          500:
+            description: Internal Server Error
+        """
+        user_id = request.args.get("user_id", type=int)
+        if not user_id:
+            return ResponseInfo.to_response((False, "User ID is required", 400))
+
+        response = self.exercise_controller.get_ratings(user_id)
+        return ResponseInfo.to_response((True, response, 200))
