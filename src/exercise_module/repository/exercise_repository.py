@@ -169,3 +169,27 @@ class ExerciseRepository(AbstractExerciseRepository):
                 ]
         except psycopg2.Error:
             return []
+
+    def get_average_ratings(self) -> list:
+        query = """
+            SELECT e.exercise_id AS exercise_id, COALESCE(AVG(r.rating), 0) AS average_rating
+            FROM exercises e
+            LEFT JOIN exercise_ratings r ON e.exercise_id = r.exercise_id
+            GROUP BY e.exercise_id
+            ORDER BY e.exercise_id
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query)
+                records = cursor.fetchall()
+                return [
+                    {
+                        "exercise_id": record["exercise_id"],
+                        "average_rating": float(record["average_rating"]),
+                    }
+                    for record in records
+                ]
+        except psycopg2.Error:
+            return []

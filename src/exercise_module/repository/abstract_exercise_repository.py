@@ -44,11 +44,21 @@ class AbstractExerciseRepository:
         """
         pass
 
+    @abstractmethod
     def get_ratings(self, user_id: int) -> list:
         """
         Get all ratings given by a user.
 
         :param user_id: The ID of the user.
         :return: A list of ratings given by the user.
+        """
+        pass
+
+    @abstractmethod
+    def get_average_ratings(self) -> list:
+        """
+        Get average ratings for all exercises.
+
+        :return: A list of dictionaries containing exercise IDs and their average ratings.
         """
         pass

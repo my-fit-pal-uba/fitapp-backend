@@ -86,3 +86,6 @@ class ExerciseController:
 
     def get_ratings(self, user_id: int) -> List[dict]:
         return self.exercise_service.get_ratings(user_id)
+
+    def get_average_ratings(self) -> List[dict]:
+        return self.exercise_service.get_average_ratings()

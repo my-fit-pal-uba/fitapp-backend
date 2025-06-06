@@ -87,3 +87,8 @@ class AbstractExerciseService:
         :return: A list of ratings given by the user.
         """
         raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def get_average_ratings(self) -> list:
+        """Abstract method to get average ratings for all exercises"""
+        raise NotImplementedError("Subclasses should implement this method.")

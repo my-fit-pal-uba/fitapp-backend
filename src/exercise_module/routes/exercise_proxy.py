@@ -35,6 +35,9 @@ class ExerciseProxy:
         self.exercise_bp.add_url_rule(
             "/ratings", view_func=self.get_ratings, methods=["GET"]
         )
+        self.exercise_bp.add_url_rule(
+            "/average-ratings", view_func=self.get_average_ratings, methods=["GET"]
+        )
 
     def search(self):
         """
@@ -432,4 +435,38 @@ class ExerciseProxy:
             return ResponseInfo.to_response((False, "User ID is required", 400))
 
         response = self.exercise_controller.get_ratings(user_id)
+        return ResponseInfo.to_response((True, response, 200))
+
+    def get_average_ratings(self):
+        """
+        Obtiene las calificaciones promedio de los ejercicios
+        ---
+        tags:
+          - Exercise
+        responses:
+          200:
+            description: Info obtenida exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      exercise_id:
+                        type: integer
+                        example: 1
+                      rating:
+                        type: integer
+                        example: 4
+          400:
+            description: User ID is required
+          500:
+            description: Internal Server Error
+        """
+        response = self.exercise_controller.get_average_ratings()
         return ResponseInfo.to_response((True, response, 200))
