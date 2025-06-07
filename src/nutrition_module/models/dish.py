@@ -1,25 +1,32 @@
 class dish:
     def __init__(
         self,
+        id: int,
         name: str,
+        description: str,
         calories: float,
         proteins: float,
         carbohydrates: float,
         fats: float,
-        ingredients: list,
+        weight: float,
     ):
+        self.id = id
         self.name = name
+        self.description = description
         self.calories = calories
         self.proteins = proteins
         self.carbohydrates = carbohydrates
         self.fats = fats
-        self.ingredients = ingredients
-        self.name = name
-        self.calories = calories
+        self.weight = weight
 
     def to_dict(self):
         return {
+            "id": self.id,
             "name": self.name,
+            "description": self.description,
             "calories": self.calories,
-            "ingredients": self.ingredients,
+            "proteins": self.proteins,
+            "carbohydrates": self.carbohydrates,
+            "fats": self.fats,
+            "weight": self.weight,
         }
