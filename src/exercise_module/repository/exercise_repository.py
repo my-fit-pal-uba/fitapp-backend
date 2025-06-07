@@ -134,3 +134,62 @@ class ExerciseRepository(AbstractExerciseRepository):
             )
             conn.commit()
             return True
+
+    def rate_exercise(self, user_id: int, exercise_id: int, rating: int) -> bool:
+        query = """
+            INSERT INTO exercise_ratings (user_id, exercise_id, rating)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, exercise_id) DO UPDATE SET rating = EXCLUDED.rating
+        """
+        with self.get_connection() as conn, conn.cursor(
+            cursor_factory=psycopg2.extras.DictCursor
+        ) as cursor:
+            cursor.execute(query, (user_id, exercise_id, rating))
+            conn.commit()
+            return True
+
+    def get_ratings(self, user_id: int) -> list:
+        query = """
+            SELECT exercise_id, rating
+            FROM exercise_ratings
+            WHERE user_id = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id,))
+                records = cursor.fetchall()
+                return [
+                    {
+                        "exercise_id": record["exercise_id"],
+                        "rating": float(record["rating"]),
+                    }
+                    for record in records
+                ]
+        except psycopg2.Error:
+            return []
+
+    def get_average_ratings(self) -> list:
+        query = """
+            SELECT e.exercise_id AS exercise_id, COALESCE(AVG(r.rating), 0) AS average_rating
+            FROM exercises e
+            LEFT JOIN exercise_ratings r ON e.exercise_id = r.exercise_id
+            GROUP BY e.exercise_id
+            ORDER BY e.exercise_id
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query)
+                records = cursor.fetchall()
+                return [
+                    {
+                        "exercise_id": record["exercise_id"],
+                        "average_rating": float(record["average_rating"]),
+                    }
+                    for record in records
+                ]
+        except psycopg2.Error:
+            return []
