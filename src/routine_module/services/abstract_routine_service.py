@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import List
 
 
 class AbstractRoutineService:
@@ -42,4 +43,39 @@ class AbstractRoutineService:
     @abstractmethod
     def get_all_routines(self, name: str) -> list:
         """Abstract method to get all routines."""
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def rate_routine(self, user_id: int, routine_id: int, rating: int) -> bool:
+        """Abstract method to rate an routine by a user.
+
+        :param user_id: The ID of the user.
+        :param routine_id: The ID of the routine.
+        :param rating: The rating given by the user.
+        :return: A boolean indicating the success of the operation.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def get_ratings(self, user_id: int) -> list:
+        """Abstract method to get all ratings given by a user.
+
+        :param user_id: The ID of the user.
+        :return: A list of ratings given by the user.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def get_average_ratings(self) -> list:
+        """Abstract method to get average ratings for all routines"""
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def register(self, user_id: int, routine_id: int) -> bool:
+        """Abstract method to register a series of an routine for a user.
+
+        :param user_id: The ID of the user.
+        :param routine_id: The ID of the routine.
+        :return: A boolean indicating the success of the operation.
+        """
         raise NotImplementedError("Subclasses should implement this method.")

@@ -3,6 +3,8 @@ from routine_module.models.routine import Routine
 from routine_module.repository.abstract_routine_repository import (
     AbstractRoutineRepository,
 )
+
+from typing import List
 from exercise_module.repository.exercise_repository import ExerciseRepository
 
 
@@ -65,3 +67,19 @@ class RoutineService(AbstractRoutineService):
             return []
 
         return [routine.to_dict() for routine in routines]
+
+    def rate_routine(self, user_id: int, routine_id: int, rating: int) -> bool:
+        if not user_id or not routine_id or not rating:
+            return False
+
+        result = self.repository.rate_routine(user_id, routine_id, rating)
+        return result
+
+    def get_ratings(self, user_id: int) -> List[dict]:
+        return self.repository.get_ratings(user_id)
+
+    def get_average_ratings(self) -> List[dict]:
+        return self.repository.get_average_ratings()
+
+    def register(self, user_id: int, routine_id: int) -> bool:
+        return self.repository.register(user_id, routine_id)

@@ -120,7 +120,6 @@ class ExerciseRepository(AbstractExerciseRepository):
         except psycopg2.Error:
             return []
 
-
     def get_by_id(self, exercise_id: int) -> Exercise:
         query = """
             SELECT 

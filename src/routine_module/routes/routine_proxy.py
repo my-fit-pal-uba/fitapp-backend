@@ -17,6 +17,18 @@ class RoutineProxy:
         self.routine_bp.add_url_rule(
             "/filter_by_series", view_func=self.filter_by_series, methods=["GET"]
         )
+        self.routine_bp.add_url_rule(
+            "/<int:routine_id>/rate", view_func=self.rate_routine, methods=["POST"]
+        )
+        self.routine_bp.add_url_rule(
+            "/ratings", view_func=self.get_ratings, methods=["GET"]
+        )
+        self.routine_bp.add_url_rule(
+            "/average-ratings", view_func=self.get_average_ratings, methods=["GET"]
+        )
+        self.routine_bp.add_url_rule(
+            "/register", view_func=self.register, methods=["POST"]
+        )
 
     def create(self):
         """
@@ -197,4 +209,188 @@ class RoutineProxy:
                         example: 3
         """
         response = self.routine_controller.get_all_routines()
+        return ResponseInfo.to_response((True, response, 200))
+
+    def rate_routine(self, routine_id):
+        """
+        Registra la calificación de una Rutina
+        ---
+        tags:
+          - Routine
+        consumes:
+          - application/json
+        parameters:
+          - in: path
+            name: routine_id
+            schema:
+              type: integer
+            required: true
+            description: ID de la rutina a calificar
+          - in: body
+            name: body
+            required: true
+            schema:
+              type: object
+              required:
+                - user_id
+                - rating
+              properties:
+                user_id:
+                  type: integer
+                  example: 15
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 4
+        responses:
+          200:
+            description: Calificación registrada exitosamente
+          400:
+            description: Datos inválidos o faltantes
+          404:
+            description: Rutina no encontrada
+          500:
+            description: Error del servidor
+        """
+
+        print(request.get_json())
+
+        user_id = request.json.get("user_id")
+        rating = request.json.get("rating")
+        if not user_id or not rating:
+            return ResponseInfo.to_response(
+                (False, "User ID and rating are required", 400)
+            )
+
+        if not isinstance(rating, int) or rating < 1 or rating > 5:
+            return ResponseInfo.to_response(
+                (False, "Rating must be an integer between 1 and 5", 400)
+            )
+
+        return ResponseInfo.to_response(
+            self.routine_controller.rate_routine(user_id, routine_id, rating)
+        )
+
+    def get_ratings(self):
+        """
+        Obtiene las calificaciones de las rutinas
+        ---
+        tags:
+          - Routine
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: ID del usuario
+        responses:
+          200:
+            description: Info obtenida exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      routine_id:
+                        type: integer
+                        example: 1
+                      rating:
+                        type: integer
+                        example: 4
+          400:
+            description: User ID is required
+          500:
+            description: Internal Server Error
+        """
+        user_id = request.args.get("user_id", type=int)
+        if not user_id:
+            return ResponseInfo.to_response((False, "User ID is required", 400))
+
+        response = self.routine_controller.get_ratings(user_id)
+        return ResponseInfo.to_response((True, response, 200))
+
+    def get_average_ratings(self):
+        """
+        Obtiene las calificaciones promedio de los ejercicios
+        ---
+        tags:
+          - Routine
+        responses:
+          200:
+            description: Info obtenida exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      routine_id:
+                        type: integer
+                        example: 1
+                      rating:
+                        type: integer
+                        example: 4
+          400:
+            description: User ID is required
+          500:
+            description: Internal Server Error
+        """
+        response = self.routine_controller.get_average_ratings()
+        return ResponseInfo.to_response((True, response, 200))
+
+    def register(self):
+        """
+        Guarda Series de un ejercicio realizadas por un usuario
+        ---
+        tags:
+          - Routine
+        consumes:
+          - application/json
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            example: 12
+          - name: routine_id
+            in: query
+            type: integer
+            required: false
+            example: 4
+        responses:
+          200:
+            description: Info guardada exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+          404:
+            description: Usuario  o rutina no encontrado
+          500:
+            description: Error del servidor
+        """
+        user_id = request.args.get("user_id", type=int)
+        routine_id = request.args.get("routine_id", type=int)
+
+        if not user_id or not routine_id:
+            return ResponseInfo.to_response(
+                (False, "User ID and routine ID are required", 400)
+            )
+
+        response = self.routine_controller.register(user_id, routine_id)
+
         return ResponseInfo.to_response((True, response, 200))
