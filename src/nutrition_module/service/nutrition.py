@@ -6,7 +6,9 @@ from nutrition_module.models import dish
 from typing import *  # noqa: F403
 
 from nutrition_module.models.meal_categorie import MealCategory
-from nutrition_module.exceptions.already_existing_dish import AlreadyExistingDish  # type: ignore # noqa: F403
+from nutrition_module.exceptions.already_existing_dish import AlreadyExistingDish
+from nutrition_module.models.dish_consumption import DishConsumption
+from nutrition_module.models.dish_equivalences import DishEquivalences  # type: ignore # noqa: F403
 
 
 class NutritionService(AbstractNutritionService):
@@ -33,19 +35,36 @@ class NutritionService(AbstractNutritionService):
             raise ValueError("Failed to associate dish with category")
         return dish
 
-    # def register_dish(self, dish):
-    #     try:
-    #         return self.nutrition_repository.register_dish(dish)
-    #     except Exception as e:
-    #         print(f"Error registering dish: {e}")
-    #         return None
-
     def get_dishes(self):
         try:
             return self.nutrition_repository.get_dishes()
         except Exception as e:
             print(f"Error fetching dishes: {e}")
             return []
+
+    def post_dish_consumption(self, dish_consumption: DishConsumption):
+        try:
+            dish = self.nutrition_repository.get_dish_by_id(dish_consumption.dish_id)
+            if not dish:
+                print(f"Dish with ID {dish_consumption.dish_id} not found")
+                return False
+            equivalencies: DishEquivalences = self._calc_equivalencies(
+                dish_consumption, dish
+            )
+            result = self.nutrition_repository.post_dish_consumption(
+                dish_id=dish_consumption.dish_id,
+                user_id=dish_consumption.user_id,
+                equivalencies=equivalencies,
+            )
+            return result
+        except Exception as e:
+            print(f"Error registering dish consumption: {e}")
+            return False
+
+    def _calc_equivalencies(self, dish_consumption: DishConsumption, dish: dish):
+        return DishEquivalences.to_equivalences(
+            dish_consumption=dish_consumption, dish=dish
+        )
 
     def post_dish_history(self, dish):
         pass

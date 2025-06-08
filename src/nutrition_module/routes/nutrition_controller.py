@@ -1,6 +1,7 @@
 from nutrition_module.service.abstract_nutrition_service import AbstractNutritionService
 from nutrition_module.models.dish import dish
 from nutrition_module.exceptions.already_existing_dish import AlreadyExistingDish
+from nutrition_module.models.dish_consumption import DishConsumption
 
 
 class NutritionController:
@@ -38,8 +39,10 @@ class NutritionController:
 
     def post_dish_consumption(self, dish_consumption_json: dict):
         try:
-            # dish_consumption = self.nutrition_service.post_dish_consumption(dish_consumption_json)
-            # return True, dish_consumption.to_dict(), 200
+            dish_consumption = DishConsumption.from_dict(dish_consumption_json)
+            if not dish_consumption.is_valid():
+                return False, "Invalid dish consumption data", 500
+            self.nutrition_service.post_dish_consumption(dish_consumption)
             return True, "Dish consumption registered successfully", 200
         except Exception as e:
             # print(f"Error registering dish consumption: {e}")

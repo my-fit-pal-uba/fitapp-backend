@@ -7,7 +7,8 @@ import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore
 
 from nutrition_module.models.meal_categorie import MealCategory
-from nutrition_module.models.dish import dish  # type: ignore
+from nutrition_module.models.dish import dish
+from nutrition_module.models.dish_equivalences import DishEquivalences  # type: ignore
 
 
 class NutritionRepository(AbstractNutritionRepository):
@@ -155,3 +156,53 @@ class NutritionRepository(AbstractNutritionRepository):
         except psycopg2.Error as e:
             print(f"Error al insertar categorías: {e}")
             return None
+
+    def get_dish_by_id(self, dish_id: int) -> Optional[dish]:
+        query = """
+            select 
+                dish.id,
+                dish.name, 
+                dish.description, 
+                dish.calories, 
+                dish.proteins, 
+                dish.carbs, 
+                dish.fat, 
+                dish.weight_in_g, 
+                dish_ca.category_id
+            from dishes as dish
+            inner join dish_categories as dish_ca
+            on dish.id = dish_ca.dish_id 
+            where dish.id = %s
+        """
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(query, (dish_id,))
+                record = cursor.fetchone()
+                if record:
+                    return self._map_dish_record_to_dish([record])[0]
+                return None
+        except psycopg2.Error as e:
+            print(f"Error fetching dish by ID: {e}")
+            return None
+
+    def post_dish_consumption(
+        self, dish_id: int, user_id: int, equivalencies: DishEquivalences
+    ) -> bool:
+        query = """
+            INSERT INTO dish_consumption (dish_id, user_id, equivalencies)
+            VALUES (%s, %s, %s)
+        """
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(query, (dish_id, user_id, equivalencies.to_dict()))
+                conn.commit()
+                return True
+        except psycopg2.Error as e:
+            print(f"Error registering dish consumption: {e}")
+            return False
