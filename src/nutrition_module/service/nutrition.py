@@ -5,7 +5,8 @@ from nutrition_module.repository.abstract_nutrition_repository import (
 from nutrition_module.models import dish
 from typing import *  # noqa: F403
 
-from nutrition_module.models.meal_categorie import MealCategory  # type: ignore # noqa: F403
+from nutrition_module.models.meal_categorie import MealCategory
+from nutrition_module.exceptions.already_existing_dish import AlreadyExistingDish  # type: ignore # noqa: F403
 
 
 class NutritionService(AbstractNutritionService):
@@ -21,12 +22,16 @@ class NutritionService(AbstractNutritionService):
             return []
 
     def post_dish(self, dish: dish):
-        try:
-            result: bool = self.nutrition_repository.post_dish_history(dish)
-            return result
-        except Exception as e:
-            print(f"Error posting dish: {e}")
-            return False
+        new_id: int = self.nutrition_repository.post_dish_history(dish)
+        dish.id = new_id
+        if dish.id is None:
+            raise AlreadyExistingDish(dish.name)
+        result: bool = self.nutrition_repository.post_dish_category(
+            dish.id, dish.id_dish_category
+        )
+        if not result:
+            raise ValueError("Failed to associate dish with category")
+        return dish
 
     # def register_dish(self, dish):
     #     try:

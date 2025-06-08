@@ -76,6 +76,7 @@ class NutritionProxy:
                 - carbs
                 - fats
                 - weight
+                - id_dish_category
               properties:
                 id:
                   type: integer
@@ -107,6 +108,10 @@ class NutritionProxy:
                   type: number
                   format: float
                   description: Peso total del plato (en gramos)
+                id_dish_category:
+                  type: number
+                  format: int
+                  description: Id de la categoria del plato
         responses:
           200:
             description: Plato registrado exitosamente

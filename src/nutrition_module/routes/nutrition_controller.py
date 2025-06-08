@@ -1,5 +1,6 @@
 from nutrition_module.service.abstract_nutrition_service import AbstractNutritionService
 from nutrition_module.models.dish import dish
+from nutrition_module.exceptions.already_existing_dish import AlreadyExistingDish
 
 
 class NutritionController:
@@ -20,8 +21,10 @@ class NutritionController:
             if not dish_data.is_valid():
                 return False, "Invalid dish data", 500
             result = self.nutrition_service.post_dish(dish_data)
-            print(result)
-            return True, dish_data.to_dict(), 200
+            print(f"Result of post_dish: {result}")
+            return True, result, 200
+        except AlreadyExistingDish:
+            return False, "Dish already exists", 401
         except Exception as e:
             print(f"Error registering dish: {e}")
             return False, str(e), 500

@@ -53,8 +53,8 @@ class NutritionRepository(AbstractNutritionRepository):
         query = """
             INSERT INTO dishes (name, description, calories, proteins, carbs, fat, weight_in_g)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
         """
-        print(dish.to_dict())
         try:
             with (
                 self.get_connection() as conn,
@@ -72,7 +72,33 @@ class NutritionRepository(AbstractNutritionRepository):
                         dish.weight,
                     ),
                 )
+                new_id = cursor.fetchone()["id"]
                 conn.commit()
-                return True
+                return new_id
         except psycopg2.Error:
-            return False
+            return None
+
+    def post_dish_category(self, dish_id: int, category_id: int) -> bool:
+
+        query = """
+            INSERT INTO dish_categories (dish_id, category_id)
+            VALUES (%s, %s)
+            RETURNING id
+        """
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(
+                    query,
+                    (
+                        dish_id,
+                        category_id,
+                    ),
+                )
+                new_id = cursor.fetchone()["id"]
+                conn.commit()
+                return new_id
+        except psycopg2.Error:
+            return None

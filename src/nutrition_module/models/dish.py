@@ -9,6 +9,7 @@ class dish:
         carbs: float,
         fats: float,
         weight: float,
+        id_dish_category: int,
     ):
         self.id = id
         self.name = name
@@ -18,6 +19,7 @@ class dish:
         self.carbs = carbs
         self.fats = fats
         self.weight = weight
+        self.id_dish_category = id_dish_category
 
     def to_dict(self):
         return {
@@ -29,6 +31,7 @@ class dish:
             "carbs": self.carbs,
             "fats": self.fats,
             "weight": self.weight,
+            "id_dish_category": self.id_dish_category,
         }
 
     @classmethod
@@ -42,6 +45,7 @@ class dish:
             carbs=dish_dict.get("carbohydrates"),
             fats=dish_dict.get("fats"),
             weight=dish_dict.get("weight"),
+            id_dish_category=dish_dict.get("id_dish_category"),
         )
 
     def is_valid(self):
@@ -53,5 +57,6 @@ class dish:
             self.carbs >= 0,
             self.fats >= 0,
             self.weight > 0,
+            self.id_dish_category > 0,
         ]
         return all(conditions)
