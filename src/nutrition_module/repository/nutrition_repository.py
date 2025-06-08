@@ -1,3 +1,4 @@
+import datetime
 from nutrition_module.repository.abstract_nutrition_repository import (
     AbstractNutritionRepository,
 )
@@ -225,4 +226,21 @@ class NutritionRepository(AbstractNutritionRepository):
                 return True
         except psycopg2.Error as e:
             print(f"Error registering dish consumption: {e}")
+            return False
+
+    def register_daily_calories(self, user_id: int, calories: float) -> tuple:
+        query = """
+            INSERT INTO calories_history (user_id, date, calories)
+            VALUES (%s, %s, %s);
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(
+                    query,
+                    (user_id, datetime.now(), calories),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            print("Error al registrar las calorias")
             return False

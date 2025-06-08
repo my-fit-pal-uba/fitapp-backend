@@ -56,6 +56,9 @@ class NutritionService(AbstractNutritionService):
                 user_id=dish_consumption.user_id,
                 equivalencies=equivalencies,
             )
+            self.nutrition_repository.post_calories_history(
+                equivalencies.calories, dish_consumption.user_id
+            )
             return result
         except Exception as e:
             print(f"Error registering dish consumption: {e}")
@@ -68,7 +71,3 @@ class NutritionService(AbstractNutritionService):
 
     def post_dish_history(self, dish):
         pass
-
-    def register_calories_history(self, calories):
-        ## To do: ref to history service
-        return ""

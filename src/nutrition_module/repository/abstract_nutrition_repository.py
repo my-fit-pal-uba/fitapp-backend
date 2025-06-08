@@ -30,3 +30,7 @@ class AbstractNutritionRepository:
         self, dish_id: int, user_id: int, equivalencies: DishEquivalences
     ):
         raise NotImplementedError("This method should be overridden by subclasses")
+
+    @abstractmethod
+    def post_calories_history(self, calories: float, user_id: int):
+        raise NotImplementedError("This method should be overridden by subclasses")
