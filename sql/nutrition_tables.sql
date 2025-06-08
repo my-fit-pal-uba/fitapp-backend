@@ -30,9 +30,9 @@ CREATE TABLE dishes (
 );
 
 CREATE TABLE dish_categories (
+	id SERIAL PRIMARY KEY, 
     dish_id INT REFERENCES dishes(id) ON DELETE CASCADE,
     category_id INT REFERENCES meal_categories(id) ON DELETE CASCADE,
-    PRIMARY KEY (dish_id, category_id),
     CONSTRAINT fk_dishcategories_dish FOREIGN KEY (dish_id) REFERENCES dishes(id),
     CONSTRAINT fk_dishcategories_category FOREIGN KEY (category_id) REFERENCES meal_categories(id)
 );
@@ -65,8 +65,13 @@ CREATE TABLE dishes_history (
     user_id INT NOT NULL,
     dish_id INT NOT NULL,
     consumption_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
     serving_size_g FLOAT CHECK (serving_size_g > 0),
-    notes TEXT,
+    calories FLOAT CHECK (calories >= 0),
+    protein FLOAT CHECK (protein >= 0),
+    carbohydrates FLOAT CHECK (carbohydrates >= 0),
+    fats FLOAT CHECK (fats >= 0),
+    
     CONSTRAINT fk_dishhistory_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_dishhistory_dish FOREIGN KEY (dish_id) REFERENCES dishes(id) ON DELETE RESTRICT
 );
