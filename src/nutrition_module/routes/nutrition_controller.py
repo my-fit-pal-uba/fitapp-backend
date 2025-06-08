@@ -35,3 +35,14 @@ class NutritionController:
         except Exception as e:
             print(f"Error fetching dishes: {e}")
             return False, [], 500
+
+    def post_dish_consumption(self, dish_consumption_json: dict):
+        try:
+            # dish_consumption = self.nutrition_service.post_dish_consumption(dish_consumption_json)
+            # return True, dish_consumption.to_dict(), 200
+            return True, "Dish consumption registered successfully", 200
+        except Exception as e:
+            # print(f"Error registering dish consumption: {e}")
+            # return False, str(e), 500
+            print(f"Error registering dish consumption: {e}")
+            return False, "Error registering dish consumption", 500

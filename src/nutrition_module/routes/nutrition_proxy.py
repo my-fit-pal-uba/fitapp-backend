@@ -27,6 +27,11 @@ class NutritionProxy:
             view_func=self.get_dishes,
             methods=["GET"],
         )
+        self.nutrition_bp.add_url_rule(
+            "/post_dish_consumption",
+            view_func=self.post_dish_consumption,
+            methods=["POST"],
+        )
 
     def get_meal_categories(self):
         """
@@ -203,3 +208,96 @@ class NutritionProxy:
         """
         response = self.nutrition_controller.get_dishes()
         return ResponseInfo.to_response(response)
+
+    def post_dish_consumption(self):
+        """
+        Registra un nuevo plato en la base de datos
+        ---
+        tags:
+          - nutrition
+        summary: Registra un nuevo plato en la base de datos / Registers a new dish in the database
+        description: Crea un nuevo registro de plato con la información nutricional proporcionada / Creates a new dish record with the provided nutritional information
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - in: body
+            name: body
+            description: Objeto Plato que necesita ser registrado
+            required: true
+            schema:
+              type: object
+              required:
+                - id
+                - name
+                - description
+                - weight
+                - id_dish_category
+              properties:
+                user_id:
+                  type: integer
+                  format: int
+                  description: ID único del plato
+                dish_id:
+                  type: integer
+                  format: int
+                  description: ID único del plato
+                weight:
+                  type: number
+                  format: float
+                  description: Peso total del plato (en gramos)
+                example:
+                  user_id: 1
+                  dish_id: 1
+                  weight: 1
+        responses:
+          200:
+            description: Consumo registrado exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Ensalada César"
+          401:
+            description: Error en los parametros
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                error:
+                  type: string
+                  example: "El plato ya existe en la base de datos"
+          500:
+            description: Error del servidor
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                error:
+                  type: string
+                  example: "Error interno del servidor"
+        """
+        try:
+            dish_registration = request.get_json()
+            if not dish_registration:
+                return ResponseInfo.to_response((None, "Invalid input data", 500))
+            result = self.nutrition_controller.post_dish_consumption(dish_registration)
+            return ResponseInfo.to_response(result)
+        except Exception as e:
+            logger.error(f"Error registering dish: {e}")
+            return ResponseInfo.to_response((None, "Error registering dish", 500))
