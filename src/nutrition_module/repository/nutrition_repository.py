@@ -4,9 +4,10 @@ from nutrition_module.repository.abstract_nutrition_repository import (
 
 from typing import List, Optional  # noqa: F401
 import psycopg2  # type: ignore
-from psycopg2.extras import DictCursor
+from psycopg2.extras import DictCursor  # type: ignore
 
-from nutrition_module.models.meal_categorie import MealCategory  # type: ignore
+from nutrition_module.models.meal_categorie import MealCategory
+from nutrition_module.models.dish import dish  # type: ignore
 
 
 class NutritionRepository(AbstractNutritionRepository):
@@ -47,3 +48,31 @@ class NutritionRepository(AbstractNutritionRepository):
                 ]
         except psycopg2.Error:
             return []
+
+    def post_dish_history(self, dish: dish) -> bool:
+        query = """
+            INSERT INTO dishes (name, description, calories, proteins, carbs, fat, weight_in_g)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        print(dish.to_dict())
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(
+                    query,
+                    (
+                        dish.name,
+                        dish.description,
+                        dish.calories,
+                        dish.proteins,
+                        dish.carbs,
+                        dish.fats,
+                        dish.weight,
+                    ),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error:
+            return False

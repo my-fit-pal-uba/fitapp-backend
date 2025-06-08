@@ -6,7 +6,7 @@ class dish:
         description: str,
         calories: float,
         proteins: float,
-        carbohydrates: float,
+        carbs: float,
         fats: float,
         weight: float,
     ):
@@ -15,7 +15,7 @@ class dish:
         self.description = description
         self.calories = calories
         self.proteins = proteins
-        self.carbohydrates = carbohydrates
+        self.carbs = carbs
         self.fats = fats
         self.weight = weight
 
@@ -26,7 +26,32 @@ class dish:
             "description": self.description,
             "calories": self.calories,
             "proteins": self.proteins,
-            "carbohydrates": self.carbohydrates,
+            "carbs": self.carbs,
             "fats": self.fats,
             "weight": self.weight,
         }
+
+    @classmethod
+    def from_dict(cls, dish_dict: dict):
+        return cls(
+            id=dish_dict.get("id"),
+            name=dish_dict.get("name"),
+            description=dish_dict.get("description"),
+            calories=dish_dict.get("calories"),
+            proteins=dish_dict.get("proteins"),
+            carbs=dish_dict.get("carbohydrates"),
+            fats=dish_dict.get("fats"),
+            weight=dish_dict.get("weight"),
+        )
+
+    def is_valid(self):
+        conditions = [
+            len(self.name) > 0,
+            isinstance(self.description, str),
+            self.calories >= 0,
+            self.proteins >= 0,
+            self.carbs >= 0,
+            self.fats >= 0,
+            self.weight > 0,
+        ]
+        return all(conditions)

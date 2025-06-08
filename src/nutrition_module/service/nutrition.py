@@ -20,20 +20,20 @@ class NutritionService(AbstractNutritionService):
             print(f"Error fetching meal categories: {e}")
             return []
 
-    def post_dish(self, dish: dish, user_id: int):
+    def post_dish(self, dish: dish):
         try:
-            result: bool = self.nutrition_repository.post_dish_history(dish, user_id)
+            result: bool = self.nutrition_repository.post_dish_history(dish)
             return result
         except Exception as e:
             print(f"Error posting dish: {e}")
             return False
 
-    def register_dish(self, dish):
-        try:
-            return self.nutrition_repository.register_dish(dish)
-        except Exception as e:
-            print(f"Error registering dish: {e}")
-            return None
+    # def register_dish(self, dish):
+    #     try:
+    #         return self.nutrition_repository.register_dish(dish)
+    #     except Exception as e:
+    #         print(f"Error registering dish: {e}")
+    #         return None
 
     def get_dishes(self):
         try:

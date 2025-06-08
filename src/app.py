@@ -106,7 +106,7 @@ class BackendApp:
         try:
             port_data = os.getenv("PORT", DEFAULT_PORT)
             port = int(port_data)
-            self.app.run(host="0.0.0.0", port=port)
+            self.app.run(host="0.0.0.0", port=port, debug=True)
         except Exception as e:
             print(f"Error: {e}")
 
