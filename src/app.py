@@ -31,6 +31,15 @@ from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
 
+from routine_module.repository.abstract_routine_repository import (
+    AbstractRoutineRepository,
+)
+from routine_module.repository.routine_repository import RoutineRepository
+from routine_module.services.abstract_routine_service import AbstractRoutineService
+from routine_module.services.routine_service import RoutineService
+from routine_module.routes.routine_controller import RoutineController
+from routine_module.routes.routine_proxy import RoutineProxy
+
 DEFAULT_PORT = "8080"
 
 
@@ -44,6 +53,7 @@ class BackendApp:
         self.inject_exercise_service()
         self.inyect_registrarion_service()
         self.inyect_history_service()
+        self.inject_routine_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -73,6 +83,13 @@ class BackendApp:
         history_controller: HistoryController = HistoryController(history_service)
         history_proxy = HistoryProxy(history_controller)
         self.app.register_blueprint(history_proxy.history_bp)
+
+    def inject_routine_service(self):
+        routine_repository: AbstractRoutineRepository = RoutineRepository()
+        routine_service: AbstractRoutineService = RoutineService(routine_repository)
+        routine_controller: RoutineController = RoutineController(routine_service)
+        routine_proxy = RoutineProxy(routine_controller)
+        self.app.register_blueprint(routine_proxy.routine_bp)
 
     def register_healt_check(self):
         @self.app.route("/")

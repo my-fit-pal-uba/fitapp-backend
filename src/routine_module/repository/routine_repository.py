@@ -1,0 +1,218 @@
+from routine_module.models.routine import Routine
+from exercise_module.models.exercise import Exercise
+import psycopg2  # type: ignore
+from routine_module.repository.abstract_routine_repository import (
+    AbstractRoutineRepository,
+)
+
+
+class RoutineRepository(AbstractRoutineRepository):
+    def __init__(self, db_config=None):
+        self.db_config = db_config or {
+            "host": "db",
+            "database": "app_db",
+            "user": "app_user",
+            "password": "app_password",
+            "port": "5432",
+        }
+
+    def get_connection(self):
+        return psycopg2.connect(**self.db_config)
+
+    def _record_to_routine(self, record) -> Routine:
+        return Routine(
+            routine_id=record["routine_id"],
+            name=record["name"],
+            description=record["description"],
+            series=record["series"],
+            muscular_group=record["muscular_group"],
+        )
+
+    def _record_to_exercise(self, record) -> Exercise:
+        return Exercise(
+            exercise_id=record["exercise_id"],
+            name=record["name"],
+            description=record["description"],
+            muscular_group=record["muscular_group"],
+            type=record["type"],
+            place=record["place"],
+            photo_guide=record.get("photo_guide"),
+            video_guide=record.get("video_guide"),
+        )
+
+    def create_routine(self, routine: Routine) -> int:
+        insert_routine_query = """
+        INSERT INTO Routines (name, muscular_group, description, series)
+        VALUES (%s, %s, %s, %s)
+        RETURNING routine_id
+        """
+        insert_relation_query = """
+            INSERT INTO Routine_Exercises (routine_id, exercise_id)
+            VALUES (%s, %s)
+        """
+
+        try:
+            with self.get_connection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(
+                        insert_routine_query,
+                        (
+                            routine.name,
+                            routine.muscular_group,
+                            routine.description,
+                            routine.series,
+                        ),
+                    )
+                    routine_id = cursor.fetchone()[0]
+
+                    for exercise in routine.exercises:
+                        cursor.execute(
+                            insert_relation_query, (routine_id, exercise.exercise_id)
+                        )
+
+                conn.commit()
+                return routine_id
+
+        except psycopg2.Error as e:
+            print("Error al guardar la rutina:", e)
+            return None
+
+    def search_routine(self, name: str) -> list:
+        routine_query = """
+            SELECT routine_id, name, muscular_group, description, series
+            FROM Routines
+            WHERE name ILIKE %s
+        """
+
+        exercises_query = """
+            SELECT e.exercise_id, e.name, e.description, e.muscular_group, e.type, e.place,
+                e.photo_guide, e.video_guide
+            FROM Exercises e
+            JOIN Routine_Exercises re ON e.exercise_id = re.exercise_id
+            WHERE re.routine_id = %s
+        """
+
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(routine_query, (f"%{name}%",))
+                routines_data = cursor.fetchall()
+
+                routines = []
+                for row in routines_data:
+                    routine_id = row["routine_id"]
+
+                    cursor.execute(exercises_query, (routine_id,))
+                    exercises_data = cursor.fetchall()
+                    exercises = [self._record_to_exercise(e) for e in exercises_data]
+
+                    routine = Routine(
+                        routine_id=routine_id,
+                        name=row["name"],
+                        muscular_group=row["muscular_group"],
+                        description=row["description"],
+                        series=row["series"],
+                        exercises=exercises,
+                    )
+                    routines.append(routine)
+
+                return routines
+
+        except psycopg2.Error as e:
+            print("Error al buscar rutina:", e)
+            return []
+
+    def filter_by_series(self, series: int) -> list:
+        routine_query = """
+            SELECT routine_id, name, muscular_group, description, series
+            FROM Routines
+            WHERE series = %s
+        """
+
+        exercises_query = """
+            SELECT e.exercise_id, e.name, e.description, e.muscular_group, e.type, e.place,
+                e.photo_guide, e.video_guide
+            FROM Exercises e
+            JOIN Routine_Exercises re ON e.exercise_id = re.exercise_id
+            WHERE re.routine_id = %s
+        """
+
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(routine_query, (series,))
+                routines_data = cursor.fetchall()
+
+                routines = []
+                for row in routines_data:
+                    routine_id = row["routine_id"]
+
+                    # Obtener ejercicios asociados a la rutina
+                    cursor.execute(exercises_query, (routine_id,))
+                    exercises_data = cursor.fetchall()
+                    exercises = [self._record_to_exercise(e) for e in exercises_data]
+
+                    routine = Routine(
+                        routine_id=routine_id,
+                        name=row["name"],
+                        muscular_group=row["muscular_group"],
+                        description=row["description"],
+                        series=row["series"],
+                        exercises=exercises,
+                    )
+                    routines.append(routine)
+
+                return routines
+
+        except psycopg2.Error as e:
+            print("Error al filtrar por series:", e)
+            return []
+
+    def get_all_routines(self) -> list:
+        routine_query = """
+            SELECT routine_id, name, muscular_group, description, series
+            FROM Routines
+        """
+
+        exercises_query = """
+            SELECT e.exercise_id, e.name, e.description, e.muscular_group, e.type, e.place,
+                e.photo_guide, e.video_guide
+            FROM Exercises e
+            JOIN Routine_Exercises re ON e.exercise_id = re.exercise_id
+            WHERE re.routine_id = %s
+        """
+
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(
+                    routine_query,
+                )
+                routines_data = cursor.fetchall()
+
+                routines = []
+                for row in routines_data:
+                    routine_id = row["routine_id"]
+
+                    cursor.execute(exercises_query, (routine_id,))
+                    exercises_data = cursor.fetchall()
+                    exercises = [self._record_to_exercise(e) for e in exercises_data]
+
+                    routine = Routine(
+                        routine_id=routine_id,
+                        name=row["name"],
+                        muscular_group=row["muscular_group"],
+                        description=row["description"],
+                        series=row["series"],
+                        exercises=exercises,
+                    )
+                    routines.append(routine)
+
+                return routines
+
+        except psycopg2.Error as e:
+            print("Error al buscar rutina:", e)
+            return []
