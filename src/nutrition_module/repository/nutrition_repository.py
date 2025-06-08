@@ -192,15 +192,30 @@ class NutritionRepository(AbstractNutritionRepository):
         self, dish_id: int, user_id: int, equivalencies: DishEquivalences
     ) -> bool:
         query = """
-            INSERT INTO dish_consumption (dish_id, user_id, equivalencies)
-            VALUES (%s, %s, %s)
+INSERT INTO dishes_history (
+    user_id,
+    dish_id,
+    serving_size_g,
+    calories,
+    protein,
+    carbohydrates,
+    fats
+) VALUES (
+    11,
+    11,
+    250,
+    110.0,
+    110.0,
+    110.0,
+    110.0
+);
         """
         try:
             with (
                 self.get_connection() as conn,
                 conn.cursor(cursor_factory=DictCursor) as cursor,
             ):
-                cursor.execute(query, (dish_id, user_id, equivalencies.to_dict()))
+                cursor.execute(query, (dish_id, user_id, equivalencies))
                 conn.commit()
                 return True
         except psycopg2.Error as e:
