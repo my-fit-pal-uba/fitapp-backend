@@ -9,7 +9,7 @@ class dish:
         carbs: float,
         fats: float,
         weight: float,
-        id_dish_category: int,
+        id_dish_category: list[int],
     ):
         self.id = id
         self.name = name
@@ -57,6 +57,6 @@ class dish:
             self.carbs >= 0,
             self.fats >= 0,
             self.weight > 0,
-            self.id_dish_category > 0,
+            self.id_dish_category is not None and self.id_dish_category != [],
         ]
         return all(conditions)

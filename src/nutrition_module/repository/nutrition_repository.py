@@ -78,8 +78,9 @@ class NutritionRepository(AbstractNutritionRepository):
         except psycopg2.Error:
             return None
 
-    def post_dish_category(self, dish_id: int, category_id: int) -> bool:
-
+    def post_dish_categories(
+        self, dish_id: int, category_ids: list[int]
+    ) -> list[int] | None:
         query = """
             INSERT INTO dish_categories (dish_id, category_id)
             VALUES (%s, %s)
@@ -90,15 +91,19 @@ class NutritionRepository(AbstractNutritionRepository):
                 self.get_connection() as conn,
                 conn.cursor(cursor_factory=DictCursor) as cursor,
             ):
-                cursor.execute(
-                    query,
-                    (
-                        dish_id,
-                        category_id,
-                    ),
-                )
-                new_id = cursor.fetchone()["id"]
+                inserted_ids = []
+                for category_id in category_ids:
+                    cursor.execute(
+                        query,
+                        (dish_id, category_id),
+                    )
+                    result = cursor.fetchone()
+                    if result:
+                        inserted_ids.append(result["id"])
+
                 conn.commit()
-                return new_id
-        except psycopg2.Error:
+                return inserted_ids if inserted_ids else None
+
+        except psycopg2.Error as e:
+            print(f"Error al insertar categorías: {e}")
             return None

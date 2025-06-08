@@ -109,9 +109,20 @@ class NutritionProxy:
                   format: float
                   description: Peso total del plato (en gramos)
                 id_dish_category:
-                  type: number
-                  format: int
-                  description: Id de la categoria del plato
+                  type: array
+                  items:
+                    type: integer
+                    description: Lista de IDs de categorías a las que pertenece el plato
+                example:
+                  id: 1
+                  name: "Ensalada César"
+                  description: "Ensalada fresca con pollo, lechuga, crutones y aderezo César"
+                  calories: 350.0
+                  proteins: 20.0
+                  carbohydrates: 30.0
+                  fats: 15.0
+                  weight: 250.0
+                  id_dish_category: [1, 2]
         responses:
           200:
             description: Plato registrado exitosamente

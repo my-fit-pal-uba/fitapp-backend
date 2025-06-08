@@ -26,10 +26,10 @@ class NutritionService(AbstractNutritionService):
         dish.id = new_id
         if dish.id is None:
             raise AlreadyExistingDish(dish.name)
-        result: bool = self.nutrition_repository.post_dish_category(
+        result: list[int] = self.nutrition_repository.post_dish_categories(
             dish.id, dish.id_dish_category
         )
-        if not result:
+        if not result or len(result) != len(dish.id_dish_category):
             raise ValueError("Failed to associate dish with category")
         return dish
 

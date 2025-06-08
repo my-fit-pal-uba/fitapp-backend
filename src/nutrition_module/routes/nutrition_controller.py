@@ -21,8 +21,7 @@ class NutritionController:
             if not dish_data.is_valid():
                 return False, "Invalid dish data", 500
             result = self.nutrition_service.post_dish(dish_data)
-            print(f"Result of post_dish: {result}")
-            return True, result, 200
+            return True, result.to_dict(), 200
         except AlreadyExistingDish:
             return False, "Dish already exists", 401
         except Exception as e:
