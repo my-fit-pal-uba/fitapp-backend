@@ -107,3 +107,51 @@ class NutritionRepository(AbstractNutritionRepository):
         except psycopg2.Error as e:
             print(f"Error al insertar categorías: {e}")
             return None
+
+    def _map_dish_record_to_dish(self, records):
+        dishes_dict = {}
+        for record in records:
+            dish_id = record["id"]
+            if dish_id not in dishes_dict:
+                dishes_dict[dish_id] = dish(
+                    id=record["id"],
+                    name=record["name"],
+                    description=record["description"],
+                    calories=record["calories"],
+                    proteins=record["proteins"],
+                    carbs=record["carbs"],
+                    fats=record["fat"],
+                    weight=record["weight_in_g"],
+                    id_dish_category=[record["category_id"]],
+                )
+            else:
+                dishes_dict[dish_id].id_dish_category.append(record["category_id"])
+        return list(dishes_dict.values())
+
+    def get_dishes(self):
+        query = """
+            SELECT 
+            dish.id,
+            dish.name, 
+            dish.description, 
+            dish.calories, 
+            dish.proteins, 
+            dish.carbs, 
+            dish.fat, 
+            dish.weight_in_g, 
+            dish_ca.category_id
+            FROM dishes AS dish
+            INNER JOIN dish_categories AS dish_ca
+            ON dish.id = dish_ca.dish_id 
+        """
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(query, ())
+                records = cursor.fetchall()
+                return self._map_dish_record_to_dish(records)
+        except psycopg2.Error as e:
+            print(f"Error al insertar categorías: {e}")
+            return None

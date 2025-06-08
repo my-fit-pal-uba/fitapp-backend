@@ -12,3 +12,7 @@ class AbstractNutritionService:
     @abstractmethod
     def post_dish(self, dish: dish):
         raise NotImplementedError("This method should be overridden by subclasses")
+
+    @abstractmethod
+    def get_dishes(self):
+        raise NotImplementedError("This method should be overridden by subclasses")

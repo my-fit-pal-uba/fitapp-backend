@@ -27,3 +27,11 @@ class NutritionController:
         except Exception as e:
             print(f"Error registering dish: {e}")
             return False, str(e), 500
+
+    def get_dishes(self):
+        try:
+            dishes = self.nutrition_service.get_dishes()
+            return True, [dish.to_dict() for dish in dishes], 200
+        except Exception as e:
+            print(f"Error fetching dishes: {e}")
+            return False, [], 500

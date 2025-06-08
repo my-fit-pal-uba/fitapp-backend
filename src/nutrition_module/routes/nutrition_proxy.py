@@ -22,6 +22,11 @@ class NutritionProxy:
             view_func=self.post_dish,
             methods=["POST"],
         )
+        self.nutrition_bp.add_url_rule(
+            "/get_dishes",
+            view_func=self.get_dishes,
+            methods=["GET"],
+        )
 
     def get_meal_categories(self):
         """
@@ -173,3 +178,28 @@ class NutritionProxy:
         except Exception as e:
             logger.error(f"Error registering dish: {e}")
             return ResponseInfo.to_response((None, "Error registering dish", 500))
+
+    def get_dishes(self):
+        """
+        obtiene todos los platos registrados
+        ---
+        tags:
+          - nutrition
+        responses:
+          200:
+            description: Categorías de comidas obtenidas exitosamente
+            schema:
+              type: object
+              properties:
+            success:
+              type: boolean
+              example: true
+            data:
+              type: array
+              items:
+                type: string
+          500:
+            description: Error del servidor
+        """
+        response = self.nutrition_controller.get_dishes()
+        return ResponseInfo.to_response(response)
