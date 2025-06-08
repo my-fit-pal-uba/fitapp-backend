@@ -69,3 +69,23 @@ class ExerciseController:
             return False, {"error": "Internal server error"}, 500
 
         return True, {"message": "Series registered successfully"}, 200
+
+    def rate_exercise(
+        self, user_id: int, exercise_id: int, rating: int
+    ) -> Tuple[bool, dict, int]:
+        try:
+            result = self.exercise_service.rate_exercise(user_id, exercise_id, rating)
+            if not result:
+                return False, {"error": "Failed to rate exercise"}, 500
+        except ForeignKeyViolation:
+            return False, {"error": "User or Exercise not found"}, 404
+        except Exception:
+            return False, {"error": "Internal server error"}, 500
+
+        return True, {"message": "Exercise rated successfully"}, 200
+
+    def get_ratings(self, user_id: int) -> List[dict]:
+        return self.exercise_service.get_ratings(user_id)
+
+    def get_average_ratings(self) -> List[dict]:
+        return self.exercise_service.get_average_ratings()

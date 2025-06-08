@@ -80,3 +80,16 @@ class ExerciseService(AbstractExerciseService):
                 return False
 
         return True
+
+    def rate_exercise(self, user_id: int, exercise_id: int, rating: int) -> bool:
+        if not user_id or not exercise_id or not rating:
+            return False
+
+        result = self.repository.rate_exercise(user_id, exercise_id, rating)
+        return result
+
+    def get_ratings(self, user_id: int) -> List[dict]:
+        return self.repository.get_ratings(user_id)
+
+    def get_average_ratings(self) -> List[dict]:
+        return self.repository.get_average_ratings()
