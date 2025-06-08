@@ -67,7 +67,7 @@ class RoutineService(AbstractRoutineService):
             return []
 
         return [routine.to_dict() for routine in routines]
-    
+
     def rate_routine(self, user_id: int, routine_id: int, rating: int) -> bool:
         if not user_id or not routine_id or not rating:
             return False
@@ -81,7 +81,5 @@ class RoutineService(AbstractRoutineService):
     def get_average_ratings(self) -> List[dict]:
         return self.repository.get_average_ratings()
 
-    def register(
-        self, user_id: int, routine_id: int
-    ) -> bool:
+    def register(self, user_id: int, routine_id: int) -> bool:
         return self.repository.register(user_id, routine_id)

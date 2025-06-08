@@ -275,7 +275,7 @@ class RoutineRepository(AbstractRoutineRepository):
                 ]
         except psycopg2.Error:
             return []
-    
+
     def register(self, user_id: int, routine_id: int) -> bool:
         query = """
             INSERT INTO done_routines (user_id, routine_id)

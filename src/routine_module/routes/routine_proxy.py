@@ -349,7 +349,7 @@ class RoutineProxy:
         """
         response = self.routine_controller.get_average_ratings()
         return ResponseInfo.to_response((True, response, 200))
-  
+
     def register(self):
         """
         Guarda Series de un ejercicio realizadas por un usuario
@@ -391,8 +391,6 @@ class RoutineProxy:
                 (False, "User ID and routine ID are required", 400)
             )
 
-        response = self.routine_controller.register(
-            user_id, routine_id
-        )
+        response = self.routine_controller.register(user_id, routine_id)
 
         return ResponseInfo.to_response((True, response, 200))

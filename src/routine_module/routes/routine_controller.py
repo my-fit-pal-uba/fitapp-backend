@@ -2,6 +2,7 @@ from typing import Tuple
 from routine_module.services.abstract_routine_service import AbstractRoutineService
 from typing import List
 
+
 class RoutineController:
     def __init__(self, routine_service: AbstractRoutineService):
         self.routine_service: AbstractRoutineService = routine_service
@@ -63,9 +64,7 @@ class RoutineController:
     def get_average_ratings(self) -> List[dict]:
         return self.routine_service.get_average_ratings()
 
-    def register(
-        self, user_id: int, routine_id: int
-    ) -> Tuple[bool, dict, int]:
+    def register(self, user_id: int, routine_id: int) -> Tuple[bool, dict, int]:
 
         try:
             result = self.routine_service.register(user_id, routine_id)

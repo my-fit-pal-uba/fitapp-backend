@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import List
- 
+
+
 class AbstractRoutineService:
     """An abstract base class that defines the interface for routine services.
     Subclasses should implement the methods to provide concrete routine management logic.
@@ -70,9 +71,7 @@ class AbstractRoutineService:
         raise NotImplementedError("Subclasses should implement this method.")
 
     @abstractmethod
-    def register(
-        self, user_id: int, routine_id: int
-    ) -> bool:
+    def register(self, user_id: int, routine_id: int) -> bool:
         """Abstract method to register a series of an routine for a user.
 
         :param user_id: The ID of the user.
