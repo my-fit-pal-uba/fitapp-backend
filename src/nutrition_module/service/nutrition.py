@@ -56,8 +56,9 @@ class NutritionService(AbstractNutritionService):
                 user_id=dish_consumption.user_id,
                 equivalencies=equivalencies,
             )
+            print(equivalencies.to_dict())
             self.nutrition_repository.post_calories_history(
-                equivalencies.calories, dish_consumption.user_id
+                dish_consumption.user_id, equivalencies.calories
             )
             return result
         except Exception as e:

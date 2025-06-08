@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from nutrition_module.repository.abstract_nutrition_repository import (
     AbstractNutritionRepository,
 )
@@ -228,7 +228,7 @@ class NutritionRepository(AbstractNutritionRepository):
             print(f"Error registering dish consumption: {e}")
             return False
 
-    def register_daily_calories(self, user_id: int, calories: float) -> tuple:
+    def post_calories_history(self, user_id: int, calories: float) -> tuple:
         query = """
             INSERT INTO calories_history (user_id, date, calories)
             VALUES (%s, %s, %s);
