@@ -216,3 +216,75 @@ class RoutineRepository(AbstractRoutineRepository):
         except psycopg2.Error as e:
             print("Error al buscar rutina:", e)
             return []
+
+    def rate_routine(self, user_id: int, routine_id: int, rating: int) -> bool:
+        query = """
+            INSERT INTO routine_ratings (user_id, routine_id, rating)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, routine_id) DO UPDATE SET rating = EXCLUDED.rating
+        """
+        with self.get_connection() as conn, conn.cursor(
+            cursor_factory=psycopg2.extras.DictCursor
+        ) as cursor:
+            cursor.execute(query, (user_id, routine_id, rating))
+            conn.commit()
+            return True
+
+    def get_ratings(self, user_id: int) -> list:
+        query = """
+            SELECT routine_id, rating
+            FROM routine_ratings
+            WHERE user_id = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id,))
+                records = cursor.fetchall()
+                return [
+                    {
+                        "routine_id": record["routine_id"],
+                        "rating": float(record["rating"]),
+                    }
+                    for record in records
+                ]
+        except psycopg2.Error:
+            return []
+
+    def get_average_ratings(self) -> list:
+        query = """
+            SELECT e.routine_id AS routine_id, COALESCE(AVG(r.rating), 0) AS average_rating
+            FROM routines e
+            LEFT JOIN routine_ratings r ON e.routine_id = r.routine_id
+            GROUP BY e.routine_id
+            ORDER BY e.routine_id
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query)
+                records = cursor.fetchall()
+                return [
+                    {
+                        "routine_id": record["routine_id"],
+                        "average_rating": float(record["average_rating"]),
+                    }
+                    for record in records
+                ]
+        except psycopg2.Error:
+            return []
+    
+    def register(self, user_id: int, routine_id: int) -> bool:
+        query = """
+            INSERT INTO done_routines (user_id, routine_id)
+            VALUES (%s, %s);
+        """
+
+        with self.get_connection() as conn, conn.cursor(
+            cursor_factory=psycopg2.extras.DictCursor
+        ) as cursor:
+            cursor.execute(query, (user_id, routine_id))
+            conn.commit()
+            return True
