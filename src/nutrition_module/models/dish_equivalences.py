@@ -5,12 +5,18 @@ class DishEquivalences:
     """
 
     def __init__(
-        self, calories: float, protein: float, carbohydrates: float, fats: float
+        self,
+        calories: float,
+        protein: float,
+        carbohydrates: float,
+        fats: float,
+        weight: float,
     ):
         self.calories = calories
         self.protein = protein
         self.carbohydrates = carbohydrates
         self.fats = fats
+        self.weight = weight
 
     @classmethod
     def to_equivalences(cls, dish_consumption, dish):
@@ -30,6 +36,7 @@ class DishEquivalences:
             protein=proteins_consumption,
             carbohydrates=carbs_consumption,
             fats=fats_consumption,
+            weight=dish_consumption.quantity,
         )
 
     def to_dict(self):
@@ -42,4 +49,5 @@ class DishEquivalences:
             "protein": self.protein,
             "carbohydrates": self.carbohydrates,
             "fats": self.fats,
+            "weight": self.weight,
         }
