@@ -80,3 +80,14 @@ class AbstractProfileService:
         :return: A tuple containing the result of the operation.
         """
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def post_photo(self, user_id: int, photo: bytes) -> tuple:
+        """
+        Post a user's photo.
+
+        :param user_id: The ID of the user.
+        :param photo: The photo to be posted.
+        :return: A tuple containing the result of the operation.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")

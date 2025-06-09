@@ -61,3 +61,13 @@ class ProfileController:
         if not result:
             return False, {"error": "An error has ocurred"}, 400
         return True, {"message": "User role registered successfully"}, 200
+
+    def post_photo(self, user_id: int, photo: bytes) -> tuple:
+        if not user_id or not photo:
+            return False, {"error": "User ID and photo are required"}, 400
+
+        result = self.ProfileService.post_photo(user_id, photo)
+        if not result:
+            return False, {"error": "Failed to post photo"}, 500
+
+        return True, {"message": "Photo posted successfully"}, 200

@@ -61,3 +61,13 @@ class ProfileService(AbstractProfileService):
     def get_user_rols(self):
         user_rols = self.repository.get_user_rols()
         return user_rols
+
+    def post_photo(self, user_id, photo) -> tuple:
+        """
+        Post a photo for a user.
+
+        :param user_id: The ID of the user.
+        :param photo: The photo to be posted.
+        :return: A tuple containing the result of the operation.
+        """
+        return self.repository.post_photo(user_id, photo)

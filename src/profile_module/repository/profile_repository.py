@@ -161,3 +161,17 @@ class ProfileRepository(AbstractProfileRepository):
         except psycopg2.Error as e:
             print(f"Database error: {e}")
             return []
+
+    def post_photo(self, user_id: int, photo: bytes) -> tuple:
+        query = """
+            INSERT INTO user_photos (user_id, photo)
+            VALUES (%s, %s)
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (user_id, photo))
+                conn.commit()
+                return True
+        except psycopg2.Error as e:
+            print(f"Error al guardar la foto: {e}")
+            return False

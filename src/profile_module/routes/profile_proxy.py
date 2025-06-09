@@ -38,6 +38,9 @@ class ProfileProxy:
         self.profile_bp.add_url_rule(
             "/get_user_rols", view_func=self.get_user_rols, methods=["GET"]
         )
+        self.profile_bp.add_url_rule(
+            "/post_photo", view_func=self.post_photo, methods=["POST"]
+        )
 
     def post_daily_weight(self):
         """
@@ -319,4 +322,45 @@ class ProfileProxy:
             rol_id=int(rol_id), user_id=int(user_id)
         )
 
+        return ResponseInfo.to_response(result)
+
+    def post_photo(self):
+        """
+        Guarda la foto del usuario
+        ---
+        tags:
+          - Profile
+        parameters:
+          - name: user_id
+            in: query
+            type: string
+            required: true
+            example: usuario@ejemplo,com
+          - name: photo
+            in: formData
+            type: file
+            required: true
+        responses:
+          200:
+            description: Foto guardada exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+          400:
+            description: user_id es requerido o foto no proporcionada
+          500:
+            description: Error del servidor
+        """
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return ResponseInfo.to_response((False, "user_id is required", 400))
+
+        if "photo" not in request.files:
+            return ResponseInfo.to_response((False, "Photo is required", 400))
+
+        photo = request.files["photo"]
+        result = self.profile_controller.post_photo(user_id, photo)
         return ResponseInfo.to_response(result)
