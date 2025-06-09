@@ -1,6 +1,6 @@
 from typing import Tuple
-from routine_module.services.abstract_routine_service import AbstractRoutineService
 from typing import List
+from routine_module.services.abstract_routine_service import AbstractRoutineService
 
 
 class RoutineController:
