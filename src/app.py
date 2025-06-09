@@ -31,6 +31,15 @@ from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
 
+from goals_module.repository.abstract_goals_repository import (
+    AbstractGoalsRepository,
+)
+from goals_module.repository.goals_repository import GoalsRepository
+from goals_module.services.abstract_goals_service import AbstractGoalsService
+from goals_module.services.goals_service import GoalsService
+from goals_module.routes.goals_controller import GoalsController
+from goals_module.routes.goals_proxy import GoalsProxy
+
 from routine_module.repository.abstract_routine_repository import (
     AbstractRoutineRepository,
 )
@@ -39,6 +48,7 @@ from routine_module.services.abstract_routine_service import AbstractRoutineServ
 from routine_module.services.routine_service import RoutineService
 from routine_module.routes.routine_controller import RoutineController
 from routine_module.routes.routine_proxy import RoutineProxy
+
 
 DEFAULT_PORT = "8080"
 
@@ -54,6 +64,7 @@ class BackendApp:
         self.inyect_registrarion_service()
         self.inyect_history_service()
         self.inject_routine_service()
+        self.inject_goals_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -90,6 +101,13 @@ class BackendApp:
         routine_controller: RoutineController = RoutineController(routine_service)
         routine_proxy = RoutineProxy(routine_controller)
         self.app.register_blueprint(routine_proxy.routine_bp)
+
+    def inject_goals_service(self):
+        goals_repository: AbstractGoalsRepository = GoalsRepository()
+        goals_service: AbstractGoalsService = GoalsService(goals_repository)
+        goals_controller: GoalsController = GoalsController(goals_service)
+        goals_proxy = GoalsProxy(goals_controller)
+        self.app.register_blueprint(goals_proxy.goals_bp)
 
     def register_healt_check(self):
         @self.app.route("/")
