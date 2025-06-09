@@ -21,7 +21,7 @@ class GoalsController:
             return goal
         except Exception:
             return False, "An error has ocurred", 500
-        
+
     def get_goal_history(self, user_id: int) -> Tuple[bool, dict, int]:
         try:
             return self.goals_service.get_all_goals_by_user(user_id)

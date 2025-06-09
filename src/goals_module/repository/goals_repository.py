@@ -67,7 +67,7 @@ class GoalsRepository(AbstractGoalsRepository):
                     )
         except Exception as e:
             return False, {"message": f"Error interno: {str(e)}"}, 500
-    
+
     def get_all_goals_by_user(self, user_id: int) -> list:
         query = """
             SELECT goal_value, registered_at

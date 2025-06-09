@@ -18,7 +18,7 @@ class GoalsProxy:
             "/current", view_func=self.current_goal, methods=["GET"]
         )
         self.goals_bp.add_url_rule(
-          "/history", view_func=self.goal_history, methods=["GET"]
+            "/history", view_func=self.goal_history, methods=["GET"]
         )
 
     def save_goal(self):
@@ -122,52 +122,51 @@ class GoalsProxy:
 
         return ResponseInfo.to_response(self.goals_controller.get_latest_goal(user_id))
 
-
     def goal_history(self):
-      """
-      Obtiene el historial de objetivos del usuario
-      ---
-      tags:
-        - Goals
-      consumes:
-        - application/json
-      parameters:
-        - in: query
-          name: user_id
-          type: integer
-          required: true
-          description: ID del usuario
-          example: 12
-      responses:
-        200:
-          description: Historial de objetivos encontrado
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    goal_value:
-                      type: number
-                      format: float
-                      example: 72.5
-                    registered_at:
-                      type: string
-                      format: date-time
-                      example: "2025-06-09T13:45:00Z"
-        400:
-          description: Parámetros inválidos
-        404:
-          description: No hay historial
-      """
-      user_id = request.args.get("user_id", type=int)
+        """
+        Obtiene el historial de objetivos del usuario
+        ---
+        tags:
+          - Goals
+        consumes:
+          - application/json
+        parameters:
+          - in: query
+            name: user_id
+            type: integer
+            required: true
+            description: ID del usuario
+            example: 12
+        responses:
+          200:
+            description: Historial de objetivos encontrado
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      goal_value:
+                        type: number
+                        format: float
+                        example: 72.5
+                      registered_at:
+                        type: string
+                        format: date-time
+                        example: "2025-06-09T13:45:00Z"
+          400:
+            description: Parámetros inválidos
+          404:
+            description: No hay historial
+        """
+        user_id = request.args.get("user_id", type=int)
 
-      if not user_id:
-          return ResponseInfo.to_response((False, "Falta user_id", 400))
+        if not user_id:
+            return ResponseInfo.to_response((False, "Falta user_id", 400))
 
-      return ResponseInfo.to_response(self.goals_controller.get_goal_history(user_id))
+        return ResponseInfo.to_response(self.goals_controller.get_goal_history(user_id))

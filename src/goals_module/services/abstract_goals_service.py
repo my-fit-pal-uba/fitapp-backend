@@ -29,7 +29,7 @@ class AbstractGoalsService:
         :return: A boolean indicating the success of the operation.
         """
         raise NotImplementedError("Subclasses should implement this method.")
-    
+
     @abstractmethod
     def get_all_goals_by_user(self, user_id: int) -> List[dict]:
         """Obtiene todo el historial de objetivos de un usuario"""
