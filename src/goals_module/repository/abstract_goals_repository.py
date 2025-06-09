@@ -7,7 +7,7 @@ class AbstractGoalsRepository:
     @abstractmethod
     def save_goal(self, user_id: int, goal_value: int) -> bool:
         pass
-    
+
     @abstractmethod
     def get_latest_goal(self, user_id: int) -> tuple:
         pass

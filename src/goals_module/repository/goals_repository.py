@@ -35,7 +35,7 @@ class GoalsRepository(AbstractGoalsRepository):
         except Exception as e:
             print(f"Error al guardar el objetivo: {e}")
             return False
-    
+
     def get_latest_goal(self, user_id: int) -> tuple:
         query = """
             SELECT user_id, goal_value, registered_at
@@ -50,12 +50,20 @@ class GoalsRepository(AbstractGoalsRepository):
                 result = cursor.fetchone()
                 if result:
                     user_id, goal_value, registered_at = result
-                    return True, {
-                        "user_id": user_id,
-                        "goal_value": goal_value,
-                        "registered_at": registered_at.isoformat()
-                    }, 200
+                    return (
+                        True,
+                        {
+                            "user_id": user_id,
+                            "goal_value": goal_value,
+                            "registered_at": registered_at.isoformat(),
+                        },
+                        200,
+                    )
                 else:
-                    return False, {"message": "No se encontró objetivo para el usuario"}, 404
+                    return (
+                        False,
+                        {"message": "No se encontró objetivo para el usuario"},
+                        404,
+                    )
         except Exception as e:
             return False, {"message": f"Error interno: {str(e)}"}, 500

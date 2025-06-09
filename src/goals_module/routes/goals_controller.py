@@ -2,6 +2,7 @@ from goals_module.services.abstract_goals_service import AbstractGoalsService
 from typing import Tuple
 from typing import List
 
+
 class GoalsController:
 
     def __init__(self, goals_service: AbstractGoalsService):
@@ -14,7 +15,7 @@ class GoalsController:
         except Exception:
             return [], "An error has ocurred", 500
 
-    def get_latest_goal(self, user_id: int)-> Tuple[bool, dict, int]:
+    def get_latest_goal(self, user_id: int) -> Tuple[bool, dict, int]:
         try:
             goal = self.goals_service.get_latest_goal(user_id)
             return goal
