@@ -20,3 +20,12 @@ class AbstractGoalsService:
         :return: A boolean indicating the success of the operation.
         """
         raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def get_latest_goal(self, user_id: int)-> tuple:
+        """Abstract method to get the last weight goal
+
+        :param user_id: The ID of the user.
+        :return: A boolean indicating the success of the operation.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")

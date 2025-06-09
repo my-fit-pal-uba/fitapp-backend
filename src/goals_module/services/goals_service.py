@@ -12,4 +12,7 @@ class GoalsService(AbstractGoalsService):
         self.repository: AbstractGoalsRepository = abstract_goals_service
 
     def save_goal(self, user_id: int, goal_value: int) -> bool:
-        self.repository.save_goal(user_id, goal_value)
+        return self.repository.save_goal(user_id, goal_value)
+    
+    def get_latest_goal(self, user_id: int)-> tuple:
+        return self.repository.get_latest_goal(user_id)

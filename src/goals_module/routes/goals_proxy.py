@@ -14,6 +14,9 @@ class GoalsProxy:
         self.goals_bp.add_url_rule(
             "/register", view_func=self.save_goal, methods=["POST"]
         )
+        self.goals_bp.add_url_rule(
+            "/current", view_func=self.current_goal, methods=["GET"]
+        )
 
     def save_goal(self):
         """
@@ -68,3 +71,50 @@ class GoalsProxy:
         self.goals_controller.save_goal(user_id, goal_value)
 
         return ResponseInfo.to_response((True, "Objetivo guardado", 200))
+
+    def current_goal(self):
+        """
+        Obtiene el objetivo actual del usuario
+        ---
+        tags:
+          - Goals
+        consumes:
+          - application/json
+        parameters:
+          - in: query
+            name: user_id
+            type: integer
+            required: true
+            description: ID del usuario
+            example: 12
+        responses:
+          200:
+            description: Objetivo encontrado exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    goal_value:
+                      type: number
+                      format: float
+                      example: 72.5
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-06-09T13:45:00Z"
+          400:
+            description: Parámetros inválidos
+          404:
+            description: Objetivo no encontrado
+        """
+        user_id = request.args.get("user_id", type=int)
+
+        if not user_id:
+            return ResponseInfo.to_response((False, "Falta user_id", 400))
+
+        return ResponseInfo.to_response(self.goals_controller.get_latest_goal(user_id))
