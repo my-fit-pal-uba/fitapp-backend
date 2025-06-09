@@ -16,3 +16,13 @@ class GoalsService(AbstractGoalsService):
 
     def get_latest_goal(self, user_id: int) -> tuple:
         return self.repository.get_latest_goal(user_id)
+
+    def get_all_goals_by_user(self, user_id: int) -> tuple:
+        try:
+            history = self.repository.get_all_goals_by_user(user_id)
+            if not history:
+                return (False, "No hay historial de objetivos", 404)
+            # Retornamos un dict con data = lista de goals
+            return (True, {"data": history}, 200)
+        except Exception as e:
+            return (False, f"Error al obtener historial: {e}", 500)

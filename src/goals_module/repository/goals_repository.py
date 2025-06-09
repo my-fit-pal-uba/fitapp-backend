@@ -67,3 +67,21 @@ class GoalsRepository(AbstractGoalsRepository):
                     )
         except Exception as e:
             return False, {"message": f"Error interno: {str(e)}"}, 500
+    
+    def get_all_goals_by_user(self, user_id: int) -> list:
+        query = """
+            SELECT goal_value, registered_at
+            FROM goal_history
+            WHERE user_id = %s
+            ORDER BY registered_at ASC
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (user_id,))
+                results = cursor.fetchall()
+                return [
+                    {"goal_value": float(row[0]), "registered_at": row[1]}
+                    for row in results
+                ]
+        except Exception as e:
+            raise Exception(f"Error fetching goal history: {e}")

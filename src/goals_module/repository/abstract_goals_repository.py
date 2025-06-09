@@ -11,3 +11,7 @@ class AbstractGoalsRepository:
     @abstractmethod
     def get_latest_goal(self, user_id: int) -> tuple:
         pass
+
+    @abstractmethod
+    def get_all_goals_by_user(self, user_id: int) -> list:
+        pass
