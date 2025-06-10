@@ -2,7 +2,7 @@ class Diet:
     def __init__(
         self,
         id: int,
-        name: str,
+        name: str, 
         observation: str,
     ):
         self.id = id
@@ -15,7 +15,7 @@ class Diet:
             "name": self.name,
             "observation": self.observation,
         }
-
+    
     @classmethod
     def from_dict(cls, diet_dict: dict):
         return cls(
@@ -23,7 +23,7 @@ class Diet:
             name=diet_dict.get("name"),
             observation=diet_dict.get("observation"),
         )
-
+    
     def is_valid(self):
         conditions = [
             isinstance(self.name, str) and len(self.name) > 0,
