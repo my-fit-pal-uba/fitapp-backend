@@ -24,7 +24,14 @@ class DietRepository(AbstractDietRepository):
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
     
-    def get_diets(self):
+    def _record_to_diet(self, record) -> Diet:
+        return Diet(
+            id=record["id"],
+            name=record["name"],
+            observation=record["observation"]
+        )
+
+    def get_diets(self) -> List[Diet]:
         query = """
             SELECT 
             id,
@@ -39,7 +46,7 @@ class DietRepository(AbstractDietRepository):
             ):
                 cursor.execute(query, ())
                 records = cursor.fetchall()
-                return [Diet.from_dict(record) for record in records]
+                return [self._record_to_diet(record) for record in records]
         except psycopg2.Error as e:
             print(f"Error al buscar dietas: {e}")
             return None
@@ -61,7 +68,7 @@ class DietRepository(AbstractDietRepository):
                 cursor.execute(query, (diet_id,))
                 record = cursor.fetchone()
                 if record:
-                    return Diet.from_dict(record)
+                    return self._record_to_diet(record)
                 return None
         except psycopg2.Error as e:
             print(f"Error al buscar dieta por ID: {e}")
