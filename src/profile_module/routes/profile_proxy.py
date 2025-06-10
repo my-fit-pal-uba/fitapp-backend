@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from models.response import ResponseInfo
 from profile_module.routes.profile_controller import ProfileController
@@ -40,6 +40,9 @@ class ProfileProxy:
         )
         self.profile_bp.add_url_rule(
             "/post_photo", view_func=self.post_photo, methods=["POST"]
+        )
+        self.profile_bp.add_url_rule(
+            "/get_photos", view_func=self.get_photos, methods=["GET"]
         )
 
     def post_daily_weight(self):
@@ -362,5 +365,44 @@ class ProfileProxy:
             return ResponseInfo.to_response((False, "Photo is required", 400))
 
         photo = request.files["photo"]
-        result = self.profile_controller.post_photo(user_id, photo)
+        photo_bytes = photo.read()
+        result = self.profile_controller.post_photo(user_id, photo_bytes)
         return ResponseInfo.to_response(result)
+
+    def get_photos(self):
+        """
+        Devuelve todas las fotos del usuario con su fecha.
+        ---
+        tags:
+          - Profile
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+        responses:
+          200:
+            description: Lista de fotos
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  photo:
+                    type: string
+                    format: base64
+                  upload_date:
+                    type: string
+                    format: date-time
+          404:
+            description: No se encontraron fotos
+        """
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+
+        results = self.profile_controller.get_photos(user_id)
+        if not results:
+            return jsonify([]), 200
+
+        return jsonify(results), 200

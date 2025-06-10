@@ -71,3 +71,6 @@ class ProfileController:
             return False, {"error": "Failed to post photo"}, 500
 
         return True, {"message": "Photo posted successfully"}, 200
+
+    def get_photos(self, user_id: int) -> list:
+        return self.ProfileService.get_photos(user_id)

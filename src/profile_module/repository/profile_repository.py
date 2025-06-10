@@ -175,3 +175,18 @@ class ProfileRepository(AbstractProfileRepository):
         except psycopg2.Error as e:
             print(f"Error al guardar la foto: {e}")
             return False
+
+    def get_photos(self, user_id: int) -> list:
+        query = """
+            SELECT photo, upload_date
+            FROM user_photos
+            WHERE user_id = %s
+            ORDER BY upload_date ASC
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (user_id,))
+                return cursor.fetchall()  # list of (photo_bytes, upload_date)
+        except psycopg2.Error as e:
+            print(f"Error al obtener las fotos: {e}")
+            return []
