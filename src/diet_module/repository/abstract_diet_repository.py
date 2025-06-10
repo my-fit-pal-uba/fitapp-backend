@@ -17,3 +17,6 @@ class AbstractDietRepository:
     def remove_diet(self, diet_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
     
+    @abstractmethod
+    def get_dishes_from_diet(self, diet_id: int):
+        raise NotImplementedError("This method should be overridden by subclasses")
