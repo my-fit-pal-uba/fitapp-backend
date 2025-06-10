@@ -1,6 +1,7 @@
 from history_module.repository.abstract_history_repository import (
     AbstractHistoryRepository,
 )
+from routine_module.repository.routine_repository import RoutineRepository
 
 from typing import Optional  # noqa: F401
 import psycopg2  # type: ignore
@@ -9,6 +10,7 @@ from psycopg2.extras import DictCursor  # type: ignore  # noqa: F401
 
 class HistoryRepository(AbstractHistoryRepository):
     def __init__(self, db_config=None):
+        self.routine_repository = RoutineRepository()
         self.db_config = db_config or {
             "host": "db",
             "database": "app_db",
@@ -83,5 +85,59 @@ class HistoryRepository(AbstractHistoryRepository):
                         records,
                     )
                 )
+        except psycopg2.Error:
+            return []
+
+    def get_routine_history(self, user_id: int) -> list:
+        query = """
+            SELECT * 
+            FROM done_routines 
+            WHERE user_id = %s 
+            ORDER BY done_at DESC
+            LIMIT 50
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id,))
+                records = cursor.fetchall()
+                result = []
+                for record in records:
+                    routine = self.routine_repository.get_routine_by_id(
+                        record["routine_id"]
+                    )
+                    result.append(
+                        {
+                            "done_at": str(record["done_at"])[:10],
+                            "routine": routine,  # Aquí devuelves la rutina completa
+                        }
+                    )
+                return result
+        except psycopg2.Error:
+            return []
+
+    def get_routine_history_by_date(self, user_id: int, done_at: str) -> list:
+        query = """
+            SELECT * 
+            FROM done_routines 
+            WHERE user_id = %s AND DATE(done_at) = %s
+            ORDER BY done_at DESC
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id, done_at))
+                records = cursor.fetchall()
+                result = []
+                for record in records:
+                    routine = self.routine_repository.get_routine_by_id(
+                        record["routine_id"]
+                    )
+                    result.append(
+                        {"done_at": str(record["done_at"])[:10], "routine": routine}
+                    )
+                return result
         except psycopg2.Error:
             return []

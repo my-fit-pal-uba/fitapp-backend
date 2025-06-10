@@ -1,6 +1,7 @@
 from routine_module.models.routine import Routine
 from exercise_module.models.exercise import Exercise
 import psycopg2  # type: ignore
+from typing import Optional
 from routine_module.repository.abstract_routine_repository import (
     AbstractRoutineRepository,
 )
@@ -288,3 +289,46 @@ class RoutineRepository(AbstractRoutineRepository):
             cursor.execute(query, (user_id, routine_id))
             conn.commit()
             return True
+
+    def get_routine_by_id(self, routine_id: int) -> Optional[dict]:
+        query = """
+            SELECT * FROM routines WHERE routine_id = %s
+        """
+        exercises_query = """
+            SELECT e.*
+            FROM exercises e
+            JOIN routine_exercises re ON e.exercise_id = re.exercise_id
+            WHERE re.routine_id = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (routine_id,))
+                routine_record = cursor.fetchone()
+                if not routine_record:
+                    return None
+                cursor.execute(exercises_query, (routine_id,))
+                exercises = cursor.fetchall()
+                return {
+                    "routine_id": routine_record["routine_id"],
+                    "name": routine_record["name"],
+                    "description": routine_record["description"],
+                    "muscular_group": routine_record["muscular_group"],
+                    "series": routine_record["series"],
+                    "exercises": [
+                        {
+                            "exercise_id": ex["exercise_id"],
+                            "name": ex["name"],
+                            "description": ex["description"],
+                            "muscular_group": ex["muscular_group"],
+                            "type": ex["type"],
+                            "place": ex["place"],
+                            "photo_guide": ex.get("photo_guide"),
+                            "video_guide": ex.get("video_guide"),
+                        }
+                        for ex in exercises
+                    ],
+                }
+        except psycopg2.Error:
+            return None
