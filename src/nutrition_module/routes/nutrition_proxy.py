@@ -106,7 +106,7 @@ class NutritionProxy:
                   type: number
                   format: float
                   description: Contenido de proteínas (en gramos)
-                carbohydrates:
+                carbs:
                   type: number
                   format: float
                   description: Contenido de carbohidratos (en gramos)
@@ -132,7 +132,6 @@ class NutritionProxy:
                   carbohydrates: 30.0
                   fats: 15.0
                   weight: 250.0
-                  id_dish_category: [1, 2]
         responses:
           200:
             description: Plato registrado exitosamente

@@ -42,7 +42,7 @@ class dish:
             description=dish_dict.get("description"),
             calories=dish_dict.get("calories"),
             proteins=dish_dict.get("proteins"),
-            carbs=dish_dict.get("carbohydrates"),
+            carbs=dish_dict.get("carbs"),
             fats=dish_dict.get("fats"),
             weight=dish_dict.get("weight"),
             id_dish_category=dish_dict.get("id_dish_category"),
