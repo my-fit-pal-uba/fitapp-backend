@@ -66,6 +66,9 @@ class ProfileController:
         if not user_id or not photo:
             return False, {"error": "User ID and photo are required"}, 400
 
+        if not photo.startswith(b"\x89PNG\r\n\x1a\n"):
+            return False, {"error": "Only PNG files are allowed"}, 400
+
         result = self.ProfileService.post_photo(user_id, photo)
         if not result:
             return False, {"error": "Failed to post photo"}, 500
