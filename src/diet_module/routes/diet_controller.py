@@ -10,4 +10,5 @@ class DietController:
             diets = self.diet_service.get_diets(user_id)
             return True, diets, 200
         except Exception as e:
-            return False, str(e), 500
+            print(f"Error retrieving diets: {e}")
+            return False, [], 500
