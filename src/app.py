@@ -30,6 +30,8 @@ from history_module.routes.history_controller import HistoryController
 from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
+from diet_module.routes.diet_controller import DietController
+from diet_module.routes.diet_proxy import DietProxy
 from nutrition_module.repository.abstract_nutrition_repository import (
     AbstractNutritionRepository,
 )
@@ -40,6 +42,9 @@ from nutrition_module.service.abstract_nutrition_service import (
 )
 from nutrition_module.service.nutrition import NutritionService
 from nutrition_module.repository.nutrition_repository import NutritionRepository
+from diet_module.service.abstract_service import AbstractDietService
+from diet_module.service.diet_service import DietService
+from diet_module.repository.diet_repository import DietRepository
 
 from goals_module.repository.abstract_goals_repository import (
     AbstractGoalsRepository,
@@ -73,6 +78,7 @@ class BackendApp:
         self.inject_exercise_service()
         self.inyect_registrarion_service()
         self.inyect_history_service()
+        self.inyect_diet_service()
         self.inyect_nutrition_service()
         self.inject_routine_service()
         self.inject_goals_service()
@@ -115,6 +121,13 @@ class BackendApp:
         )
         nutrition_proxy = NutritionProxy(nutrition_controller)
         self.app.register_blueprint(nutrition_proxy.nutrition_bp)
+
+    def inyect_diet_service(self):
+        diet_repository: AbstractDietService = DietRepository()
+        diet_service: AbstractDietService = DietService(diet_repository)
+        diet_controller: DietController = DietController(diet_service)
+        diet_proxy = DietProxy(diet_controller)
+        self.app.register_blueprint(diet_proxy.diet_bp)
 
     def inject_routine_service(self):
         routine_repository: AbstractRoutineRepository = RoutineRepository()
