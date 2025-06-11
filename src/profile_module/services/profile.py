@@ -3,6 +3,7 @@ from profile_module.repository.abstract_profile_repository import (
 )
 from profile_module.services.abstract_profile_service import AbstractProfileService
 from models.profile import Profile
+import base64
 
 
 class ProfileService(AbstractProfileService):
@@ -61,3 +62,21 @@ class ProfileService(AbstractProfileService):
     def get_user_rols(self):
         user_rols = self.repository.get_user_rols()
         return user_rols
+
+    def post_photo(self, user_id, photo) -> tuple:
+        """
+        Post a photo for a user.
+
+        :param user_id: The ID of the user.
+        :param photo: The photo to be posted.
+        :return: A tuple containing the result of the operation.
+        """
+        return self.repository.post_photo(user_id, photo)
+
+    def get_photos(self, user_id: int) -> list:
+        rows = self.repository.get_photos(user_id)
+        photos = []
+        for photo_data, upload_date in rows:
+            encoded = base64.b64encode(photo_data).decode("utf-8")
+            photos.append({"photo": encoded, "upload_date": upload_date.isoformat()})
+        return photos
