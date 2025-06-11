@@ -30,6 +30,8 @@ from history_module.routes.history_controller import HistoryController
 from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
+from diet_module.routes.diet_controller import DietController
+from diet_module.routes.diet_proxy import DietProxy
 
 DEFAULT_PORT = "8080"
 
@@ -44,6 +46,7 @@ class BackendApp:
         self.inject_exercise_service()
         self.inyect_registrarion_service()
         self.inyect_history_service()
+        self.inyect_diet_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -73,6 +76,11 @@ class BackendApp:
         history_controller: HistoryController = HistoryController(history_service)
         history_proxy = HistoryProxy(history_controller)
         self.app.register_blueprint(history_proxy.history_bp)
+
+    def inyect_diet_service(self):
+        diet_controller: DietController = DietController()
+        diet_proxy = DietProxy(diet_controller)
+        self.app.register_blueprint(diet_proxy.diet_bp)
 
     def register_healt_check(self):
         @self.app.route("/")
