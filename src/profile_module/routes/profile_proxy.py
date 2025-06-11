@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from models.response import ResponseInfo
 from profile_module.routes.profile_controller import ProfileController
@@ -38,6 +38,12 @@ class ProfileProxy:
         self.profile_bp.add_url_rule(
             "/get_user_rols", view_func=self.get_user_rols, methods=["GET"]
         )
+        self.profile_bp.add_url_rule(
+            "/post_photo", view_func=self.post_photo, methods=["POST"]
+        )
+        self.profile_bp.add_url_rule(
+            "/get_photos", view_func=self.get_photos, methods=["GET"]
+        )
 
     def post_daily_weight(self):
         """
@@ -75,12 +81,9 @@ class ProfileProxy:
         user_id = data.get("user_id", None)
 
         if not weight or not user_id:
-            return ResponseInfo(
-                status_code=400,
-                message="Weight and user_id are required",
-                data=None,
-            ).to_dict()
-
+            return ResponseInfo.to_response(
+                (False, "Weight and user_id are required", 400)
+            )
         result = self.profile_controller.register_daily_weight(
             user_id=int(user_id), weight=float(weight)
         )
@@ -124,12 +127,9 @@ class ProfileProxy:
         user_id = data.get("user_id", None)
 
         if not calories or not user_id:
-            return ResponseInfo(
-                status_code=400,
-                message="Calories and user_id are required",
-                data=None,
-            ).to_dict()
-
+            return ResponseInfo.to_response(
+                (False, "Calories and user_id are required", 400)
+            )
         result = self.profile_controller.register_daily_calories(
             user_id=int(user_id), calories=float(calories)
         )
@@ -326,3 +326,83 @@ class ProfileProxy:
         )
 
         return ResponseInfo.to_response(result)
+
+    def post_photo(self):
+        """
+        Guarda la foto del usuario
+        ---
+        tags:
+          - Profile
+        parameters:
+          - name: user_id
+            in: query
+            type: string
+            required: true
+            example: usuario@ejemplo,com
+          - name: photo
+            in: formData
+            type: file
+            required: true
+        responses:
+          200:
+            description: Foto guardada exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+          400:
+            description: user_id es requerido o foto no proporcionada
+          500:
+            description: Error del servidor
+        """
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return ResponseInfo.to_response((False, "user_id is required", 400))
+
+        if "photo" not in request.files:
+            return ResponseInfo.to_response((False, "Photo is required", 400))
+
+        photo = request.files["photo"]
+        photo_bytes = photo.read()
+        result = self.profile_controller.post_photo(user_id, photo_bytes)
+        return ResponseInfo.to_response(result)
+
+    def get_photos(self):
+        """
+        Devuelve todas las fotos del usuario con su fecha.
+        ---
+        tags:
+          - Profile
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+        responses:
+          200:
+            description: Lista de fotos
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  photo:
+                    type: string
+                    format: base64
+                  upload_date:
+                    type: string
+                    format: date-time
+          404:
+            description: No se encontraron fotos
+        """
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+
+        results = self.profile_controller.get_photos(user_id)
+        if not results:
+            return jsonify([]), 200
+
+        return jsonify(results), 200

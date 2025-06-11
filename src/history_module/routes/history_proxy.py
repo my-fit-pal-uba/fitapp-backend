@@ -17,6 +17,14 @@ class HistoryProxy:
         self.history_bp.add_url_rule(
             "/calories_history", view_func=self.get_calories_history, methods=["GET"]
         )
+        self.history_bp.add_url_rule(
+            "routine_history", view_func=self.get_routine_history, methods=["GET"]
+        )
+        self.history_bp.add_url_rule(
+            "routine_history_by_date",
+            view_func=self.get_routine_history_by_date,
+            methods=["GET"],
+        )
 
     def get_weight_history(self):
         """
@@ -123,3 +131,110 @@ class HistoryProxy:
             return ResponseInfo.to_response(result)
         except Exception as e:
             return {"error": str(e)}, 400
+
+    def get_routine_history(self):
+        """
+        ---
+        tags:
+          - History
+        summary: Retrieve user's routine history
+        description: Returns an array of objects containing dates and corresponding routine values
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: The ID of the user whose routine history is being requested
+        responses:
+          200:
+            description: Routine history retrieved successfully
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    description: The date of the routine record
+                  routine:
+                    type: string
+                    description: The routine performed on that date
+            examples:
+              application/json: [
+                {"date": "2023-01-01", "routine": "Morning Run"},
+                {"date": "2023-01-02", "routine": "Evening Yoga"}
+              ]
+          400:
+            description: An error occurred while processing the request
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Error message
+        """
+        data = request.args.to_dict()
+        user_id = data.get("user_id", None)
+        if not user_id:
+            return ResponseInfo.to_response((False, "User_id is required", 400))
+        result = self.history_service.get_routine_history(user_id)
+        return ResponseInfo.to_response((True, result, 200))
+
+    def get_routine_history_by_date(self):
+        """
+        ---
+        tags:
+          - History
+        summary: Retrieve user's routine history by date
+        description: Returns an array of objects containing dates and corresponding routine values for a specific date
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: The ID of the user whose routine history is being requested
+          - name: date
+            in: query
+            type: string
+            required: true
+            description: "The date for which the routine history is being requested (format: YYYY-MM-DD)"
+        responses:
+          200:
+            description: Routine history retrieved successfully
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    description: The date of the routine record
+                  routine:
+                    type: string
+                    description: The routine performed on that date
+            examples:
+              application/json: [
+                {"date": "2023-01-01", "routine": "Morning Run"},
+                {"date": "2023-01-02", "routine": "Evening Yoga"}
+              ]
+          400:
+            description: An error occurred while processing the request
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Error message
+        """
+        data = request.args.to_dict()
+        user_id = data.get("user_id", None)
+        date = data.get("date", None)
+        if not user_id or not date:
+            return ResponseInfo.to_response(
+                (False, "User_id and date are required", 400)
+            )
+
+        result = self.history_service.get_routine_history_by_date(user_id, date)
+        return ResponseInfo.to_response((True, result, 200))

@@ -30,6 +30,40 @@ from history_module.routes.history_controller import HistoryController
 from history_module.routes.history_proxy import HistoryProxy
 from history_module.services.abstract_history_service import AbstractHistoryService
 from history_module.services.history import HistoryService
+from diet_module.routes.diet_controller import DietController
+from diet_module.routes.diet_proxy import DietProxy
+from nutrition_module.repository.abstract_nutrition_repository import (
+    AbstractNutritionRepository,
+)
+from nutrition_module.routes.nutrition_controller import NutritionController
+from nutrition_module.routes.nutrition_proxy import NutritionProxy
+from nutrition_module.service.abstract_nutrition_service import (
+    AbstractNutritionService,
+)
+from nutrition_module.service.nutrition import NutritionService
+from nutrition_module.repository.nutrition_repository import NutritionRepository
+from diet_module.service.abstract_service import AbstractDietService
+from diet_module.service.diet_service import DietService
+from diet_module.repository.diet_repository import DietRepository
+
+from goals_module.repository.abstract_goals_repository import (
+    AbstractGoalsRepository,
+)
+from goals_module.repository.goals_repository import GoalsRepository
+from goals_module.services.abstract_goals_service import AbstractGoalsService
+from goals_module.services.goals_service import GoalsService
+from goals_module.routes.goals_controller import GoalsController
+from goals_module.routes.goals_proxy import GoalsProxy
+
+from routine_module.repository.abstract_routine_repository import (
+    AbstractRoutineRepository,
+)
+from routine_module.repository.routine_repository import RoutineRepository
+from routine_module.services.abstract_routine_service import AbstractRoutineService
+from routine_module.services.routine_service import RoutineService
+from routine_module.routes.routine_controller import RoutineController
+from routine_module.routes.routine_proxy import RoutineProxy
+
 
 DEFAULT_PORT = "8080"
 
@@ -44,6 +78,10 @@ class BackendApp:
         self.inject_exercise_service()
         self.inyect_registrarion_service()
         self.inyect_history_service()
+        self.inyect_diet_service()
+        self.inyect_nutrition_service()
+        self.inject_routine_service()
+        self.inject_goals_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -67,12 +105,43 @@ class BackendApp:
         self.app.register_blueprint(profile_proxy.profile_bp)
 
     def inyect_history_service(self):
-
         history_repository: AbstractHistoryRepository = HistoryRepository()
         history_service: AbstractHistoryService = HistoryService(history_repository)
         history_controller: HistoryController = HistoryController(history_service)
         history_proxy = HistoryProxy(history_controller)
         self.app.register_blueprint(history_proxy.history_bp)
+
+    def inyect_nutrition_service(self):
+        nutrition_repository: AbstractNutritionRepository = NutritionRepository()
+        nutrition_service: AbstractNutritionService = NutritionService(
+            nutrition_repository
+        )
+        nutrition_controller: NutritionController = NutritionController(
+            nutrition_service
+        )
+        nutrition_proxy = NutritionProxy(nutrition_controller)
+        self.app.register_blueprint(nutrition_proxy.nutrition_bp)
+
+    def inyect_diet_service(self):
+        diet_repository: AbstractDietService = DietRepository()
+        diet_service: AbstractDietService = DietService(diet_repository)
+        diet_controller: DietController = DietController(diet_service)
+        diet_proxy = DietProxy(diet_controller)
+        self.app.register_blueprint(diet_proxy.diet_bp)
+
+    def inject_routine_service(self):
+        routine_repository: AbstractRoutineRepository = RoutineRepository()
+        routine_service: AbstractRoutineService = RoutineService(routine_repository)
+        routine_controller: RoutineController = RoutineController(routine_service)
+        routine_proxy = RoutineProxy(routine_controller)
+        self.app.register_blueprint(routine_proxy.routine_bp)
+
+    def inject_goals_service(self):
+        goals_repository: AbstractGoalsRepository = GoalsRepository()
+        goals_service: AbstractGoalsService = GoalsService(goals_repository)
+        goals_controller: GoalsController = GoalsController(goals_service)
+        goals_proxy = GoalsProxy(goals_controller)
+        self.app.register_blueprint(goals_proxy.goals_bp)
 
     def register_healt_check(self):
         @self.app.route("/")
@@ -85,7 +154,7 @@ class BackendApp:
         try:
             port_data = os.getenv("PORT", DEFAULT_PORT)
             port = int(port_data)
-            self.app.run(host="0.0.0.0", port=port)
+            self.app.run(host="0.0.0.0", port=port, debug=True)
         except Exception as e:
             print(f"Error: {e}")
 

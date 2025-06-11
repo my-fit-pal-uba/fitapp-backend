@@ -1,5 +1,8 @@
 from exercise_module.services.abstract_exercise import AbstractExerciseService
 from exercise_module.models.exercise import Exercise
+from exercise_module.models.serie import Serie
+from typing import List
+
 from exercise_module.repository.abstract_exercise_repository import (
     AbstractExerciseRepository,
 )
@@ -55,3 +58,38 @@ class ExerciseService(AbstractExerciseService):
             return []
 
         return [exercise.to_dict() for exercise in exercises]
+
+    def register_series(
+        self, user_id: int, exercise_id: int, series: List[dict]
+    ) -> bool:
+
+        for serie in series:
+            repetitions = serie.get("repetitions")
+            weight = serie.get("weight")
+
+            result = self.repository.register_serie(
+                Serie(
+                    user_id=user_id,
+                    exercise_id=exercise_id,
+                    repetitions=repetitions,
+                    weight=weight,
+                )
+            )
+
+            if not result:
+                return False
+
+        return True
+
+    def rate_exercise(self, user_id: int, exercise_id: int, rating: int) -> bool:
+        if not user_id or not exercise_id or not rating:
+            return False
+
+        result = self.repository.rate_exercise(user_id, exercise_id, rating)
+        return result
+
+    def get_ratings(self, user_id: int) -> List[dict]:
+        return self.repository.get_ratings(user_id)
+
+    def get_average_ratings(self) -> List[dict]:
+        return self.repository.get_average_ratings()
