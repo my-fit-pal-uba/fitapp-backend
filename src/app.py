@@ -42,6 +42,9 @@ from nutrition_module.service.abstract_nutrition_service import (
 )
 from nutrition_module.service.nutrition import NutritionService
 from nutrition_module.repository.nutrition_repository import NutritionRepository
+from diet_module.service.abstract_service import AbstractDietService
+from diet_module.service.diet_service import DietService
+from diet_module.repository.diet_repository import DietRepository
 
 DEFAULT_PORT = "8080"
 
@@ -99,7 +102,9 @@ class BackendApp:
         self.app.register_blueprint(nutrition_proxy.nutrition_bp)
 
     def inyect_diet_service(self):
-        diet_controller: DietController = DietController()
+        diet_repository: AbstractDietService = DietRepository()
+        diet_service: AbstractDietService = DietService(diet_repository)
+        diet_controller: DietController = DietController(diet_service)
         diet_proxy = DietProxy(diet_controller)
         self.app.register_blueprint(diet_proxy.diet_bp)
 

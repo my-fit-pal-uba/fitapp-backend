@@ -4,7 +4,7 @@ from abc import abstractmethod
 class AbstractDietService:
 
     @abstractmethod
-    def get_diets(self, user_id: str) -> dict:
+    def get_diets(self, user_id: str):
         """
         Retrieve the diet information for a given user.
 
