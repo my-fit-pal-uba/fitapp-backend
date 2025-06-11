@@ -1,13 +1,13 @@
+from diet_module.service.abstract_service import AbstractDietService
+
+
 class DietController:
-    def __init__(self):
-        pass
+    def __init__(self, diet_service: AbstractDietService):
+        self.diet_service: AbstractDietService = diet_service
 
     def get_diets(self, user_id):
-        diets = [
-            {
-                "name": "Dieta Mediterránea",
-                "description": "Enfocada en el consumo de frutas, verduras, granos enteros, pescado y aceite de oliva.",
-                "calories": 2000,
-            }
-        ]
-        return True, diets, 200
+        try:
+            diets = self.diet_service.get_diets(user_id)
+            return True, diets, 200
+        except Exception as e:
+            return False, str(e), 500
