@@ -14,4 +14,4 @@ EXPOSE 8080
 RUN useradd app 
 USER app
 
-CMD ["python", "src/app.py"]
+CMD ["python", "src/app.py", "--debug"]

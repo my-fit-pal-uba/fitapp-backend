@@ -1,23 +1,23 @@
 from abc import abstractmethod
 
-from nutrition_module.models.dish import dish
-from nutrition_module.models.dish_consumption import DishConsumption
 
-
-class AbstractNutritionService:
-
+class AbstractDietRepository:
     @abstractmethod
-    def get_meal_categories(self):
+    def get_diets(self):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def post_dish(self, dish: dish):
+    def get_diet_by_id(self, diet_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def get_dishes(self):
+    def post_diet(self, diet):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def post_dish_consumption(self, dish_consumption: DishConsumption):
+    def remove_diet(self, diet_id: int):
+        raise NotImplementedError("This method should be overridden by subclasses")
+
+    @abstractmethod
+    def get_dishes_from_diet(self, diet_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
