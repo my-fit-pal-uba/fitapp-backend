@@ -17,3 +17,14 @@ class AbstractTrainerRepository:
         Asocia el paciente con el entrenador en la base de datos.
         """
         pass
+    
+
+    @abstractmethod
+    def get_clients_by_trainer(self, trainer_id: int) -> list[dict]:
+        """
+        Devuelve todos los clientes (ID, nombre, apellido) asociados a un entrenador.
+
+        :param trainer_id: ID del entrenador
+        :return: Lista de diccionarios con las claves: user_id, first_name, last_name
+        """
+        pass

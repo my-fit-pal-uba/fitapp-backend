@@ -33,3 +33,6 @@ class TrainerController:
             return True, "Cliente vinculado exitosamente", 200
         except Exception as e:
             return False, f"Error al vincular cliente: {str(e)}", 500
+
+    def get_clients_by_trainer(self, trainer_id: int):
+         return self.trainer_service.get_clients_by_trainer(trainer_id)

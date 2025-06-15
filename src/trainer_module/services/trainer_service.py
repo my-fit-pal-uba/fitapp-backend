@@ -3,7 +3,7 @@ from trainer_module.repository.abstract_trainer_repository import (
     AbstractTrainerRepository,
 )
 
-from typing import List
+from typing import List, Dict
 
 class TrainerService(AbstractTrainerService):
     def __init__(self, abstract_trainer_service: AbstractTrainerRepository):
@@ -16,3 +16,6 @@ class TrainerService(AbstractTrainerService):
             raise ValueError("Paciente no encontrado con nombre, apellido e ID provistos.")
 
         self.repository.link_patient_to_trainer(patient_id, trainer_id)
+    
+    def get_clients_by_trainer(self, trainer_id: int) -> List[dict]:
+        return self.repository.get_clients_by_trainer(trainer_id)

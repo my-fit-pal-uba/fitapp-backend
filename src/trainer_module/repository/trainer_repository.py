@@ -58,3 +58,19 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error vinculando paciente a entrenador:", e)
             raise
+
+    def get_clients_by_trainer(self, trainer_id: int) -> list[dict]:
+        query = """
+            SELECT u.user_id, u.first_name, u.last_name
+            FROM trainer_client tc
+            JOIN users u ON tc.client_id = u.user_id
+            WHERE tc.trainer_id = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+                cursor.execute(query, (trainer_id,))
+                rows = cursor.fetchall()
+                return [dict(row) for row in rows]
+        except psycopg2.Error as e:
+            print("Error al obtener clientes del entrenador:", e)
+            return []
