@@ -4,6 +4,7 @@ from trainer_module.repository.abstract_trainer_repository import (
     AbstractTrainerRepository,
 )
 
+
 class TrainerRepository(AbstractTrainerRepository):
     def __init__(self, db_config=None):
         self.db_config = db_config or {
@@ -17,13 +18,17 @@ class TrainerRepository(AbstractTrainerRepository):
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
 
-    def find_patient_by_full_identity(self, nombre: str, apellido: str, patient_id: int):
+    def find_patient_by_full_identity(
+        self, nombre: str, apellido: str, patient_id: int
+    ):
         query = """
             SELECT * FROM users
             WHERE first_name = %s AND last_name = %s AND user_id = %s
         """
         try:
-            with self.get_connection() as conn, conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
                 cursor.execute(query, (nombre, apellido, patient_id))
                 return cursor.fetchone()
         except psycopg2.Error as e:
@@ -67,7 +72,9 @@ class TrainerRepository(AbstractTrainerRepository):
             WHERE tc.trainer_id = %s
         """
         try:
-            with self.get_connection() as conn, conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
                 cursor.execute(query, (trainer_id,))
                 rows = cursor.fetchall()
                 return [dict(row) for row in rows]

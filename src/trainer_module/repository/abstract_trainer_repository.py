@@ -1,12 +1,15 @@
 from abc import abstractmethod
 
+
 class AbstractTrainerRepository:
 
     @abstractmethod
-    def find_patient_by_full_identity(self, nombre: str, apellido: str, patient_id: int):
+    def find_patient_by_full_identity(
+        self, nombre: str, apellido: str, patient_id: int
+    ):
         """
         Busca un paciente por nombre, apellido e ID exactos.
-        
+
         :return: El paciente si existe, None si no.
         """
         pass
@@ -17,7 +20,6 @@ class AbstractTrainerRepository:
         Asocia el paciente con el entrenador en la base de datos.
         """
         pass
-    
 
     @abstractmethod
     def get_clients_by_trainer(self, trainer_id: int) -> list[dict]:

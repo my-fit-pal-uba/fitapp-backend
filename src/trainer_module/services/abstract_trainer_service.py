@@ -4,13 +4,16 @@ from typing import List, Dict
 
 class AbstractTrainerService:
     """An abstract base class that defines the interface for trainer services.
-    Subclasses should implement the methods to provide concrete trainer management logic."""
+    Subclasses should implement the methods to provide concrete trainer management logic.
+    """
 
     @abstractmethod
-    def register_client(self, nombre: str, apellido: str, patient_id: int, trainer_id: int) -> None:
+    def register_client(
+        self, nombre: str, apellido: str, patient_id: int, trainer_id: int
+    ) -> None:
         """
         Registra (vincula) un paciente a un entrenador.
-        
+
         Parámetros:
         - nombre: str - nombre del paciente
         - apellido: str - apellido del paciente

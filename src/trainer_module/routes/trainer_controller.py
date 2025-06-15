@@ -8,7 +8,9 @@ class TrainerController:
     def __init__(self, trainer_service: AbstractTrainerService):
         self.trainer_service: AbstractTrainerService = trainer_service
 
-    def register_client(self, patient_key: str, trainer_id: int) -> Tuple[bool, str, int]:
+    def register_client(
+        self, patient_key: str, trainer_id: int
+    ) -> Tuple[bool, str, int]:
         # Validación y parsing de clave
         if "#" not in patient_key:
             return False, "Formato de clave inválido. Debe ser 'NombreApellido#ID'", 400
@@ -20,7 +22,7 @@ class TrainerController:
             return False, "ID inválido en la clave", 400
 
         # Separar nombre y apellido (asumiendo PascalCase sin espacios)
-        name_parts = re.findall('[A-Z][^A-Z]*', full_name)
+        name_parts = re.findall("[A-Z][^A-Z]*", full_name)
         if len(name_parts) < 2:
             return False, "La clave debe contener al menos nombre y apellido", 400
 
@@ -29,10 +31,12 @@ class TrainerController:
 
         # Delegar en el service
         try:
-            self.trainer_service.register_client(nombre, apellido, patient_id, trainer_id)
+            self.trainer_service.register_client(
+                nombre, apellido, patient_id, trainer_id
+            )
             return True, "Cliente vinculado exitosamente", 200
         except Exception as e:
             return False, f"Error al vincular cliente: {str(e)}", 500
 
     def get_clients_by_trainer(self, trainer_id: int):
-         return self.trainer_service.get_clients_by_trainer(trainer_id)
+        return self.trainer_service.get_clients_by_trainer(trainer_id)

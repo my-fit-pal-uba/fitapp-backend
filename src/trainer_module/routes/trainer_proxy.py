@@ -11,9 +11,15 @@ class TrainerProxy:
         self.register_routes()
 
     def register_routes(self):
-        self.trainer_bp.add_url_rule("/register_client", view_func=self.register_client, methods=["POST"])
-        self.trainer_bp.add_url_rule("/clients/<int:trainer_id>", view_func=self.get_clients_by_trainer, methods=["GET"])
-       
+        self.trainer_bp.add_url_rule(
+            "/register_client", view_func=self.register_client, methods=["POST"]
+        )
+        self.trainer_bp.add_url_rule(
+            "/clients/<int:trainer_id>",
+            view_func=self.get_clients_by_trainer,
+            methods=["GET"],
+        )
+
     def register_client(self):
         """
         Registra un cliente a un entrenador
@@ -48,7 +54,6 @@ class TrainerProxy:
 
         result = self.trainer_controller.register_client(patient_key, trainer_id)
         return ResponseInfo.to_response(result)
-
 
     def get_clients_by_trainer(self, trainer_id: int):
         """
@@ -87,5 +92,7 @@ class TrainerProxy:
         """
         result = self.trainer_controller.get_clients_by_trainer(trainer_id)
         if result is None:
-            return ResponseInfo.to_response((False, "Entrenador no encontrado o sin clientes", 404))
+            return ResponseInfo.to_response(
+                (False, "Entrenador no encontrado o sin clientes", 404)
+            )
         return jsonify(result)
