@@ -52,9 +52,6 @@ class NotificationsProxy:
           500:
             description: Error del servidor
         """
-
-        # self._send_email(mailserver, port)
-        # return ResponseInfo.to_response((True, "Email sent successfully", 200))
         result = self.notification_controller.send_notification_mail()
         return ResponseInfo.to_response(result)
 
@@ -89,6 +86,13 @@ class NotificationsProxy:
         ---
         tags:
           - notifications
+        parameters:
+          - in: query
+            name: user_id
+            required: true
+            schema:
+              type: string
+            description: The ID of the user to retrieve notifications for
         responses:
           200:
             description: Notification retrieved successfully
@@ -107,5 +111,6 @@ class NotificationsProxy:
         user_id = request.args.get("user_id")
         if not user_id:
             return ResponseInfo.to_response((False, "User ID is required", 400))
+        result = self.notification_controller.get_notification(int(user_id))
 
-        return self.notification_controller.get_notification(user_id)
+        return ResponseInfo.to_response(result)

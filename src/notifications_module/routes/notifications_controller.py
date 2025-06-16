@@ -14,9 +14,9 @@ class NotificationController:
             print(f"Error sending notification email: {e}")
             return False, str(e), 500
 
-    def get_notification(self):
+    def get_notification(self, user_id: int):
         try:
-            notifications = self.notification_service.get_notifications()
+            notifications = self.notification_service.get_notifications(user_id)
             return True, notifications, 200
         except Exception as e:
             print(f"Error retrieving notifications: {e}")

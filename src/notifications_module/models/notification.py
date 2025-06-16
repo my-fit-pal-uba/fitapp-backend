@@ -7,9 +7,6 @@ class Notification:
     def to_dict(self):
         return {
             "id": self.id,
-            "title": self.title,
-            "content": self.content,
             "description": self.description,
             "date": self.date,
-            "read": self.read,
         }
