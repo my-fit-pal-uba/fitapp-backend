@@ -63,6 +63,9 @@ from routine_module.services.abstract_routine_service import AbstractRoutineServ
 from routine_module.services.routine_service import RoutineService
 from routine_module.routes.routine_controller import RoutineController
 from routine_module.routes.routine_proxy import RoutineProxy
+from notifications_module.routes.notifications_proxy import NotificationsProxy
+from notifications_module.routes.notifications_controller import NotificationController
+from notifications_module.services.notification_service import NotificationService
 
 
 DEFAULT_PORT = "8080"
@@ -82,6 +85,7 @@ class BackendApp:
         self.inyect_nutrition_service()
         self.inject_routine_service()
         self.inject_goals_service()
+        self.inyect_notifications_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -142,6 +146,12 @@ class BackendApp:
         goals_controller: GoalsController = GoalsController(goals_service)
         goals_proxy = GoalsProxy(goals_controller)
         self.app.register_blueprint(goals_proxy.goals_bp)
+
+    def inyect_notifications_service(self):
+        notification_service = NotificationService()
+        notification_controller = NotificationController(notification_service)
+        notifications_proxy = NotificationsProxy(notification_controller)
+        self.app.register_blueprint(notifications_proxy.notifications_bp)
 
     def register_healt_check(self):
         @self.app.route("/")
