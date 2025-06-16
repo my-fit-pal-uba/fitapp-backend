@@ -3,10 +3,12 @@ import os
 import socket
 import ssl
 
+from datetime import datetime
 from dotenv import load_dotenv
 from notifications_module.services.abstract_notification_service import (
     AbstractNotificationService,
 )
+from notifications_module.models.notification import Notification
 
 MAILSERVER = "smtp.gmail.com"
 PORT = 465
@@ -120,3 +122,11 @@ class NotificationService(AbstractNotificationService):
 
         msg = "".join(response)
         return msg
+
+    def get_notifications(self, user_id: int):
+        notification = Notification(
+            id=1,
+            description="This is a test notification",
+            date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        )
+        return [notification.to_dict()]

@@ -16,6 +16,11 @@ class NotificationsProxy:
             view_func=self.post_notification,
             methods=["POST"],
         )
+        self.notifications_bp.add_url_rule(
+            "/get_notification",
+            view_func=self.get_notification,
+            methods=["GET"],
+        )
         self.register_routes()
 
     def register_routes(self):
@@ -77,3 +82,30 @@ class NotificationsProxy:
         notification = request.get_json()
         print(f"Notification data: {notification}")
         return ResponseInfo.to_response((True, "Notification posted successfully", 200))
+
+    def get_notification(self):
+        """
+        Get a notification
+        ---
+        tags:
+          - notifications
+        responses:
+          200:
+            description: Notification retrieved successfully
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: string
+                  example: "Notification retrieved successfully"
+          500:
+            description: Error retrieving notification
+        """
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return ResponseInfo.to_response((False, "User ID is required", 400))
+
+        return self.notification_controller.get_notification(user_id)
