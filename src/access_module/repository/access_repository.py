@@ -30,15 +30,18 @@ class AccessRepository(AbstractAccessRepository):
             is_superuser=record.get("is_admin"),
             last_login=record.get("last_login"),
             password_hash=record.get("password_hash"),
+            rol_resource_key=record.get("rol_resource_key"),
         )
 
     def get_user_by_email(self, email: str) -> Optional[User]:
         query = """
             SELECT 
-                user_id, username, email, first_name, last_name, 
-                is_active, is_admin, last_login, password_hash
-            FROM Users
-            WHERE email = %s
+                u.user_id, u.username, u.email, u.first_name, u.last_name, 
+                u.is_active, u.is_admin, u.last_login, u.password_hash, r.rol_resource_key
+            FROM Users u
+            JOIN user_rols ur ON u.user_id = ur.user_id
+            JOIN rols r ON ur.rol_id = r.id
+            WHERE u.email = %s;
         """
         try:
             with self.get_connection() as conn, conn.cursor(

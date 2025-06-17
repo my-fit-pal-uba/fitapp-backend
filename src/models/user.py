@@ -16,6 +16,7 @@ class User:
         last_name: Optional[str] = None,
         user_id: Optional[int] = None,
         username: Optional[str] = None,
+        rol_resource_key: Optional[str] = None,
     ):
         self.user_id = user_id
         self.username = username
@@ -26,6 +27,7 @@ class User:
         self.is_superuser = is_superuser
         self.last_login = last_login
         self.password_hash = password_hash
+        self.rol_resource_key = rol_resource_key
 
     def to_dict(self):
         return {
@@ -37,4 +39,5 @@ class User:
             "is_active": self.is_active,
             "is_superuser": self.is_superuser,
             "last_login": self.last_login.isoformat() if self.last_login else None,
+            "rol": self.rol_resource_key,
         }
