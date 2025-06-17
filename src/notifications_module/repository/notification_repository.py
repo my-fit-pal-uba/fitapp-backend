@@ -53,4 +53,28 @@ class NotificationRepository(AbstractNotificationRepository):
             return []
 
     def post_notification(self, notification_data: Notification):
-        pass
+        query = """
+            INSERT INTO notifications (user_id, description, date, active)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+        """
+        print(f"Posting notification: {notification_data.to_dict()}")
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(
+                    query,
+                    (
+                        notification_data.user_id,
+                        notification_data.description,
+                        notification_data.date,
+                        True,
+                    ),
+                )
+                conn.commit()
+                return True
+        except psycopg2.Error as e:
+            print(f"Error posting notification: {e}")
+            return False

@@ -27,7 +27,7 @@ class NotificationController:
         try:
             new_notification = Notification.from_dict(notification_data)
             result = self.notification_service.post_notification(new_notification)
-            return True, result, 201
+            return True, result, 200
         except Exception as e:
             print(f"Error posting notification: {e}")
             return False, str(e), 500

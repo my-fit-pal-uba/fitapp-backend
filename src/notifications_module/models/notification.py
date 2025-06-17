@@ -3,7 +3,7 @@ class Notification:
         self.id = id
         self.description = description
         self.date = date
-        self.user_id = 0
+        self.user_id = user_id
 
     def to_dict(self):
         return {
@@ -17,4 +17,5 @@ class Notification:
             id=data.get("id"),
             description=data.get("description"),
             date=data.get("date"),
+            user_id=data.get("user_id", 0),
         )

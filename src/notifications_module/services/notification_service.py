@@ -3,7 +3,6 @@ import os
 import socket
 import ssl
 
-from datetime import datetime
 from dotenv import load_dotenv
 from notifications_module.services.abstract_notification_service import (
     AbstractNotificationService,
@@ -142,7 +141,7 @@ class NotificationService(AbstractNotificationService):
         """
         try:
             print(f"Posting notification: {notification_data.to_dict()}")
-            self.notifications_repository.post_notification(notification_data)
+            self.notification_repository.post_notification(notification_data)
         except Exception as e:
             print(f"Error posting notification: {e}")
             return False

@@ -57,13 +57,49 @@ class NotificationsProxy:
 
     def post_notification(self):
         """
-        Post a notification
+
+        Registra un nuevo plato en la base de datos
         ---
         tags:
           - notifications
+        summary: Registra un nuevo plato en la base de datos / Registers a new dish in the database
+        description: Crea un nuevo registro de plato con la información nutricional proporcionada / Creates a new dish record with the provided nutritional information
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - in: body
+            name: body
+            description: Nueva notificacion
+            required: true
+            schema:
+              type: object
+              required:
+                - description
+                - user_id
+                - date
+              properties:
+                user_id:
+                  type: integer
+                  format: int
+                  description: ID único del plato
+                description:
+                  type: string
+                  description: Descripción de la notificación
+                  example: "Notificación de prueba"
+                date:
+                  type: string
+                  format: date-time
+                  description: Fecha de la notificación
+                  example: "2023-10-01T12:00:00Z"
+                example:
+                  description: "Notificación de prueba"
+                  date: "2023-10-01T12:00:00Z"
+                  user_id: 11
         responses:
           200:
-            description: Notification posted successfully
+            description: Consumo registrado exitosamente
             schema:
               type: object
               properties:
@@ -71,10 +107,37 @@ class NotificationsProxy:
                   type: boolean
                   example: true
                 data:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Ensalada César"
+          401:
+            description: Error en los parametros
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                error:
                   type: string
-                  example: "Notification posted successfully"
+                  example: "El plato ya existe en la base de datos"
           500:
-            description: Error posting notification
+            description: Error del servidor
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                error:
+                  type: string
+                  example: "Error interno del servidor"
+
         """
         notification = request.get_json()
         print(f"Notification data: {notification}")
