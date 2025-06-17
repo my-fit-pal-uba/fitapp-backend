@@ -63,7 +63,7 @@ class Login(AbstractAccessService):
         email = idinfo.get("email")
         name = idinfo.get("given_name")
         last_name = idinfo.get("family_name")
-        password = None
+        password = ""
 
         result = self.repository.create_user(email, password, name, last_name)
 
