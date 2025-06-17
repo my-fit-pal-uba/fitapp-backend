@@ -45,7 +45,5 @@ class NutritionController:
             self.nutrition_service.post_dish_consumption(dish_consumption)
             return True, "Dish consumption registered successfully", 200
         except Exception as e:
-            # print(f"Error registering dish consumption: {e}")
-            # return False, str(e), 500
             print(f"Error registering dish consumption: {e}")
             return False, "Error registering dish consumption", 500
