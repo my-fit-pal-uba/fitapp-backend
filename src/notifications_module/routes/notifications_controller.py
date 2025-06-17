@@ -18,7 +18,7 @@ class NotificationController:
     def get_notification(self, user_id: int):
         try:
             notifications = self.notification_service.get_notifications(user_id)
-            return True, notifications, 200
+            return True, [noti.to_dict() for noti in notifications], 200
         except Exception as e:
             print(f"Error retrieving notifications: {e}")
             return False, str(e), 500

@@ -125,12 +125,15 @@ class NotificationService(AbstractNotificationService):
         return msg
 
     def get_notifications(self, user_id: int):
-        notification = Notification(
-            id=user_id,
-            description="This is a test notification",
-            date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        )
-        return [notification.to_dict()]
+        try:
+            """
+            Retrieves notifications for a specific user.
+            This method simulates fetching notifications by returning a list of dummy notifications.
+            """
+            return self.notification_repository.get_notifications(user_id)
+        except Exception as e:
+            print(f"Error retrieving notifications: {e}")
+            return []
 
     def post_notification(self, notification_data: Notification):
         """

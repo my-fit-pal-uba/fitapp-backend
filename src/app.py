@@ -66,6 +66,12 @@ from routine_module.routes.routine_proxy import RoutineProxy
 from notifications_module.routes.notifications_proxy import NotificationsProxy
 from notifications_module.routes.notifications_controller import NotificationController
 from notifications_module.services.notification_service import NotificationService
+from notifications_module.repository.abstract_notification_repository import (
+    AbstractNotificationRepository,
+)
+from notifications_module.repository.notification_repository import (
+    NotificationRepository,
+)
 
 
 DEFAULT_PORT = "8080"
@@ -148,7 +154,10 @@ class BackendApp:
         self.app.register_blueprint(goals_proxy.goals_bp)
 
     def inyect_notifications_service(self):
-        notification_service = NotificationService()
+        notification_repository: AbstractNotificationRepository = (
+            NotificationRepository()
+        )
+        notification_service = NotificationService(notification_repository)
         notification_controller = NotificationController(notification_service)
         notifications_proxy = NotificationsProxy(notification_controller)
         self.app.register_blueprint(notifications_proxy.notifications_bp)
