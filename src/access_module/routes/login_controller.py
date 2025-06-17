@@ -32,3 +32,21 @@ class LoginController:
             return response, "User signed up successfully", 200
         except Exception as e:
             return False, str(e), 500
+
+    def sign_up_google(self, idinfo) -> Tuple[bool, str, int]:
+        try:
+            response = self.login_service.sign_up_google(idinfo)
+            if not response:
+                return False, "User already exists or could not be created", 404
+            return response, "User signed up with Google successfully", 200
+        except Exception as e:
+            return False, str(e), 500
+
+    def login_google(self, idinfo) -> Tuple[bool, str, int]:
+        try:
+            response = self.login_service.login_google(idinfo)
+            if not response:
+                return False, "User does not exist or could not log in", 404
+            return response, "User logged in with Google successfully", 200
+        except Exception as e:
+            return False, str(e), 500

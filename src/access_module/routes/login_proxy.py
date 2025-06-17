@@ -1,4 +1,12 @@
 from flask import Blueprint, request
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+
+from google.oauth2 import id_token
+from google.auth.transport import requests as grequests
 
 from access_module.routes.login_controller import LoginController
 from models.response import ResponseInfo
@@ -15,6 +23,12 @@ class LoginProxy:
         self.login_bp.add_url_rule("/login", view_func=self.login, methods=["GET"])
         self.login_bp.add_url_rule("/signup", view_func=self.sign_up, methods=["POST"])
         # self.login_bp.add_url_rule("/users", view_func=self.get_users, methods=["GET"])
+        self.login_bp.add_url_rule(
+            "/signup/google", view_func=self.sign_up_google, methods=["POST"]
+        )
+        self.login_bp.add_url_rule(
+            "/login/google", view_func=self.login_google, methods=["GET"]
+        )
 
     def login(self):
         """
@@ -111,4 +125,104 @@ class LoginProxy:
         responde = self.login_controller.sign_up(
             user_email, user_password, user_name, user_last_name
         )
+        return ResponseInfo.to_response(responde)
+
+    def sign_up_google(self):
+        """
+        Registra un usuario con Google OAuth
+        ---
+        tags:
+          - Authentication
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              type: object
+              properties:
+                credential:
+                  type: string
+                  example: eyJhbGciOiJSUzI1NiIsImtpZCI6Ij...
+        responses:
+          200:
+            description: Registro exitoso con Google
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                user_id:
+                  type: integer
+                  example: 42
+          400:
+            description: Token de Google inválido
+          500:
+            description: Error del servidor
+        """
+        if not request.is_json:
+            return ResponseInfo.to_response((False, "Request body must be JSON", 400))
+
+        data = request.get_json()
+        token = data.get("credential")
+        if not token:
+            return ResponseInfo.to_response(
+                (False, "Google credential is required", 400)
+            )
+
+        idinfo = id_token.verify_oauth2_token(
+            token, grequests.Request(), GOOGLE_CLIENT_ID
+        )
+
+        responde = self.login_controller.sign_up_google(idinfo)
+
+        return ResponseInfo.to_response(responde)
+
+    def login_google(self):
+        """
+        Inicia sesión de usuario con Google OAuth
+        ---
+        tags:
+          - Authentication
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              type: object
+              properties:
+                credential:
+                  type: string
+                  example: eyJhbGciOiJSUzI1NiIsImtpZCI6Ij...
+        responses:
+          200:
+            description: Login exitoso con Google
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                user_id:
+                  type: integer
+                  example: 42
+          400:
+            description: Token de Google inválido
+          500:
+            description: Error del servidor
+        """
+        if not request.is_json:
+            return ResponseInfo.to_response((False, "Request body must be JSON", 400))
+
+        data = request.get_json()
+        token = data.get("credential")
+        if not token:
+            return ResponseInfo.to_response(
+                (False, "Google credential is required", 400)
+            )
+
+        idinfo = id_token.verify_oauth2_token(
+            token, grequests.Request(), GOOGLE_CLIENT_ID
+        )
+        responde = self.login_controller.login_google(idinfo)
         return ResponseInfo.to_response(responde)

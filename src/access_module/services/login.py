@@ -58,3 +58,31 @@ class Login(AbstractAccessService):
 
     def get_users(self):
         return self.repository.get_users()
+
+    def sign_up_google(self, idinfo):
+        email = idinfo.get("email")
+        name = idinfo.get("given_name")
+        last_name = idinfo.get("family_name")
+        password = None
+
+        result = self.repository.create_user(email, password, name, last_name)
+
+        if not result:
+            raise UserAlreadyExists(email)
+
+        user_data: User = self.repository.get_user_by_email(email)
+
+        return self.create_access_token(user_data)
+
+    def login_google(self, idinfo):
+
+        email = idinfo.get("email")
+        if not email:
+            return None
+
+        user_data: User = self.repository.get_user_by_email(email)
+        if not user_data:
+            # Si el usuario no existe, puedes retornar None o crear el usuario automáticamente
+            return None
+
+        return self.create_access_token(user_data)
