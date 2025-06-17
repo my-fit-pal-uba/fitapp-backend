@@ -315,17 +315,26 @@ class ProfileProxy:
         user_id = data.get("user_id", None)
 
         if not rol_id or not user_id:
-            return ResponseInfo(
-                status_code=400,
-                message="Role and user_id are required",
-                data=None,
-            ).to_dict()
+            return ResponseInfo.to_response(
+                (False, "Role and user_id are required", 400)
+            )
 
-        result = self.profile_controller.register_user_rol(
-            rol_id=int(rol_id), user_id=int(user_id)
+        success, data, status = self.profile_controller.register_user_rol_with_token(
+            user_id=int(user_id), rol_id=int(rol_id)
         )
 
-        return ResponseInfo.to_response(result)
+        if not success:
+            return ResponseInfo.to_response(
+                (False, data.get("error", "Unknown error"), status)
+            )
+
+        return jsonify(
+            {
+                "success": True,
+                "message": data.get("message"),
+                "token": data.get("token"),
+            }
+        )
 
     def post_photo(self):
         """

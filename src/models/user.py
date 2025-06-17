@@ -39,5 +39,5 @@ class User:
             "is_active": self.is_active,
             "is_superuser": self.is_superuser,
             "last_login": self.last_login.isoformat() if self.last_login else None,
-            "rol": self.rol_resource_key,
+            "rol": getattr(self, "rol_resource_key", None),
         }
