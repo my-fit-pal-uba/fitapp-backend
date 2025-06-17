@@ -27,7 +27,7 @@ class LoginProxy:
             "/signup/google", view_func=self.sign_up_google, methods=["POST"]
         )
         self.login_bp.add_url_rule(
-            "/login/google", view_func=self.login_google, methods=["GET"]
+            "/login/google", view_func=self.login_google, methods=["POST"]
         )
 
     def login(self):
