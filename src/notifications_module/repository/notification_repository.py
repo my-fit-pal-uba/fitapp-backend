@@ -32,6 +32,7 @@ class NotificationRepository(AbstractNotificationRepository):
                 active
             FROM notifications
             WHERE user_id = %s
+            AND active = true
         """
         try:
             with (
@@ -77,4 +78,40 @@ class NotificationRepository(AbstractNotificationRepository):
                 return True
         except psycopg2.Error as e:
             print(f"Error posting notification: {e}")
+            return False
+
+    def notification_by_id(self, notification_id: int):
+        query = """
+            SELECT 
+                description
+            FROM notifications
+            WHERE id = %s AND active = true
+        """
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(query, (notification_id,))
+                record = cursor.fetchone()
+                return record["description"] if record else ""
+        except psycopg2.Error:
+            return None
+
+    def deactivate_notification(self, notification_id: int):
+        query = """
+            UPDATE notifications
+            SET active = false
+            WHERE id = %s
+        """
+        try:
+            with (
+                self.get_connection() as conn,
+                conn.cursor(cursor_factory=DictCursor) as cursor,
+            ):
+                cursor.execute(query, (notification_id,))
+                conn.commit()
+                return True
+        except psycopg2.Error as e:
+            print(f"Error deactivating notification: {e}")
             return False

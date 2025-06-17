@@ -3,7 +3,7 @@ from notifications_module.models.notification import Notification
 
 class AbstractNotificationService:
 
-    def send_notification_email(self):
+    def send_notification_email(self, notification_id: int, user_email: str):
         """
         Sends a notification email.
         This method should be implemented by subclasses to define the specific email sending logic.

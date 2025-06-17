@@ -22,7 +22,7 @@ class NotificationService(AbstractNotificationService):
             notificarion_repository
         )
 
-    def send_notification_email(self):
+    def send_notification_email(self, notification_id: int, user_email: str):
         """
         Sends a notification email.
         This method connects to the SMTP server and sends an email with a predefined message.
@@ -34,10 +34,22 @@ class NotificationService(AbstractNotificationService):
         password = os.getenv("EMAIL_PASSWORD", None)
         if not username or not password:
             raise ValueError("Should have set mails configs first")
-        self._send_email(MAILSERVER, PORT, username, password)
-        return True, "Email sent successfully", 200
+        notification_message = self.notification_repository.notification_by_id(
+            notification_id
+        )
+        try:
+            if not notification_message or notification_message == "":
+                notification_message = "Acordate de passar por PeakFit Hoy"
+            if self._send_email(
+                MAILSERVER, PORT, username, password, notification_message, user_email
+            ):
+                self.notification_repository.deactivate_notification(notification_id)
+            return True
+        except Exception as e:
+            print(f"Error sending email: {e}")
+            return False
 
-    def _send_email(self, mailserver, port, username, password):
+    def _send_email(self, mailserver, port, username, password, msg, dst_email):
         try:
             with socket.create_connection((mailserver, port)) as sock:
                 context = ssl.create_default_context()
@@ -55,40 +67,9 @@ class NotificationService(AbstractNotificationService):
                     )
 
                     from_addr = "fitnesspeakfit@gmail.com"
-                    to_addr = ["jcastrom@fi.uba.ar"]
-                    subject = "Invitación al gimnasio"
-                    msg_body = """
-                    *🏳️‍🌈 ¡Tu Mejor Versión te Espera en Fitness Peak Fit! 🏳️‍🌈*  
-
-                    *💪 El primer gimnasio gay-friendly donde el sudor se mezcla con el orgullo*  
-
-                    En *Fitness Peak Fit* no solo moldeamos cuerpos - construimos *comunidad, confianza y autoestima* en un espacio 100% libre de prejuicios.  
-
-                    ### 🌟 *Nuestros diferenciales rainbow:*  
-                    ✅ *Zonas diseñadas para tu comodidad* (vestuarios gender-neutral, área lounge)  
-                    ✅ *Clases que desafían estereotipos*:  
-                      - 🧘‍♂️ Yoga Drag (viernes glam)  
-                      - 🥊 Boxeo sin Machismos  
-                      - 💃 Cardio Beyoncé  
-                    ✅ *Equipo especializado en salud LGBTQ+*  
-                    ✅ *Sábados Sociales* (después del entrenamiento: jugos, música y networking)  
-
-                    ### 🔥 *OFERTA DE LANZAMIENTO*  
-                    *30% OFF* en tu primera membresía + *1 clase gratis* al usar el código: *#RAINBOWPEAK*  
-
-                    📍 *Donde estamos*: Calle Céspedes 2940
-                    📩 *Reservas*: fitnesspeakfit@gmail.com
-                    ⏰ *Horario extendido*: 6AM-11PM (porque sabemos de after-offices)  
-
-                    *#NoEsGymEsRevolución #FitnessSinArmarios*  
-
-                    "En Fitness Peak Fit no preguntamos cómo te identificas - preguntamos qué meta quieres lograr"  
-
-                    ---  
-                    ✨ *Bonus: Presentando este mail en recepción, **tu primera suplementación post-entreno es cortesía de la casa*.  
-
-                    *¡Te estamos esperando con los brazos (y mancuernas) abiertos!* 💪🌈
-                    """
+                    to_addr = [dst_email]
+                    subject = "Un recordatorio de PeakFit"
+                    msg_body = msg
 
                     self.send_command(secure_sock, f"MAIL FROM: <{from_addr}>")
 
@@ -101,13 +82,13 @@ class NotificationService(AbstractNotificationService):
                     self.send_command(secure_sock, email_content)
 
                     self.send_command(secure_sock, "QUIT")
-
-            print("✅ Email sent successfully!")
-
+                    return True
         except ssl.SSLError as e:
             print(f"❌ SSL error: {e}")
+            return False
         except Exception as e:
             print(f"❌ General error: {e}")
+            return False
 
     def send_command(self, sock, command):
         """Send a command to the SMTP server and print the response."""

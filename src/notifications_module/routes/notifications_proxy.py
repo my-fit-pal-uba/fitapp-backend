@@ -52,7 +52,18 @@ class NotificationsProxy:
           500:
             description: Error del servidor
         """
-        result = self.notification_controller.send_notification_mail()
+        data = request.get_json()
+        print(f"Received data for email sending: {data}")
+        notification_id = data.get("notification_id")
+        user_email = data.get("user_email")
+        if not notification_id or not user_email:
+            return ResponseInfo.to_response(
+                (False, "user_id, notification_id and user_email are required", 400)
+            )
+        print(f"notification_id: {notification_id}, user_email: {user_email}")
+        result = self.notification_controller.send_notification_mail(
+            notification_id, user_email
+        )
         return ResponseInfo.to_response(result)
 
     def post_notification(self):
@@ -140,7 +151,6 @@ class NotificationsProxy:
 
         """
         notification = request.get_json()
-        print(f"Notification data: {notification}")
         if not notification:
             return ResponseInfo.to_response(
                 (False, "Notification data is required", 400)

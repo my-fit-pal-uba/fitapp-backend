@@ -22,3 +22,17 @@ class AbstractNotificationRepository:
         Create a new notification.
         """
         raise NotImplementedError("This method should be overridden by subclasses.")
+
+    @abstractmethod
+    def notification_by_id(self, notification_id: int) -> dict:
+        """
+        Retrieve a notification by its ID.
+        """
+        raise NotImplementedError("This method should be overridden by subclasses.")
+
+    @abstractmethod
+    def deactivate_notification(self, notification_id: int) -> dict:
+        """
+        Deactivate a notification by its ID.
+        """
+        raise NotImplementedError("This method should be overridden by subclasses.")

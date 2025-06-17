@@ -1,9 +1,17 @@
 class Notification:
-    def __init__(self, id: int, description: str, date: str, user_id: int = 0):
+    def __init__(
+        self,
+        id: int,
+        description: str,
+        date: str,
+        user_id: int = 0,
+        active: bool = True,
+    ):
         self.id = id
         self.description = description
         self.date = date
         self.user_id = user_id
+        self.active = active
 
     def to_dict(self):
         return {

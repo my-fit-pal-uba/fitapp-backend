@@ -8,9 +8,13 @@ class NotificationController:
     def __init__(self, notification_service: AbstractNotificationService):
         self.notification_service = notification_service
 
-    def send_notification_mail(self):
+    def send_notification_mail(self, notification_id: int, user_email: str):
         try:
-            return self.notification_service.send_notification_email()
+            if not self.notification_service.send_notification_email(
+                notification_id, user_email
+            ):
+                return False, "Failed to send notification email", 404
+            return True, "Notification email sent successfully", 200
         except Exception as e:
             print(f"Error sending notification email: {e}")
             return False, str(e), 500
