@@ -78,7 +78,12 @@ class NotificationsProxy:
         """
         notification = request.get_json()
         print(f"Notification data: {notification}")
-        return ResponseInfo.to_response((True, "Notification posted successfully", 200))
+        if not notification:
+            return ResponseInfo.to_response(
+                (False, "Notification data is required", 400)
+            )
+        result = self.notification_controller.post_notification(notification)
+        return ResponseInfo.to_response(result)
 
     def get_notification(self):
         """

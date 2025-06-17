@@ -9,14 +9,19 @@ from notifications_module.services.abstract_notification_service import (
     AbstractNotificationService,
 )
 from notifications_module.models.notification import Notification
+from notifications_module.repository.abstract_notification_repository import (
+    AbstractNotificationRepository,
+)
 
 MAILSERVER = "smtp.gmail.com"
 PORT = 465
 
 
 class NotificationService(AbstractNotificationService):
-    def __init__(self):
-        pass
+    def __init__(self, notificarion_repository: AbstractNotificationRepository):
+        self.notification_repository: AbstractNotificationRepository = (
+            notificarion_repository
+        )
 
     def send_notification_email(self):
         """
@@ -29,11 +34,7 @@ class NotificationService(AbstractNotificationService):
         username = os.getenv("EMAIL_USERNAME", None)
         password = os.getenv("EMAIL_PASSWORD", None)
         if not username or not password:
-            raise ValueError(
-                f"Email username and password must be set in environment variables. "
-                f"Check the variables in the environment where you run this script. "
-                f"File: {os.path.abspath(__file__)}"
-            )
+            raise ValueError("Should have set mails configs first")
         self._send_email(MAILSERVER, PORT, username, password)
         return True, "Email sent successfully", 200
 
@@ -125,8 +126,20 @@ class NotificationService(AbstractNotificationService):
 
     def get_notifications(self, user_id: int):
         notification = Notification(
-            id=1,
+            id=user_id,
             description="This is a test notification",
             date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         )
         return [notification.to_dict()]
+
+    def post_notification(self, notification_data: Notification):
+        """
+        Posts a notification.
+        This method simulates posting a notification by returning the provided data.
+        """
+        try:
+            print(f"Posting notification: {notification_data.to_dict()}")
+            self.notifications_repository.post_notification(notification_data)
+        except Exception as e:
+            print(f"Error posting notification: {e}")
+            return False
