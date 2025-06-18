@@ -81,3 +81,109 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error al obtener clientes del entrenador:", e)
             return []
+        
+    def exercise_exists(self, exercise_id: int) -> bool:
+        query = "SELECT EXISTS(SELECT 1 FROM exercises WHERE exercise_id = %s)"
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (exercise_id,))
+                return cursor.fetchone()[0]
+        except psycopg2.Error as e:
+            print("Error verificando existencia de ejercicio:", e)
+            return False
+        
+    def client_exists(self, client_id: int) -> bool:
+        query = "SELECT EXISTS(SELECT 1 FROM users WHERE user_id = %s)"
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (client_id,))
+                return cursor.fetchone()[0]
+        except psycopg2.Error as e:
+            print("Error verificando existencia de cliente:", e)
+            return False
+        
+    def share_exercise(self, exercise_id: int, client_id: int) -> None:
+        query = """
+            INSERT INTO client_exercises (client_id, exercise_id)
+            VALUES (%s, %s)
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (client_id, exercise_id))
+                conn.commit()
+        except psycopg2.Error as e:
+            print("Error compartiendo ejercicio:", e)
+            raise
+
+    def dish_exists(self, dish_id: int) -> bool:
+        query = "SELECT EXISTS(SELECT 1 FROM dishes WHERE id = %s)"
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (dish_id,))
+                return cursor.fetchone()[0]
+        except psycopg2.Error as e:
+            print("Error verificando existencia de plato:", e)
+            return False
+        
+    def share_dish(self, dish_id: int, client_id: int) -> None:
+        query = """
+            INSERT INTO client_dishes (client_id, dish_id)
+            VALUES (%s, %s)
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (client_id, dish_id))
+                conn.commit()
+        except psycopg2.Error as e:
+            print("Error compartiendo plato:", e)
+            raise
+
+    def client_dishes(self, client_id: int) -> list[dict]:
+        query = "SELECT dish_id FROM client_dishes WHERE client_id = %s"
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (client_id,))
+                dish_ids = [row[0] for row in cursor.fetchall()]
+            return [self.get_dish_by_id(dish_id) for dish_id in dish_ids]
+        except psycopg2.Error as e:
+            print("Error obteniendo platos del cliente:", e)
+            return []
+
+    def client_exercises(self, client_id: int) -> list[dict]:
+        query = "SELECT exercise_id FROM client_exercises WHERE client_id = %s"
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (client_id,))
+                exercise_ids = [row[0] for row in cursor.fetchall()]
+            return [self.get_exercise_by_id(ex_id) for ex_id in exercise_ids]
+        except psycopg2.Error as e:
+            print("Error obteniendo ejercicios del cliente:", e)
+            return []
+
+    def get_dish_by_id(self, dish_id: int) -> Optional[dict]:
+        query = "SELECT * FROM dishes WHERE id = %s"
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (dish_id,))
+                row = cursor.fetchone()
+                return dict(row) if row else None
+        except psycopg2.Error as e:
+            print("Error obteniendo plato:", e)
+            return None
+
+    def get_exercise_by_id(self, exercise_id: int) -> Optional[dict]:
+        query = "SELECT * FROM exercises WHERE exercise_id = %s"
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (exercise_id,))
+                row = cursor.fetchone()
+                return dict(row) if row else None
+        except psycopg2.Error as e:
+            print("Error obteniendo ejercicio:", e)
+            return None
+
+        

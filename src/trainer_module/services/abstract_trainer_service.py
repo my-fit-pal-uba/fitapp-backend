@@ -34,3 +34,52 @@ class AbstractTrainerService:
         - List[Dict]: Lista de diccionarios con keys 'user_id', 'first_name', 'last_name'
         """
         raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def share_exercise(self, exercise_id: int, client_id: int) -> None:
+        """
+        Comparte un ejercicio con un cliente.
+
+        Parámetros:
+        - exercise_id: int - ID del ejercicio a compartir
+        - client_id: int - ID del entrenador que comparte el ejercicio
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+    
+    @abstractmethod
+    def share_dish(self, dish_id: int, client_id: int) -> None:
+        """
+        Comparte un plato con un cliente.
+
+        Parámetros:
+        - dish_id: int - ID del plato a compartir
+        - client_id: int - ID del entrenador que comparte el plato
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+    
+    @abstractmethod
+    def client_dishes(self, client_id: int) -> List[Dict[str, any]]:
+        """
+        Obtiene los platos compartidos con un cliente específico.
+
+        Parámetros:
+        - client_id: int - ID del cliente
+
+        Retorna:
+        - List[Dict]: Lista de diccionarios con los platos compartidos
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+    
+    @abstractmethod
+    def client_exercises(self, client_id: int) -> List[Dict[str, any]]:
+        """
+        Obtiene los ejercicios compartidos con un cliente específico.
+
+        Parámetros:
+        - client_id: int - ID del cliente
+
+        Retorna:
+        - List[Dict]: Lista de diccionarios con los ejercicios compartidos
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+    
