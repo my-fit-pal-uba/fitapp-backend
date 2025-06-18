@@ -40,3 +40,35 @@ class TrainerController:
 
     def get_clients_by_trainer(self, trainer_id: int):
         return self.trainer_service.get_clients_by_trainer(trainer_id)
+
+    def share_exercise(self, client_id: int, exercise_id: int) -> Tuple[bool, str, int]:
+        try:
+            self.trainer_service.share_exercise(exercise_id, client_id)
+            return True, "Ejercicio compartido exitosamente", 200
+        except Exception as e:
+            return False, f"Error al compartir ejercicio: {str(e)}", 500
+
+    def share_dish(self, client_id: int, dish_id: int) -> Tuple[bool, str, int]:
+        try:
+            self.trainer_service.share_dish(dish_id, client_id)
+            return True, "Plato compartido exitosamente", 200
+        except Exception as e:
+            return False, f"Error al compartir plato: {str(e)}", 500
+
+    def client_dishes(self, client_id: int) -> List[dict]:
+        """
+        Obtiene los platos compartidos con un cliente específico.
+
+        :param client_id: ID del cliente
+        :return: Lista de diccionarios con los platos compartidos
+        """
+        return self.trainer_service.client_dishes(client_id)
+
+    def client_exercises(self, client_id: int) -> List[dict]:
+        """
+        Obtiene los ejercicios compartidos con un cliente específico.
+
+        :param client_id: ID del cliente
+        :return: Lista de diccionarios con los ejercicios compartidos
+        """
+        return self.trainer_service.client_exercises(client_id)
