@@ -81,7 +81,7 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error al obtener clientes del entrenador:", e)
             return []
-        
+
     def exercise_exists(self, exercise_id: int) -> bool:
         query = "SELECT EXISTS(SELECT 1 FROM exercises WHERE exercise_id = %s)"
         try:
@@ -91,7 +91,7 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error verificando existencia de ejercicio:", e)
             return False
-        
+
     def client_exists(self, client_id: int) -> bool:
         query = "SELECT EXISTS(SELECT 1 FROM users WHERE user_id = %s)"
         try:
@@ -101,7 +101,7 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error verificando existencia de cliente:", e)
             return False
-        
+
     def share_exercise(self, exercise_id: int, client_id: int) -> None:
         query = """
             INSERT INTO client_exercises (client_id, exercise_id)
@@ -124,7 +124,7 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error verificando existencia de plato:", e)
             return False
-        
+
     def share_dish(self, dish_id: int, client_id: int) -> None:
         query = """
             INSERT INTO client_dishes (client_id, dish_id)
@@ -185,5 +185,3 @@ class TrainerRepository(AbstractTrainerRepository):
         except psycopg2.Error as e:
             print("Error obteniendo ejercicio:", e)
             return None
-
-        

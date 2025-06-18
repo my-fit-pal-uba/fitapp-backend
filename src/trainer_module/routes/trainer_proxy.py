@@ -19,11 +19,18 @@ class TrainerProxy:
             view_func=self.get_clients_by_trainer,
             methods=["GET"],
         )
-        self.trainer_bp.add_url_rule("/share_exercise", view_func=self.share_exercise, methods=["POST"])
-        self.trainer_bp.add_url_rule("/share_dish", view_func=self.share_dish, methods=["POST"])
-        self.trainer_bp.add_url_rule("/client_dishes", view_func=self.client_dishes, methods=["GET"])
-        self.trainer_bp.add_url_rule("/client_exercises", view_func=self.client_exercises, methods=["GET"])
-
+        self.trainer_bp.add_url_rule(
+            "/share_exercise", view_func=self.share_exercise, methods=["POST"]
+        )
+        self.trainer_bp.add_url_rule(
+            "/share_dish", view_func=self.share_dish, methods=["POST"]
+        )
+        self.trainer_bp.add_url_rule(
+            "/client_dishes", view_func=self.client_dishes, methods=["GET"]
+        )
+        self.trainer_bp.add_url_rule(
+            "/client_exercises", view_func=self.client_exercises, methods=["GET"]
+        )
 
     def register_client(self):
         """
@@ -101,7 +108,7 @@ class TrainerProxy:
                 (False, "Entrenador no encontrado o sin clientes", 404)
             )
         return jsonify(result)
-    
+
     def share_exercise(self):
         """
         Comparte un ejercicio con un cliente
@@ -136,7 +143,7 @@ class TrainerProxy:
 
         result = self.trainer_controller.share_exercise(client_id, exercise_id)
         return ResponseInfo.to_response(result)
-    
+
     def share_dish(self):
         """
         Comparte un plato con un cliente
@@ -167,11 +174,11 @@ class TrainerProxy:
         dish_id = data.get("dish_id")
 
         if client_id is None or dish_id is None:
-          return ResponseInfo.to_response((False, "Datos requeridos faltantes", 400))
+            return ResponseInfo.to_response((False, "Datos requeridos faltantes", 400))
 
         result = self.trainer_controller.share_dish(client_id, dish_id)
         return ResponseInfo.to_response(result)
-    
+
     def client_dishes(self):
         """
         Obtiene todos los platos compartidos con un cliente
@@ -208,7 +215,7 @@ class TrainerProxy:
 
         result = self.trainer_controller.client_dishes(client_id)
         return jsonify(result)
-    
+
     def client_exercises(self):
         """
         Obtiene todos los ejercicios compartidos con un cliente
@@ -245,5 +252,3 @@ class TrainerProxy:
 
         result = self.trainer_controller.client_exercises(client_id)
         return jsonify(result)
-    
-  
