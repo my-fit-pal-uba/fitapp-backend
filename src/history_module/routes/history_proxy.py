@@ -25,6 +25,9 @@ class HistoryProxy:
             view_func=self.get_routine_history_by_date,
             methods=["GET"],
         )
+        self.history_bp.add_url_rule(
+            "all_history", view_func=self.get_all_history, methods=["GET"]
+        )
 
     def get_weight_history(self):
         """

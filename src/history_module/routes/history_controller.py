@@ -57,6 +57,7 @@ class HistoryController:
         try:
             all_history = self.history_service.get_all_history(user_id)
             if not all_history:
+                print("No history found for user ID:", user_id)
                 return False, {"error": "No history found"}, 404
             return True, [history.to_dict() for history in all_history], 200
         except Exception as e:
