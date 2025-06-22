@@ -37,3 +37,10 @@ class HistoryService(AbstractHistoryService):
             user_id, date
         )
         return routine_history
+
+    def get_all_history(self, user_id: int) -> list:
+        if not user_id:
+            return []
+
+        all_history = self.history_repository.get_all_history(user_id)
+        return all_history

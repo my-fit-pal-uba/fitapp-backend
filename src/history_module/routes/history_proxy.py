@@ -238,3 +238,56 @@ class HistoryProxy:
 
         result = self.history_service.get_routine_history_by_date(user_id, date)
         return ResponseInfo.to_response((True, result, 200))
+
+    def get_all_history(self):
+        """
+        ---
+        tags:
+          - History
+        summary: Retrieve user's calories consumption history
+        description: Returns an array of objects containing dates and corresponding calories values
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: The ID of the user whose calories history is being requested
+        responses:
+          200:
+            description: Calories history retrieved successfully
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    description: The date of the calories record
+                  calories:
+                    type: number
+                    format: float
+                    description: The amount of calories consumed on that date
+            examples:
+              application/json: [
+                {"date": "2023-01-01", "calories": 2000.5},
+                {"date": "2023-01-02", "calories": 1850.0}
+              ]
+          400:
+            description: An error occurred while processing the request
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  description: Error message
+        """
+        try:
+            data = request.args.to_dict()
+            user_id = data.get("user_id", None)
+            if not user_id:
+                return {"error": "User ID is required"}, 400
+            result = self.history_service.get_all_history(user_id)
+            return ResponseInfo.to_response(result)
+        except Exception as e:
+            return {"error": str(e)}, 400

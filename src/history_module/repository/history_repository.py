@@ -141,3 +141,6 @@ class HistoryRepository(AbstractHistoryRepository):
                 return result
         except psycopg2.Error:
             return []
+
+    def get_all_history(self, user_id: int) -> list:
+        return []

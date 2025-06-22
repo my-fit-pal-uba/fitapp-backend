@@ -33,3 +33,11 @@ class AbstractHistoryRepository:
         :return: List of dictionaries with routine details for the specified date.
         """
         raise NotImplementedError("This method should be overridden by subclasses.")
+
+    @abstractmethod
+    def get_all_history(self, user_id: int) -> list:
+        """
+        Fetches all history for a user.
+        :return: List of dictionaries with all history details.
+        """
+        raise NotImplementedError("This method should be overridden by subclasses.")

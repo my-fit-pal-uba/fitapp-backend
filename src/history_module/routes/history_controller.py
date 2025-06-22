@@ -50,3 +50,14 @@ class HistoryController:
             return True, {"routine_history": routine_history}, 200
         except Exception as e:
             return False, {"error": str(e)}, 500
+
+    def get_all_history(self, user_id: int) -> Tuple[bool, dict, int]:
+        if not user_id:
+            return False, {"error": "User ID is required"}, 400
+        try:
+            all_history = self.history_service.get_all_history(user_id)
+            if not all_history:
+                return False, {"error": "No history found"}, 404
+            return True, [history.to_dict() for history in all_history], 200
+        except Exception as e:
+            return False, {"error": str(e)}, 500

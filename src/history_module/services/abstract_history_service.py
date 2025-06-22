@@ -28,3 +28,10 @@ class AbstractHistoryService:
         Retrieves the routine history for a specific date.
         """
         raise NotImplementedError("This method should be overridden by subclasses.")
+
+    @abstractmethod
+    def get_all_history(self, user_id: int) -> list:
+        """
+        Retrieves all history for a user.
+        """
+        raise NotImplementedError("This method should be overridden by subclasses.")
