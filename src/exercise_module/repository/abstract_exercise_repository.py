@@ -62,3 +62,13 @@ class AbstractExerciseRepository:
         :return: A list of dictionaries containing exercise IDs and their average ratings.
         """
         pass
+
+    @abstractmethod
+    def get_series_by_user(self, user_id: int) -> list:
+        """
+        Get all exercise series performed by a user.
+
+        :param user_id: The ID of the user.
+        :return: A list of series (dicts or Serie objects).
+        """
+        pass
