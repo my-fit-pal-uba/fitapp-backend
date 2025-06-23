@@ -237,7 +237,7 @@ class ExerciseRepository(AbstractExerciseRepository):
                         "exercise_name": record["exercise_name"],  # <--- agregado
                         "repetitions": record["reps"],
                         "weight": float(record["weight"]),
-                        "created_at": record["created_at"].isoformat()
+                        "created_at": record["created_at"].isoformat(),
                     }
                     for record in records
                 ]

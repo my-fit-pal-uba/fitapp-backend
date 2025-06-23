@@ -101,4 +101,3 @@ class AbstractExerciseService:
         :return: A list of series (each as a dict or Serie object).
         """
         raise NotImplementedError("Subclasses should implement this method.")
-
