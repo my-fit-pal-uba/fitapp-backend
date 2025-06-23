@@ -38,6 +38,9 @@ class ExerciseProxy:
         self.exercise_bp.add_url_rule(
             "/average-ratings", view_func=self.get_average_ratings, methods=["GET"]
         )
+        self.exercise_bp.add_url_rule(
+            "/series", view_func=self.get_series, methods=["GET"]
+        )
 
     def search(self):
         """
@@ -470,3 +473,63 @@ class ExerciseProxy:
         """
         response = self.exercise_controller.get_average_ratings()
         return ResponseInfo.to_response((True, response, 200))
+
+    def get_series(self):
+        """
+        Obtiene todas las series realizadas por un usuario
+        ---
+        tags:
+          - Exercise
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+            description: ID del usuario
+        responses:
+          200:
+            description: Series obtenidas exitosamente
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      exercise_id:
+                        type: integer
+                        example: 4
+                      reps:
+                        type: integer
+                        example: 10
+                      weight:
+                        type: number
+                        format: float
+                        example: 75.5
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-06-22T14:23:00"
+          400:
+            description: user_id es requerido
+          404:
+            description: Usuario no tiene series registradas
+          500:
+            description: Error interno del servidor
+        """
+        user_id = request.args.get("user_id", type=int)
+        if not user_id:
+            return ResponseInfo.to_response((False, "user_id is required", 400))
+
+        series = self.exercise_controller.get_series_by_user(user_id)
+        if not series:
+            return ResponseInfo.to_response((False, "No series found for user", 404))
+
+        return ResponseInfo.to_response((True, series, 200))
