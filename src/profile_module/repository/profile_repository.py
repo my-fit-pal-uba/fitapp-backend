@@ -224,3 +224,23 @@ class ProfileRepository(AbstractProfileRepository):
                 return self._record_to_user(record) if record else None
         except psycopg2.Error:
             return None
+
+    def get_code(self, user_id: int) -> tuple:
+        query = """
+            SELECT first_name, last_name, user_id
+            FROM users
+            WHERE user_id = %s;
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(query, (user_id,))
+                record = cursor.fetchone()
+                if record:
+                    first_name = record['first_name'] or ""
+                    last_name = record['last_name'] or ""
+                    user_id = record['user_id']
+                    code = f"{first_name}{last_name}#{user_id}"
+                    return code
+                return None
+        except psycopg2.Error:
+            return None

@@ -78,3 +78,14 @@ class AbstractProfileRepository:
         :return: A list with al the photos and the upload date.
         """
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def get_code(self, user_id: int) -> tuple:
+        """
+        Get all user photos.
+
+        :param user_id: The ID of the user.
+        :return: A tuple containing the link code.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")
+

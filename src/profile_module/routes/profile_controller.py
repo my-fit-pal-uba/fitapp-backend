@@ -110,6 +110,9 @@ class ProfileController:
     def get_photos(self, user_id: int) -> list:
         return self.ProfileService.get_photos(user_id)
 
+    def get_code(self, user_id: int) -> tuple:
+        return self.ProfileService.get_code(user_id)
+
     def create_access_token(self, user: User):
         dict_user = user.to_dict()
         to_encode = dict_user.copy()
