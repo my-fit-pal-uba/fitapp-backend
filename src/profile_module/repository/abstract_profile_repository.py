@@ -88,4 +88,3 @@ class AbstractProfileRepository:
         :return: A tuple containing the link code.
         """
         raise NotImplementedError("Subclasses must implement this method.")
-

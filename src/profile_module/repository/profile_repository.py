@@ -232,13 +232,15 @@ class ProfileRepository(AbstractProfileRepository):
             WHERE user_id = %s;
         """
         try:
-            with self.get_connection() as conn, conn.cursor(cursor_factory=DictCursor) as cursor:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
                 cursor.execute(query, (user_id,))
                 record = cursor.fetchone()
                 if record:
-                    first_name = record['first_name'] or ""
-                    last_name = record['last_name'] or ""
-                    user_id = record['user_id']
+                    first_name = record["first_name"] or ""
+                    last_name = record["last_name"] or ""
+                    user_id = record["user_id"]
                     code = f"{first_name}{last_name}#{user_id}"
                     return code
                 return None

@@ -419,7 +419,6 @@ class ProfileProxy:
 
         return jsonify(results), 200
 
-
     def get_code(self):
         """
         Devuelve código de vinculacion para entrenador
@@ -450,7 +449,7 @@ class ProfileProxy:
             return jsonify({"error": "user_id is required"}), 400
 
         results = self.profile_controller.get_code(user_id)
-        
+
         if results:
             return {"code": results}, 200
         return {"error": "user not found"}, 404
