@@ -83,3 +83,6 @@ class ProfileService(AbstractProfileService):
 
     def get_user_by_id(self, user_id: int):
         return self.repository.get_user_by_id(user_id)
+
+    def get_code(self, user_id: int) -> tuple:
+        return self.repository.get_code(user_id)

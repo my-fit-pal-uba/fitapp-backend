@@ -44,6 +44,9 @@ class ProfileProxy:
         self.profile_bp.add_url_rule(
             "/get_photos", view_func=self.get_photos, methods=["GET"]
         )
+        self.profile_bp.add_url_rule(
+            "/get_code", view_func=self.get_code, methods=["GET"]
+        )
 
     def post_daily_weight(self):
         """
@@ -415,3 +418,38 @@ class ProfileProxy:
             return jsonify([]), 200
 
         return jsonify(results), 200
+
+    def get_code(self):
+        """
+        Devuelve código de vinculacion para entrenador
+        ---
+        tags:
+          - Profile
+        parameters:
+          - name: user_id
+            in: query
+            type: integer
+            required: true
+        responses:
+          200:
+            description: codigo de vinculación
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    format: base64
+          404:
+            description: No se encontró el usuario o no se pudo generar el código
+        """
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+
+        results = self.profile_controller.get_code(user_id)
+
+        if results:
+            return {"code": results}, 200
+        return {"error": "user not found"}, 404
