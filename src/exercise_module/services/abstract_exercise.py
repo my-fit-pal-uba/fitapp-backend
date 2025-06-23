@@ -92,3 +92,13 @@ class AbstractExerciseService:
     def get_average_ratings(self) -> list:
         """Abstract method to get average ratings for all exercises"""
         raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def get_series_by_user(self, user_id: int) -> list:
+        """Abstract method to get all exercise series performed by a user.
+
+        :param user_id: The ID of the user.
+        :return: A list of series (each as a dict or Serie object).
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+
