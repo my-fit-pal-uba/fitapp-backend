@@ -6,6 +6,7 @@ from psycopg2.extras import DictCursor  # type: ignore
 
 from diet_module.models.diet import Diet
 import os
+from urllib.parse import urlparse
 
 
 class DietRepository(AbstractDietRepository):

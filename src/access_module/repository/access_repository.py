@@ -5,6 +5,7 @@ from models.user import User
 from models.profile import Profile  # noqa: F401
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
 import os
+from urllib.parse import urlparse
 
 
 class AccessRepository(AbstractAccessRepository):

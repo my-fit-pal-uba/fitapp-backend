@@ -5,6 +5,7 @@ from exercise_module.repository.abstract_exercise_repository import (
     AbstractExerciseRepository,
 )
 import os
+from urllib.parse import urlparse
 
 
 class ExerciseRepository(AbstractExerciseRepository):

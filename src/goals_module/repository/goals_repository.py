@@ -6,6 +6,7 @@ from goals_module.repository.abstract_goals_repository import (
     AbstractGoalsRepository,
 )
 import os
+from urllib.parse import urlparse
 
 
 class GoalsRepository(AbstractGoalsRepository):
