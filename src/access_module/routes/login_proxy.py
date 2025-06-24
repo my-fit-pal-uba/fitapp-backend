@@ -29,6 +29,9 @@ class LoginProxy:
         self.login_bp.add_url_rule(
             "/login/google", view_func=self.login_google, methods=["POST"]
         )
+        self.login_bp.add_url_rule(
+            "/restore_password", view_func=self.restore_password_mail, methods=["GET"]
+        )
 
     def login(self):
         """
@@ -225,4 +228,41 @@ class LoginProxy:
             token, grequests.Request(), GOOGLE_CLIENT_ID
         )
         responde = self.login_controller.login_google(idinfo)
+        return ResponseInfo.to_response(responde)
+
+    def restore_password_mail(self):
+        """
+        Autentica a un usuario existente
+        ---
+        tags:
+          - Authentication
+        parameters:
+          - name: email
+            in: query
+            type: string
+            required: true
+            example: usuario_ejemplo
+        responses:
+          200:
+            description: Login exitoso
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                user_id:
+                  type: integer
+                  example: 42
+          401:
+            description: Credenciales inválidas
+          500:
+            description: Error del servidor
+        """
+
+        data = request.args.to_dict()
+        user_email = data.get("email", None)
+        if not user_email:
+            return ResponseInfo.to_response((False, "Email is required", 400))
+        responde = self.login_controller.restore_password_mail(user_email)
         return ResponseInfo.to_response(responde)

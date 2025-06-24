@@ -50,3 +50,12 @@ class LoginController:
             return response, "User logged in with Google successfully", 200
         except Exception as e:
             return False, str(e), 500
+
+    def restore_password_mail(self, user_email: str) -> Tuple[bool, str, int]:
+        try:
+            response = self.login_service.restore_password_mail(user_email)
+            if not response:
+                return False, "User does not exist", 404
+            return response, "Password reset email sent", 200
+        except Exception as e:
+            return False, str(e), 500

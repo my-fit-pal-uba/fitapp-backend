@@ -51,3 +51,10 @@ class AbstractAccessService:
         Abstract method to be implemented by subclasses for user login.
         """
         raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def restore_password_mail(self, user_email: str) -> str:
+        """
+        Abstract method to be implemented by subclasses for restoring password via email.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
