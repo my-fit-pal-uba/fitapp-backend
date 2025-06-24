@@ -65,3 +65,17 @@ class AccessRepository(AbstractAccessRepository):
                 return True
         except psycopg2.Error:
             return False
+
+    def change_password(self, email: str, new_password: str) -> bool:
+        query = """
+            UPDATE Users
+            SET password_hash = %s
+            WHERE email = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (new_password, email))
+                conn.commit()
+                return cursor.rowcount > 0
+        except psycopg2.Error:
+            return False

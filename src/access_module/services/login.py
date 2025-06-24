@@ -176,3 +176,13 @@ class Login(AbstractAccessService):
 
         msg = "".join(response)
         return msg
+
+    def change_password(self, user_email, new_password):
+        if not user_email or not new_password:
+            raise NonExistingUser(user_email)
+
+        result = self.repository.change_password(user_email, new_password)
+        if not result:
+            raise InvalidUserPassword(user_email)
+
+        return True
