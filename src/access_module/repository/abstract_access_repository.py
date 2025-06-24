@@ -10,3 +10,7 @@ class AbstractAccessRepository:
     @abstractmethod
     def sign_up(self, email: str, password: str, name: str, last_name: str):
         pass
+
+    @abstractmethod
+    def change_password(self, email: str, new_password: str):
+        pass
