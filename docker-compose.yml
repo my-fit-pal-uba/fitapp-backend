@@ -13,6 +13,8 @@ services:
     stdin_open: true
     tty: true
     restart: unless-stopped
+    env_file:
+      - .env
 
   db:
     image: postgres:15-alpine

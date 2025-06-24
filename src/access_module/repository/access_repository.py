@@ -4,17 +4,31 @@ from psycopg2.extras import DictCursor  # type: ignore
 from models.user import User
 from models.profile import Profile  # noqa: F401
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
+import os
 
 
 class AccessRepository(AbstractAccessRepository):
     def __init__(self, db_config=None):
-        self.db_config = db_config or {
-            "host": "db",
-            "database": "app_db",
-            "user": "app_user",
-            "password": "app_password",
-            "port": "5432",
-        }
+        database_url = os.getenv("DATABASE_URL")
+        if database_url:
+            # Parsear la URL para obtener params
+            result = urlparse(database_url)
+            self.db_config = {
+                "host": result.hostname,
+                "database": result.path.lstrip('/'),
+                "user": result.username,
+                "password": result.password,
+                "port": result.port or 5432,
+            }
+        else:
+            # Config local por defecto
+            self.db_config = db_config or {
+                "host": "db",
+                "database": "app_db",
+                "user": "app_user",
+                "password": "app_password",
+                "port": "5432",
+            }
 
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
