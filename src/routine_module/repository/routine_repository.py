@@ -5,7 +5,8 @@ from typing import Optional
 from routine_module.repository.abstract_routine_repository import (
     AbstractRoutineRepository,
 )
-
+import os
+from urllib.parse import urlparse
 
 class RoutineRepository(AbstractRoutineRepository):
     def __init__(self, db_config=None):

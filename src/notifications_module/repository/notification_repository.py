@@ -7,7 +7,8 @@ import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore # noqa: F401
 
 from notifications_module.models.notification import Notification  # type: ignore
-
+import os
+from urllib.parse import urlparse
 
 class NotificationRepository(AbstractNotificationRepository):
     def __init__(self, db_config=None):

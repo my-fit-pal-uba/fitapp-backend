@@ -10,7 +10,8 @@ from psycopg2.extras import DictCursor  # type: ignore
 from nutrition_module.models.meal_categorie import MealCategory
 from nutrition_module.models.dish import dish
 from nutrition_module.models.dish_equivalences import DishEquivalences  # type: ignore
-
+import os
+from urllib.parse import urlparse
 
 class NutritionRepository(AbstractNutritionRepository):
     """

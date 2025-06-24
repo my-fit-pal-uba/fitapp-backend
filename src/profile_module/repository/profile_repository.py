@@ -9,7 +9,8 @@ from psycopg2.extras import DictCursor  # type: ignore
 from models.user import User  # noqa: F401
 from models.profile import Profile
 from profile_module.models.user_rol import Rol  # type: ignore
-
+import os
+from urllib.parse import urlparse
 
 class ProfileRepository(AbstractProfileRepository):
 

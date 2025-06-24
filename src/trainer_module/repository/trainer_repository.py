@@ -3,7 +3,8 @@ from typing import Optional
 from trainer_module.repository.abstract_trainer_repository import (
     AbstractTrainerRepository,
 )
-
+import os
+from urllib.parse import urlparse
 
 class TrainerRepository(AbstractTrainerRepository):
     def __init__(self, db_config=None):

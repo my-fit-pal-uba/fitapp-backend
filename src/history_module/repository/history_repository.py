@@ -6,7 +6,8 @@ from history_module.model.consumption_history import consumption_history  # noqa
 from typing import Optional  # noqa: F401
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore  # noqa: F401
-
+import os
+from urllib.parse import urlparse
 
 class HistoryRepository(AbstractHistoryRepository):
     def __init__(self, db_config=None):
