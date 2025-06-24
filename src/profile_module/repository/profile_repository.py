@@ -15,13 +15,24 @@ from urllib.parse import urlparse
 class ProfileRepository(AbstractProfileRepository):
 
     def __init__(self, db_config=None):
-        self.db_config = db_config or {
-            "host": "db",
-            "database": "app_db",
-            "user": "app_user",
-            "password": "app_password",
-            "port": "5432",
-        }
+        database_url = os.getenv("DATABASE_URL")
+        if database_url:
+            result = urlparse(database_url)
+            self.db_config = {
+                "host": result.hostname,
+                "database": result.path.lstrip('/'),
+                "user": result.username,
+                "password": result.password,
+                "port": result.port or 5432,
+            }
+        else:
+            self.db_config = db_config or {
+                "host": "db",
+                "database": "app_db",
+                "user": "app_user",
+                "password": "app_password",
+                "port": "5432",
+            }
 
     def _record_to_user(self, record) -> User:
         return User(
