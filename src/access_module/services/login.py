@@ -142,7 +142,7 @@ class Login(AbstractAccessService):
                         " "
                         "Te compartimos el link para poder realizar el cambio de contraseña:"
                     )
-                    msg_body += "http://localhost:8081/password-reset"
+                    msg_body += "https://fitapp-frontent.onrender.com/password-reset"
 
                     self.send_command(secure_sock, f"MAIL FROM: <{from_addr}>")
 
