@@ -37,3 +37,17 @@ class AbstractAccessService:
         Abstract method to be implemented by subclasses for user sign-up.
         """
         raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def sign_up_google(self, idinfo) -> str:
+        """
+        Abstract method to be implemented by subclasses for user sign-up-google.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
+
+    @abstractmethod
+    def login_google(self, idinfo) -> str:
+        """
+        Abstract method to be implemented by subclasses for user login.
+        """
+        raise NotImplementedError("Subclasses should implement this method.")

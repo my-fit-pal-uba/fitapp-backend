@@ -89,3 +89,17 @@ class ExerciseController:
 
     def get_average_ratings(self) -> List[dict]:
         return self.exercise_service.get_average_ratings()
+
+    def get_series_by_user(self, user_id: int) -> Tuple[bool, dict, int]:
+        if not user_id:
+            return False, {"error": "User ID is required"}, 400
+
+        try:
+            series = self.exercise_service.get_series_by_user(user_id)
+            if not series:
+                return False, {"error": "No series found for this user"}, 404
+        except Exception as e:
+            print(f"[ERROR get_series_by_user] {e}")  # <-- agregalo
+            return False, {"error": "Internal server error"}, 500
+
+        return True, {"series": series}, 200

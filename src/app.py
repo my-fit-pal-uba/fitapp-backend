@@ -63,6 +63,24 @@ from routine_module.services.abstract_routine_service import AbstractRoutineServ
 from routine_module.services.routine_service import RoutineService
 from routine_module.routes.routine_controller import RoutineController
 from routine_module.routes.routine_proxy import RoutineProxy
+from notifications_module.routes.notifications_proxy import NotificationsProxy
+from notifications_module.routes.notifications_controller import NotificationController
+from notifications_module.services.notification_service import NotificationService
+from notifications_module.repository.abstract_notification_repository import (
+    AbstractNotificationRepository,
+)
+from notifications_module.repository.notification_repository import (
+    NotificationRepository,
+)
+
+from trainer_module.repository.abstract_trainer_repository import (
+    AbstractTrainerRepository,
+)
+from trainer_module.repository.trainer_repository import TrainerRepository
+from trainer_module.services.abstract_trainer_service import AbstractTrainerService
+from trainer_module.services.trainer_service import TrainerService
+from trainer_module.routes.trainer_controller import TrainerController
+from trainer_module.routes.trainer_proxy import TrainerProxy
 
 
 DEFAULT_PORT = "8080"
@@ -82,6 +100,8 @@ class BackendApp:
         self.inyect_nutrition_service()
         self.inject_routine_service()
         self.inject_goals_service()
+        self.inyect_notifications_service()
+        self.inject_trainer_service()
 
     def inyect_login_service(self):
         login_repository: AbstractAccessRepository = AccessRepository()
@@ -142,6 +162,22 @@ class BackendApp:
         goals_controller: GoalsController = GoalsController(goals_service)
         goals_proxy = GoalsProxy(goals_controller)
         self.app.register_blueprint(goals_proxy.goals_bp)
+
+    def inyect_notifications_service(self):
+        notification_repository: AbstractNotificationRepository = (
+            NotificationRepository()
+        )
+        notification_service = NotificationService(notification_repository)
+        notification_controller = NotificationController(notification_service)
+        notifications_proxy = NotificationsProxy(notification_controller)
+        self.app.register_blueprint(notifications_proxy.notifications_bp)
+
+    def inject_trainer_service(self):
+        trainer_repository: AbstractTrainerRepository = TrainerRepository()
+        trainer_service: AbstractTrainerService = TrainerService(trainer_repository)
+        trainer_controller: TrainerController = TrainerController(trainer_service)
+        trainer_proxy = TrainerProxy(trainer_controller)
+        self.app.register_blueprint(trainer_proxy.trainer_bp)
 
     def register_healt_check(self):
         @self.app.route("/")

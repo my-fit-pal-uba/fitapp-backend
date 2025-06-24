@@ -1,10 +1,25 @@
 from profile_module.services.abstract_profile_service import AbstractProfileService
 from models.profile import Profile
+from models.user import User
+import os
+from dotenv import load_dotenv
+from datetime import datetime, timedelta
+from pytz import timezone
+import jwt
+
+load_dotenv()
+
+JWT_SECRET = os.getenv("JWT_SECRET", "your_jwt_secret")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
 
 
 class ProfileController:
     def __init__(self, profile_service: AbstractProfileService):
         self.ProfileService: AbstractProfileService = profile_service
+
+    def get_user_by_id(self, user_id: int):
+        return self.ProfileService.get_user_by_id(user_id)
 
     def register_daily_weight(self, user_id: int, weight: float) -> tuple:
         if not user_id or not weight:
@@ -50,6 +65,23 @@ class ProfileController:
         rols = self.ProfileService.get_user_rols()
         return True, rols, 200
 
+    def register_user_rol_with_token(self, user_id: int, rol_id: int):
+        success, data, status = self.register_user_rol(user_id, rol_id)
+        if not success:
+            return False, data, status
+
+        user = self.get_user_by_id(user_id)
+        if not user:
+            return False, {"error": "User not found"}, 404
+
+        token = self.create_access_token(user)
+
+        return (
+            True,
+            {"message": "User role registered successfully", "token": token},
+            200,
+        )
+
     def register_user_rol(self, user_id: int, rol_id: int) -> tuple:
         if not user_id or not rol_id:
             return False, {"error": "User ID and role are required"}, 400
@@ -77,3 +109,18 @@ class ProfileController:
 
     def get_photos(self, user_id: int) -> list:
         return self.ProfileService.get_photos(user_id)
+
+    def get_code(self, user_id: int) -> tuple:
+        return self.ProfileService.get_code(user_id)
+
+    def create_access_token(self, user: User):
+        dict_user = user.to_dict()
+        to_encode = dict_user.copy()
+        expire = datetime.now() + timedelta(minutes=JWT_EXPIRE_MINUTES)
+        to_encode.update({"exp": expire})
+        argentina_time = datetime.now(
+            timezone("America/Argentina/Buenos_Aires")
+        ).isoformat()
+        to_encode.update({"access_time": argentina_time})
+        encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
+        return encoded_jwt

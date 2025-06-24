@@ -101,3 +101,17 @@ class AbstractProfileService:
         :return: A list with al the photos and the upload date.
         """
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def get_user_by_id(self, user_id: int):
+        raise NotImplementedError("Subclasses must implement this method.")
+
+    @abstractmethod
+    def get_code(self, user_id: int) -> tuple:
+        """
+        Get user link code
+
+        :param user_id: The ID of the user.
+        :return: The link code.
+        """
+        raise NotImplementedError("Subclasses must implement this method.")

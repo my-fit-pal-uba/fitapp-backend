@@ -211,3 +211,35 @@ class ExerciseRepository(AbstractExerciseRepository):
                 ]
         except psycopg2.Error:
             return []
+
+    def get_series_by_user(self, user_id: int) -> list:
+        query = """
+            SELECT 
+                s.id, s.user_id, s.exercise_id, s.reps, s.weight, s.created_at,
+                e.name AS exercise_name
+            FROM series s
+            JOIN exercises e ON s.exercise_id = e.exercise_id
+            WHERE s.user_id = %s
+            ORDER BY s.created_at DESC
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id,))
+                records = cursor.fetchall()
+
+                return [
+                    {
+                        "id": record["id"],
+                        "user_id": record["user_id"],
+                        "exercise_id": record["exercise_id"],
+                        "exercise_name": record["exercise_name"],  # <--- agregado
+                        "repetitions": record["reps"],
+                        "weight": float(record["weight"]),
+                        "created_at": record["created_at"].isoformat(),
+                    }
+                    for record in records
+                ]
+        except psycopg2.Error:
+            return []

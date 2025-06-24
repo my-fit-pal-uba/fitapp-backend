@@ -80,3 +80,9 @@ class ProfileService(AbstractProfileService):
             encoded = base64.b64encode(photo_data).decode("utf-8")
             photos.append({"photo": encoded, "upload_date": upload_date.isoformat()})
         return photos
+
+    def get_user_by_id(self, user_id: int):
+        return self.repository.get_user_by_id(user_id)
+
+    def get_code(self, user_id: int) -> tuple:
+        return self.repository.get_code(user_id)

@@ -93,3 +93,6 @@ class ExerciseService(AbstractExerciseService):
 
     def get_average_ratings(self) -> List[dict]:
         return self.repository.get_average_ratings()
+
+    def get_series_by_user(self, user_id: int) -> List[dict]:
+        return self.repository.get_series_by_user(user_id)
