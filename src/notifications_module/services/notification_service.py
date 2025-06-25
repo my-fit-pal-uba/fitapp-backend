@@ -21,6 +21,7 @@ PORT = 465
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class NotificationService(AbstractNotificationService):
 
     def __init__(self, notificarion_repository: AbstractNotificationRepository):
