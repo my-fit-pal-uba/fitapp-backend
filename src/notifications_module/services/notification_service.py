@@ -18,11 +18,11 @@ MAILSERVER = "smtp.gmail.com"
 PORT = 465
 
 
-
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class NotificationService(AbstractNotificationService):
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
+
     def __init__(self, notificarion_repository: AbstractNotificationRepository):
         self.notification_repository: AbstractNotificationRepository = (
             notificarion_repository
@@ -36,9 +36,9 @@ class NotificationService(AbstractNotificationService):
         path_dir = os.path.dirname(os.path.abspath(__file__))
         env_path = os.path.join(path_dir, ".env")
         load_dotenv(env_path)
-        username = os.environ.get("EMAIL_USERNAME")
+        username = os.getenv("EMAIL_USERNAME")
         logger.info(f"EMAIL_USERNAME en producción: {username}")
-        password = os.environ.get("EMAIL_PASSWORD")
+        password = os.getenv("EMAIL_PASSWORD")
         print(f"EMAIL_USERNAME en producción: {username}")
         if not username or not password:
             raise ValueError("Should have set mails configs first")
