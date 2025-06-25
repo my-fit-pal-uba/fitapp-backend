@@ -188,7 +188,7 @@ class HistoryRepository(AbstractHistoryRepository):
             GROUP BY 
                 DATE(consumption_date)
             ORDER BY 
-                fecha_consumo DESC
+                fecha_consumo ASC
         """
         try:
             with self.get_connection() as conn, conn.cursor(
