@@ -107,7 +107,7 @@ class NotificationService(AbstractNotificationService):
             if len(chunk) < 1024:
                 break
         msg = "".join(response)
-        print(f"SMTP response to '{command}': {msg.strip()}")
+        logger.info(f"SMTP response to '{command}': {msg.strip()}")
         return msg
 
     def get_notifications(self, user_id: int):
