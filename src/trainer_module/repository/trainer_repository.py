@@ -6,6 +6,7 @@ from trainer_module.repository.abstract_trainer_repository import (
 import os
 from urllib.parse import urlparse
 
+
 class TrainerRepository(AbstractTrainerRepository):
     def __init__(self, db_config=None):
         database_url = os.getenv("DATABASE_URL")
@@ -13,7 +14,7 @@ class TrainerRepository(AbstractTrainerRepository):
             result = urlparse(database_url)
             self.db_config = {
                 "host": result.hostname,
-                "database": result.path.lstrip('/'),
+                "database": result.path.lstrip("/"),
                 "user": result.username,
                 "password": result.password,
                 "port": result.port or 5432,

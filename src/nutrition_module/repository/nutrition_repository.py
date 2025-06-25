@@ -13,6 +13,7 @@ from nutrition_module.models.dish_equivalences import DishEquivalences  # type: 
 import os
 from urllib.parse import urlparse
 
+
 class NutritionRepository(AbstractNutritionRepository):
     """
     Repository for managing nutrition-related data.
@@ -25,7 +26,7 @@ class NutritionRepository(AbstractNutritionRepository):
             result = urlparse(database_url)
             self.db_config = {
                 "host": result.hostname,
-                "database": result.path.lstrip('/'),
+                "database": result.path.lstrip("/"),
                 "user": result.username,
                 "password": result.password,
                 "port": result.port or 5432,

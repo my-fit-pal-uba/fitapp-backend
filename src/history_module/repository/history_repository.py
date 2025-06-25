@@ -9,6 +9,7 @@ from psycopg2.extras import DictCursor  # type: ignore  # noqa: F401
 import os
 from urllib.parse import urlparse
 
+
 class HistoryRepository(AbstractHistoryRepository):
     def __init__(self, db_config=None):
         database_url = os.getenv("DATABASE_URL")
@@ -16,7 +17,7 @@ class HistoryRepository(AbstractHistoryRepository):
             result = urlparse(database_url)
             self.db_config = {
                 "host": result.hostname,
-                "database": result.path.lstrip('/'),
+                "database": result.path.lstrip("/"),
                 "user": result.username,
                 "password": result.password,
                 "port": result.port or 5432,

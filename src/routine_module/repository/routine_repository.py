@@ -8,6 +8,7 @@ from routine_module.repository.abstract_routine_repository import (
 import os
 from urllib.parse import urlparse
 
+
 class RoutineRepository(AbstractRoutineRepository):
     def __init__(self, db_config=None):
         database_url = os.getenv("DATABASE_URL")
@@ -15,7 +16,7 @@ class RoutineRepository(AbstractRoutineRepository):
             result = urlparse(database_url)
             self.db_config = {
                 "host": result.hostname,
-                "database": result.path.lstrip('/'),
+                "database": result.path.lstrip("/"),
                 "user": result.username,
                 "password": result.password,
                 "port": result.port or 5432,
