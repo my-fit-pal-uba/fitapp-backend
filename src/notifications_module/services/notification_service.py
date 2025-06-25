@@ -30,8 +30,9 @@ class NotificationService(AbstractNotificationService):
         path_dir = os.path.dirname(os.path.abspath(__file__))
         env_path = os.path.join(path_dir, ".env")
         load_dotenv(env_path)
-        username = os.getenv("EMAIL_USERNAME", None)
-        password = os.getenv("EMAIL_PASSWORD", None)
+        username = os.environ.get("EMAIL_USERNAME")
+        password = os.environ.get("EMAIL_PASSWORD")
+        print(f"EMAIL_USERNAME en producción: {username}")
         if not username or not password:
             raise ValueError("Should have set mails configs first")
         notification_message = self.notification_repository.notification_by_id(
@@ -91,17 +92,15 @@ class NotificationService(AbstractNotificationService):
             return False
 
     def send_command(self, sock, command):
-        """Send a command to the SMTP server and print the response."""
         sock.send((command + "\r\n").encode("utf-8"))
-
         response = []
         while True:
             chunk = sock.recv(1024).decode("utf-8")
             response.append(chunk)
             if len(chunk) < 1024:
                 break
-
         msg = "".join(response)
+        print(f"SMTP response to '{command}': {msg.strip()}")
         return msg
 
     def get_notifications(self, user_id: int):
