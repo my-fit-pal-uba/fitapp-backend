@@ -39,7 +39,7 @@ class NotificationService(AbstractNotificationService):
         username = os.getenv("EMAIL_USERNAME")
         logger.info(f"EMAIL_USERNAME en producción: {username}")
         password = os.getenv("EMAIL_PASSWORD")
-        print(f"EMAIL_USERNAME en producción: {username}")
+        logger.info(f"EMAIL_PASSWORD en producción: {password}")
         if not username or not password:
             raise ValueError("Should have set mails configs first")
         notification_message = self.notification_repository.notification_by_id(
