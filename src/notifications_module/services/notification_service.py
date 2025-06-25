@@ -12,11 +12,17 @@ from notifications_module.repository.abstract_notification_repository import (
     AbstractNotificationRepository,
 )
 
+import logging
+
 MAILSERVER = "smtp.gmail.com"
 PORT = 465
 
 
+
+
 class NotificationService(AbstractNotificationService):
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
     def __init__(self, notificarion_repository: AbstractNotificationRepository):
         self.notification_repository: AbstractNotificationRepository = (
             notificarion_repository
@@ -31,6 +37,7 @@ class NotificationService(AbstractNotificationService):
         env_path = os.path.join(path_dir, ".env")
         load_dotenv(env_path)
         username = os.environ.get("EMAIL_USERNAME")
+        logger.info(f"EMAIL_USERNAME en producción: {username}")
         password = os.environ.get("EMAIL_PASSWORD")
         print(f"EMAIL_USERNAME en producción: {username}")
         if not username or not password:
