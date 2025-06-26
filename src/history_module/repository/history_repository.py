@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 class HistoryRepository(AbstractHistoryRepository):
     def __init__(self, db_config=None):
         database_url = os.getenv("DATABASE_URL")
+        self.routine_repository = RoutineRepository()
         if database_url:
             result = urlparse(database_url)
             self.db_config = {
