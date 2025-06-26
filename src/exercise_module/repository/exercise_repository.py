@@ -4,17 +4,32 @@ import psycopg2  # type: ignore
 from exercise_module.repository.abstract_exercise_repository import (
     AbstractExerciseRepository,
 )
+import os
+from urllib.parse import urlparse
 
 
 class ExerciseRepository(AbstractExerciseRepository):
     def __init__(self, db_config=None):
-        self.db_config = db_config or {
-            "host": "db",
-            "database": "app_db",
-            "user": "app_user",
-            "password": "app_password",
-            "port": "5432",
-        }
+        database_url = os.getenv("DATABASE_URL")
+        if database_url:
+            # Parsear la URL para obtener params
+            result = urlparse(database_url)
+            self.db_config = {
+                "host": result.hostname,
+                "database": result.path.lstrip("/"),
+                "user": result.username,
+                "password": result.password,
+                "port": result.port or 5432,
+            }
+        else:
+            # Config local por defecto
+            self.db_config = db_config or {
+                "host": "db",
+                "database": "app_db",
+                "user": "app_user",
+                "password": "app_password",
+                "port": "5432",
+            }
 
     def get_connection(self):
         return psycopg2.connect(**self.db_config)

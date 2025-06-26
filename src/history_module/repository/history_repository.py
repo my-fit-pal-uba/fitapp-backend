@@ -2,22 +2,35 @@ from history_module.repository.abstract_history_repository import (
     AbstractHistoryRepository,
 )
 from routine_module.repository.routine_repository import RoutineRepository
-
+from history_module.model.consumption_history import consumption_history  # noqa: F401
 from typing import Optional  # noqa: F401
 import psycopg2  # type: ignore
 from psycopg2.extras import DictCursor  # type: ignore  # noqa: F401
+import os
+from urllib.parse import urlparse
 
 
 class HistoryRepository(AbstractHistoryRepository):
     def __init__(self, db_config=None):
+        database_url = os.getenv("DATABASE_URL")
         self.routine_repository = RoutineRepository()
-        self.db_config = db_config or {
-            "host": "db",
-            "database": "app_db",
-            "user": "app_user",
-            "password": "app_password",
-            "port": "5432",
-        }
+        if database_url:
+            result = urlparse(database_url)
+            self.db_config = {
+                "host": result.hostname,
+                "database": result.path.lstrip("/"),
+                "user": result.username,
+                "password": result.password,
+                "port": result.port or 5432,
+            }
+        else:
+            self.db_config = db_config or {
+                "host": "db",
+                "database": "app_db",
+                "user": "app_user",
+                "password": "app_password",
+                "port": "5432",
+            }
 
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
@@ -140,4 +153,55 @@ class HistoryRepository(AbstractHistoryRepository):
                     )
                 return result
         except psycopg2.Error:
+            return []
+
+    def _map_record_to_daily_consumption(self, record):
+        return consumption_history(
+            fecha_consumo=str(record["fecha_consumo"]),
+            total_calorias=(
+                float(record["total_calorias"]) if record["total_calorias"] else 0.0
+            ),
+            total_proteinas=(
+                float(record["total_proteinas"]) if record["total_proteinas"] else 0.0
+            ),
+            total_carbohidratos=(
+                float(record["total_carbohidratos"])
+                if record["total_carbohidratos"]
+                else 0.0
+            ),
+            total_grasas=(
+                float(record["total_grasas"]) if record["total_grasas"] else 0.0
+            ),
+        )
+
+    def get_all_history(self, user_id: int) -> list:
+        query = """
+            SELECT 
+                DATE(consumption_date) AS fecha_consumo,
+                ROUND(SUM(calories)::numeric, 2) AS total_calorias,
+                ROUND(SUM(protein)::numeric, 2) AS total_proteinas,
+                ROUND(SUM(carbohydrates)::numeric, 2) AS total_carbohidratos,
+                ROUND(SUM(fats)::numeric, 2) AS total_grasas
+            FROM 
+                dishes_history 
+            WHERE 
+                user_id = %s
+            GROUP BY 
+                DATE(consumption_date)
+            ORDER BY 
+                fecha_consumo ASC
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor(
+                cursor_factory=DictCursor
+            ) as cursor:
+                cursor.execute(query, (user_id,))
+                records = cursor.fetchall()
+                if not records:
+                    return []
+                return [
+                    self._map_record_to_daily_consumption(record) for record in records
+                ]
+        except psycopg2.Error as e:
+            print("Error fetching all history:", e)
             return []

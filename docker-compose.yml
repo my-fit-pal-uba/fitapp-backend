@@ -4,7 +4,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://app_user:app_password@db:5433/app_db
       - FLASK_DEBUG=1
       - PYTHONUNBUFFERED=1
     depends_on:
@@ -14,6 +13,8 @@ services:
     stdin_open: true
     tty: true
     restart: unless-stopped
+    env_file:
+      - .env
 
   db:
     image: postgres:15-alpine

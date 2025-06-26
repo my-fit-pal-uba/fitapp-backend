@@ -12,11 +12,18 @@ from notifications_module.repository.abstract_notification_repository import (
     AbstractNotificationRepository,
 )
 
+import logging
+
 MAILSERVER = "smtp.gmail.com"
 PORT = 465
 
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 class NotificationService(AbstractNotificationService):
+
     def __init__(self, notificarion_repository: AbstractNotificationRepository):
         self.notification_repository: AbstractNotificationRepository = (
             notificarion_repository
@@ -30,8 +37,10 @@ class NotificationService(AbstractNotificationService):
         path_dir = os.path.dirname(os.path.abspath(__file__))
         env_path = os.path.join(path_dir, ".env")
         load_dotenv(env_path)
-        username = os.getenv("EMAIL_USERNAME", None)
-        password = os.getenv("EMAIL_PASSWORD", None)
+        username = os.getenv("EMAIL_USERNAME")
+        logger.info(f"EMAIL_USERNAME en producción: {username}")
+        password = os.getenv("EMAIL_PASSWORD")
+        logger.info(f"EMAIL_PASSWORD en producción: {password}")
         if not username or not password:
             raise ValueError("Should have set mails configs first")
         notification_message = self.notification_repository.notification_by_id(
@@ -91,17 +100,15 @@ class NotificationService(AbstractNotificationService):
             return False
 
     def send_command(self, sock, command):
-        """Send a command to the SMTP server and print the response."""
         sock.send((command + "\r\n").encode("utf-8"))
-
         response = []
         while True:
             chunk = sock.recv(1024).decode("utf-8")
             response.append(chunk)
             if len(chunk) < 1024:
                 break
-
         msg = "".join(response)
+        logger.info(f"SMTP response to '{command}': {msg.strip()}")
         return msg
 
     def get_notifications(self, user_id: int):

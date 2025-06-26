@@ -4,17 +4,32 @@ from psycopg2.extras import DictCursor  # type: ignore
 from models.user import User
 from models.profile import Profile  # noqa: F401
 from access_module.repository.abstract_access_repository import AbstractAccessRepository
+import os
+from urllib.parse import urlparse
 
 
 class AccessRepository(AbstractAccessRepository):
     def __init__(self, db_config=None):
-        self.db_config = db_config or {
-            "host": "db",
-            "database": "app_db",
-            "user": "app_user",
-            "password": "app_password",
-            "port": "5432",
-        }
+        database_url = os.getenv("DATABASE_URL")
+        if database_url:
+            # Parsear la URL para obtener params
+            result = urlparse(database_url)
+            self.db_config = {
+                "host": result.hostname,
+                "database": result.path.lstrip("/"),
+                "user": result.username,
+                "password": result.password,
+                "port": result.port or 5432,
+            }
+        else:
+            # Config local por defecto
+            self.db_config = db_config or {
+                "host": "db",
+                "database": "app_db",
+                "user": "app_user",
+                "password": "app_password",
+                "port": "5432",
+            }
 
     def get_connection(self):
         return psycopg2.connect(**self.db_config)
@@ -63,5 +78,19 @@ class AccessRepository(AbstractAccessRepository):
                 cursor.execute(query, (email, password, name, last_name, name))
                 conn.commit()
                 return True
+        except psycopg2.Error:
+            return False
+
+    def change_password(self, email: str, new_password: str) -> bool:
+        query = """
+            UPDATE Users
+            SET password_hash = %s
+            WHERE email = %s
+        """
+        try:
+            with self.get_connection() as conn, conn.cursor() as cursor:
+                cursor.execute(query, (new_password, email))
+                conn.commit()
+                return cursor.rowcount > 0
         except psycopg2.Error:
             return False
